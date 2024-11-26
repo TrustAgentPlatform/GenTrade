@@ -4,14 +4,14 @@ import ccxt
 import time
 import pandas as pd
 import numpy as np
-from core import FinancialAsset, FinancialMarket
+from core import FinancialAsset, FinancialMarket, TIME_FRAME
 
 LOG = logging.getLogger(__name__)
 
 class CryptoMarket(FinancialMarket):
 
-    def __init__(self, name: str):
-        super().__init__(name, FinancialMarket.MARKET_CRYPTO)
+    def __init__(self, name: str, cache_dir:str):
+        super().__init__(name, FinancialMarket.MARKET_CRYPTO, cache_dir)
 
     def get_crypto_asset(self, base, quote):
         """
@@ -43,8 +43,8 @@ class CryptoAsset(FinancialAsset):
 
 class BinanceMarket(CryptoMarket):
 
-    def __init__(self):
-        super().__init__("Binance")
+    def __init__(self, cache_dir:str=None):
+        super().__init__("Binance", cache_dir)
         self._ccxt_inst = ccxt.binance({'apiKey': self.api_key,
                                         'secret': self.api_secret})
 
@@ -79,7 +79,7 @@ class BinanceMarket(CryptoMarket):
         LOG.info("Fetch from market: timeframe=%s since=%d, limit=%d" % \
                   (timeframe, since, limit))
         remaining = limit
-        delta = FinancialAsset.TIME_FRAME[timeframe]
+        delta = TIME_FRAME[timeframe]
         all_ohlcv = []
 
         if since == -1:
@@ -116,5 +116,5 @@ if __name__ == "__main__":
     print(ohlcv)
     ohlcv = asset_btcusdt.fetch_ohlcv("1h", since=1732532400, limit=1)
     print(ohlcv)
-    ohlcv = asset_btcusdt.fetch_ohlcv("1h", since=1732536000)
+    ohlcv = asset_btcusdt.fetch_ohlcv("1h", since=1732514400)
     print(ohlcv)
