@@ -17,7 +17,7 @@ class CryptoMarket(FinancialMarket):
         """
         Return asset according to crypt naming rule "base/quote"
         """
-        return self.get_asset("%s/%s" % (base.lower(), quote.lower()))
+        return self.get_asset("%s_%s" % (base.lower(), quote.lower()))
 
 class CryptoAsset(FinancialAsset):
 
@@ -26,7 +26,7 @@ class CryptoAsset(FinancialAsset):
         self._currency_base = currency_base.lower()
         self._currency_quote = currency_quote.lower()
         self._symbol = symbol
-        super().__init__("%s/%s" %(currency_base.lower(),
+        super().__init__("%s_%s" %(currency_base.lower(),
                                    currency_quote.lower()), market)
 
     @property
@@ -109,12 +109,10 @@ class BinanceMarket(CryptoMarket):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    cm = BinanceMarket()
+    cm = BinanceMarket(cache_dir="./binance/")
     cm.init()
     asset_btcusdt = cm.get_crypto_asset("ETH", "USDT")
-    ohlcv = asset_btcusdt.fetch_ohlcv("1h", since=1732514400, limit=1)
-    print(ohlcv)
-    ohlcv = asset_btcusdt.fetch_ohlcv("1h", since=1732532400, limit=1)
-    print(ohlcv)
-    ohlcv = asset_btcusdt.fetch_ohlcv("1h", since=1732514400)
-    print(ohlcv)
+    while True:
+        ohlcv = asset_btcusdt.fetch_ohlcv("1h", limit=3)
+        print(ohlcv)
+        time.sleep(30)

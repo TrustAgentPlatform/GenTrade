@@ -5,12 +5,14 @@ import os
 import logging
 import pandas as pd
 import time
+import threading
 from abc import ABC, abstractmethod
 
 LOG = logging.getLogger(__name__)
 
 # The detle of TIME FRAME in seconds
 TIME_FRAME = {
+    '1m':                60,
     '15m':          15 * 60,
     '1h':       1 * 60 * 60,
     '4h':       4 * 60 * 60,
@@ -170,14 +172,24 @@ class FinancialAssetCache:
     def __init__(self, asset:FinancialAsset):
         self._asset = asset
         self._mem_cache:dict[str, pd.DataFrame] = {}
+        self._save_in_progress = False
         self._init()
 
     def _init(self):
-        # if self._root_dir is not None:
-        #     if not os.path.exists(self._root_dir):
-        #         os.makedirs(self._root_dir)
-        #         return
-        pass
+        cache_dir = self._asset.market.cache_dir
+        if not os.path.exists(cache_dir):
+            return
+
+        for timeframe in TIME_FRAME:
+            csv_name = self._get_csv_name(timeframe)
+            csv_path = os.path.join(cache_dir, csv_name)
+            if os.path.exists(csv_path):
+                print("found: " + csv_path)
+                try:
+                    self._mem_cache[timeframe] = pd.read_csv(csv_path, index_col=0)
+                    print(self._mem_cache[timeframe])
+                except pd.errors.EmptyDataError:
+                    pass
 
     def search(self, timeframe:str, since:int, to:int):
         if timeframe not in self._mem_cache:
@@ -220,4 +232,18 @@ class FinancialAssetCache:
         self._mem_cache[timeframe] = pd.concat(
             [self._mem_cache[timeframe], df_new]).drop_duplicates()
         self._mem_cache[timeframe].sort_index(inplace=True)
+        self._save_cache_to_file(timeframe)
+
+    def _get_csv_name(self, timeframe):
+        return self._asset.name + "-" + timeframe + ".csv"
+
+    def _save_cache_to_file(self, timeframe):
+        self._save_in_progress = True
+        cache_dir = self._asset.market.cache_dir
+        if not os.path.exists(cache_dir):
+            os.mkdir(cache_dir)
+        fname = os.path.join(self._asset.market.cache_dir,
+                             self._get_csv_name(timeframe))
+        self._mem_cache[timeframe].to_csv(fname)
+        self._save_in_progress = False
 
