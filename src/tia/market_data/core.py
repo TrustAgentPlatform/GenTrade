@@ -5,6 +5,7 @@ import os
 import logging
 import time
 from abc import ABC, abstractmethod
+import uuid
 import pandas as pd
 
 LOG = logging.getLogger(__name__)
@@ -111,12 +112,15 @@ class FinancialMarket(ABC):
     Trading market includes crypto, stock or golden.
     """
 
-    def __init__(self, name:str, market_type:str, cache_dir:str):
+    def __init__(self, name:str, market_type:str, cache_dir:str, \
+                 market_id:str=str(uuid.uuid4())):
         assert market_type in \
             [FinancialMarket.MARKET_CRYPTO, FinancialMarket.MARKET_STOCK]
         self._name = name
         self._assets:dict[str, FinancialAsset] = {}
         self._cache_dir = cache_dir
+        self._market_type = market_type
+        self._market_id = market_id
 
     @property
     def name(self) -> str:
@@ -138,6 +142,14 @@ class FinancialMarket(ABC):
         Property: cache_dir
         """
         return self._cache_dir
+
+    @property
+    def market_type(self) -> str:
+        return self._market_type
+
+    @property
+    def market_id(self) -> str:
+        return self._market_id
 
     def get_asset(self, name) -> FinancialAsset:
         """
@@ -172,7 +184,7 @@ class FinancialAssetCache:
 
     def _init(self):
         cache_dir = self._asset.market.cache_dir
-        if not os.path.exists(cache_dir):
+        if cache_dir is None or not os.path.exists(cache_dir):
             return
 
         for timeframe in TIME_FRAME:
