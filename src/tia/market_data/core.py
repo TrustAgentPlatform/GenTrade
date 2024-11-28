@@ -112,15 +112,19 @@ class FinancialMarket(ABC):
     Trading market includes crypto, stock or golden.
     """
 
-    def __init__(self, name:str, market_type:str, cache_dir:str, \
-                 market_id:str=str(uuid.uuid4())):
+    def __init__(self, name:str, market_type:str, market_id:str=None,
+                 cache_dir:str=None):
         assert market_type in \
             [FinancialMarket.MARKET_CRYPTO, FinancialMarket.MARKET_STOCK]
+        if market_id is None:
+            self._market_id = str(uuid.uuid4())
+        else:
+            self._market_id = market_id
         self._name = name
         self._assets:dict[str, FinancialAsset] = {}
         self._cache_dir = cache_dir
         self._market_type = market_type
-        self._market_id = market_id
+
 
     @property
     def name(self) -> str:
@@ -251,9 +255,10 @@ class FinancialAssetCache:
     def _save_cache_to_file(self, timeframe):
         self._save_in_progress = True
         cache_dir = self._asset.market.cache_dir
-        if not os.path.exists(cache_dir):
-            os.mkdir(cache_dir)
-        fname = os.path.join(self._asset.market.cache_dir,
-                             self._get_csv_name(timeframe))
-        self._mem_cache[timeframe].to_csv(fname)
+        if cache_dir is not None:
+            if not os.path.exists(cache_dir):
+                os.makedirs(cache_dir)
+            fname = os.path.join(self._asset.market.cache_dir,
+                                self._get_csv_name(timeframe))
+            self._mem_cache[timeframe].to_csv(fname)
         self._save_in_progress = False
