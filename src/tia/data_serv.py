@@ -47,6 +47,7 @@ class DataServer:
     def markets(self):
         return self._markets
 
+
     @staticmethod
     def inst():
         if DataServer._inst is None:
@@ -77,3 +78,4 @@ async def get_ohlcv(market_id:str, asset:str="BTC_USDT",
     asset_obj = market_obj.get_asset(asset.lower())
     ret = asset_obj.fetch_ohlcv(timeframe, since, limit)
     return ret.to_json(orient="records")
+

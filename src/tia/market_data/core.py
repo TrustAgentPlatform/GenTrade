@@ -112,6 +112,7 @@ class FinancialMarket(ABC):
     Trading market includes crypto, stock or golden.
     """
 
+
     def __init__(self, name:str, market_type:str, market_id:str=None,
                  cache_dir:str=None):
         assert market_type in \
@@ -124,7 +125,6 @@ class FinancialMarket(ABC):
         self._assets:dict[str, FinancialAsset] = {}
         self._cache_dir = cache_dir
         self._market_type = market_type
-
 
     @property
     def name(self) -> str:
