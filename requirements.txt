@@ -6,3 +6,5 @@ plotly
 pytz
 yfinance
 ccxt
+fastapi[standard]
+uvicorn[standard]

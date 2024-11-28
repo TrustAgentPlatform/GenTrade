@@ -44,6 +44,8 @@ class CryptoAsset(FinancialAsset):
 class BinanceMarket(CryptoMarket):
 
     def __init__(self, cache_dir:str=None):
+        if cache_dir is not None:
+            cache_dir = os.path.join(cache_dir, "Binance")
         super().__init__("Binance", cache_dir)
         self._ccxt_inst = ccxt.binance({'apiKey': self.api_key,
                                         'secret': self.api_secret})
@@ -59,20 +61,26 @@ class BinanceMarket(CryptoMarket):
     def init(self):
         LOG.info("Loading Binance Market...")
         retry_num = 0
+        success = False
         while retry_num < 5:
             try:
                 self._ccxt_inst.load_markets()
+                success = True
                 break
             except:
                 retry_num += 1
                 LOG.error("Fail to load market... retry")
                 time.sleep(1)
 
+        if not success:
+            return False
+
         for symbol in self._ccxt_inst.symbols:
             base, quote = symbol.split("/")
             caobj = CryptoAsset(base, quote, symbol, self)
             self.assets[caobj.name] = caobj
         LOG.info("Found %d crypto assets.", len(self.assets))
+        return True
 
     def fetch_ohlcv(self, asset:CryptoAsset, timeframe: str, since: int = -1,
                     limit: int = 500):
