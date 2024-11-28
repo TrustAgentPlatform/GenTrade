@@ -10,8 +10,8 @@ LOG = logging.getLogger(__name__)
 
 class CryptoMarket(FinancialMarket):
 
-    def __init__(self, name: str, cache_dir:str):
-        super().__init__(name, FinancialMarket.MARKET_CRYPTO, cache_dir)
+    def __init__(self, name: str, market_id:str=None, cache_dir:str=None):
+        super().__init__(name, FinancialMarket.MARKET_CRYPTO, market_id, cache_dir)
 
     def get_crypto_asset(self, base, quote):
         """
@@ -43,10 +43,11 @@ class CryptoAsset(FinancialAsset):
 
 class BinanceMarket(CryptoMarket):
 
-    def __init__(self, cache_dir:str=None):
+    def __init__(self, market_id="b13a4902-ad9d-11ef-a239-00155d3ba217",
+                 cache_dir:str=None):
         if cache_dir is not None:
             cache_dir = os.path.join(cache_dir, "Binance")
-        super().__init__("Binance", cache_dir)
+        super().__init__("Binance", market_id, cache_dir)
         self._ccxt_inst = ccxt.binance({'apiKey': self.api_key,
                                         'secret': self.api_secret})
 
@@ -67,7 +68,8 @@ class BinanceMarket(CryptoMarket):
                 self._ccxt_inst.load_markets()
                 success = True
                 break
-            except:
+            except Exception as e:
+                LOG.critical(e, exc_info=True)
                 retry_num += 1
                 LOG.error("Fail to load market... retry")
                 time.sleep(1)
