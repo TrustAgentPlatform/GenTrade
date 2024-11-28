@@ -1,10 +1,10 @@
 import os
 import logging
-import ccxt
 import time
+import ccxt
 import pandas as pd
 import numpy as np
-from core import FinancialAsset, FinancialMarket, TIME_FRAME
+from .core import FinancialAsset, FinancialMarket, TIME_FRAME
 
 LOG = logging.getLogger(__name__)
 
@@ -72,12 +72,12 @@ class BinanceMarket(CryptoMarket):
             base, quote = symbol.split("/")
             caobj = CryptoAsset(base, quote, symbol, self)
             self.assets[caobj.name] = caobj
-        LOG.info("Found %d crypto assets." % len(self.assets))
+        LOG.info("Found %d crypto assets.", len(self.assets))
 
     def fetch_ohlcv(self, asset:CryptoAsset, timeframe: str, since: int = -1,
                     limit: int = 500):
-        LOG.info("Fetch from market: timeframe=%s since=%d, limit=%d" % \
-                  (timeframe, since, limit))
+        LOG.info("Fetch from market: timeframe=%s since=%d, limit=%d",
+                 timeframe, since, limit)
         remaining = limit
         delta = TIME_FRAME[timeframe]
         all_ohlcv = []
@@ -87,8 +87,7 @@ class BinanceMarket(CryptoMarket):
             since = to_ - (limit - 1) * delta
         else:
             max_limit = int((time.time() - since) / delta)
-            if limit > max_limit:
-                limit = max_limit
+            limit = min(limit, max_limit)
             to_ = int((since + (limit - 1)* delta) / delta) * delta
 
         # Continuous to fetching until get all data
@@ -113,6 +112,6 @@ if __name__ == "__main__":
     cm.init()
     asset_btcusdt = cm.get_crypto_asset("ETH", "USDT")
     while True:
-        ohlcv = asset_btcusdt.fetch_ohlcv("1h", limit=3)
-        print(ohlcv)
+        ret = asset_btcusdt.fetch_ohlcv("1h", limit=3)
+        print(ret)
         time.sleep(30)

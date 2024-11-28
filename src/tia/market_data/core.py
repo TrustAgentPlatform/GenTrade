@@ -3,10 +3,9 @@ DataHub Core Package
 """
 import os
 import logging
-import pandas as pd
 import time
-import threading
 from abc import ABC, abstractmethod
+import pandas as pd
 
 LOG = logging.getLogger(__name__)
 
@@ -21,11 +20,12 @@ TIME_FRAME = {
     '1M': 30 * 24 * 60 * 60
 }
 
-# Forward Declaration
 class FinancialMarket(ABC):
+    # Forward Declaration
     pass
 
 class FinancialAssetCache:
+    # Forward Declaration
     pass
 
 class FinancialAsset(ABC):
@@ -62,11 +62,10 @@ class FinancialAsset(ABC):
         # correct limit to ensure correct range according to since
         if since != -1:
             max_limit = int((time.time() - since) / TIME_FRAME[timeframe])
-            if limit > max_limit:
-                limit = max_limit
+            limit = min(limit, max_limit)
 
         if timeframe not in TIME_FRAME:
-            LOG.error("Time frame %s is invalid" % timeframe)
+            LOG.error("Time frame %s is invalid", timeframe)
             return None
 
         tf_delta = TIME_FRAME[timeframe]
@@ -78,10 +77,6 @@ class FinancialAsset(ABC):
         else:
             from_ = int(since / tf_delta) * tf_delta
             to_ = since + (limit - 1) * tf_delta
-
-        # LOG.info("from=%d->to=%d first=%d->last=%d" % (
-        #     from_, to_, self._cache[timeframe].index[0],
-        #     self._cache[timeframe].index[-1]))
 
         # search from cache first
         df_cached = self._cache.search(timeframe, from_, to_)
@@ -186,12 +181,16 @@ class FinancialAssetCache:
             if os.path.exists(csv_path):
                 print("found: " + csv_path)
                 try:
-                    self._mem_cache[timeframe] = pd.read_csv(csv_path, index_col=0)
+                    self._mem_cache[timeframe] = \
+                        pd.read_csv(csv_path, index_col=0)
                     print(self._mem_cache[timeframe])
                 except pd.errors.EmptyDataError:
                     pass
 
     def search(self, timeframe:str, since:int, to:int):
+        """
+        Search from cache
+        """
         if timeframe not in self._mem_cache:
             self._mem_cache[timeframe] = pd.DataFrame()
             return None
@@ -220,8 +219,8 @@ class FinancialAssetCache:
         count = int((df.index[-1] - df.index[0]) / TIME_FRAME[timeframe]) \
             + 1
         if count != len(df):
-            LOG.error("The data frame is not continuous: count=%d, len=%d" %
-                      (count, len(df)))
+            LOG.error("The data frame is not continuous: count=%d, len=%d",
+                      count, len(df))
             return False
         return True
 
@@ -246,4 +245,3 @@ class FinancialAssetCache:
                              self._get_csv_name(timeframe))
         self._mem_cache[timeframe].to_csv(fname)
         self._save_in_progress = False
-
