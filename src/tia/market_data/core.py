@@ -10,7 +10,7 @@ import pandas as pd
 
 LOG = logging.getLogger(__name__)
 
-# The detle of TIME FRAME in seconds
+# The delta of TIME FRAME in seconds
 TIME_FRAME = {
     '1m':                60,
     '15m':          15 * 60,
@@ -85,13 +85,14 @@ class FinancialAsset(ABC):
             df = self._market.fetch_ohlcv(self, timeframe, since, limit)
             self._cache.save(timeframe, df)
         else:
+            LOG.info("cache -1: %d to: %d", df_cached.index[-1], to_)
             if df_cached.index[-1] == to_:
                 # Find all data
                 df = df_cached
             else:
                 # Find part data, continue fetch remaining from market
-                new_limit = limit - int((to_ - df_cached.index[-1]) / tf_delta)
-                new_since = df_cached.index[-1]
+                new_limit = int((to_ - df_cached.index[-1]) / tf_delta)
+                new_since = df_cached.index[-1] + 1
                 df_remaining = self._market.fetch_ohlcv(
                     self, timeframe, new_since, new_limit)
                 df = pd.concat([df_cached, df_remaining]).drop_duplicates()
@@ -125,7 +126,6 @@ class FinancialMarket(ABC):
         self._cache_dir = cache_dir
         self._market_type = market_type
 
-
     @property
     def name(self) -> str:
         """
@@ -143,12 +143,15 @@ class FinancialMarket(ABC):
     @property
     def cache_dir(self) -> str:
         """
-        Property: cache_dir
+        Property: Cache Directory
         """
         return self._cache_dir
 
     @property
     def market_type(self) -> str:
+        """
+        Property: Market Type
+        """
         return self._market_type
 
     @property
@@ -171,10 +174,10 @@ class FinancialMarket(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def fetch_ohlcv(self, asset:FinancialAsset, timeframe:str, since: int = None,
-                    limit: int = None):
+    def fetch_ohlcv(self, asset:FinancialAsset, timeframe:str,
+                    since: int = None, limit: int = None):
         """
-        Fetch OHLV for the specific asset
+        Fetch OHLCV for the specific asset
         """
         raise NotImplementedError
 
@@ -195,11 +198,10 @@ class FinancialAssetCache:
             csv_name = self._get_csv_name(timeframe)
             csv_path = os.path.join(cache_dir, csv_name)
             if os.path.exists(csv_path):
-                print("found: " + csv_path)
+                LOG.info("found: %s", csv_path)
                 try:
                     self._mem_cache[timeframe] = \
                         pd.read_csv(csv_path, index_col=0)
-                    print(self._mem_cache[timeframe])
                 except pd.errors.EmptyDataError:
                     pass
 
@@ -207,38 +209,29 @@ class FinancialAssetCache:
         """
         Search from cache
         """
+        LOG.info("Search cache: tf=%s, since=%d, to=%d",
+                 timeframe, since, to)
         if timeframe not in self._mem_cache:
             self._mem_cache[timeframe] = pd.DataFrame()
             return None
 
         if since < self._mem_cache[timeframe].index[0] or \
             since > self._mem_cache[timeframe].index[-1]:
-            LOG.info("Not found records from cache")
+            LOG.info("No records found from cache")
             return None
 
         # if from_ in the range of existing cache
         if to <= self._mem_cache[timeframe].index[-1]:
-            LOG.info("Found all records from cache")
+            LOG.info("All records found from cache")
             df_part = self._mem_cache[timeframe].loc[since:to]
         else:
-            LOG.info("Found part of records from cache")
             df_part = self._mem_cache[timeframe].loc[since:]
+            LOG.info("Part of records found from cache: from %d -> %d",
+                     df_part.index[0], df_part.index[-1])
 
         if self._check_whether_continuous(df_part, timeframe):
             return df_part
         return None
-
-    def _check_whether_continuous(self, df:pd.DataFrame, timeframe):
-        """
-        Check whether the dataframe is continuous
-        """
-        count = int((df.index[-1] - df.index[0]) / TIME_FRAME[timeframe]) \
-            + 1
-        if count != len(df):
-            LOG.error("The data frame is not continuous: count=%d, len=%d",
-                      count, len(df))
-            return False
-        return True
 
     def save(self, timeframe:str, df_new:pd.DataFrame):
         """
@@ -262,3 +255,15 @@ class FinancialAssetCache:
                                 self._get_csv_name(timeframe))
             self._mem_cache[timeframe].to_csv(fname)
         self._save_in_progress = False
+
+    def _check_whether_continuous(self, df:pd.DataFrame, timeframe):
+        """
+        Check whether the dataframe is continuous
+        """
+        count = int((df.index[-1] - df.index[0]) / TIME_FRAME[timeframe]) \
+            + 1
+        if count != len(df):
+            LOG.error("The data frame is not continuous: count=%d, len=%d",
+                      count, len(df))
+            return False
+        return True
