@@ -11,7 +11,8 @@ LOG = logging.getLogger(__name__)
 class CryptoMarket(FinancialMarket):
 
     def __init__(self, name: str, market_id:str=None, cache_dir:str=None):
-        super().__init__(name, FinancialMarket.MARKET_CRYPTO, market_id, cache_dir)
+        super().__init__(name, FinancialMarket.MARKET_CRYPTO, market_id,
+                         cache_dir)
 
     def get_crypto_asset(self, base, quote):
         """
@@ -43,13 +44,15 @@ class CryptoAsset(FinancialAsset):
 
 class BinanceMarket(CryptoMarket):
 
-    def __init__(self, market_id="b13a4902-ad9d-11ef-a239-00155d3ba217",
-                 cache_dir:str=None):
+    MARKET_ID = "b13a4902-ad9d-11ef-a239-00155d3ba217"
+
+    def __init__(self, market_id=MARKET_ID, cache_dir:str=None):
         if cache_dir is not None:
             cache_dir = os.path.join(cache_dir, "Binance")
         super().__init__("Binance", market_id, cache_dir)
         self._ccxt_inst = ccxt.binance({'apiKey': self.api_key,
                                         'secret': self.api_secret})
+        self._ready = False
 
     @property
     def api_key(self):
@@ -60,6 +63,9 @@ class BinanceMarket(CryptoMarket):
         return os.getenv("TIA_BINANCE_API_SECRET")
 
     def init(self):
+        if self._ready:
+            return False
+
         LOG.info("Loading Binance Market...")
         retry_num = 0
         success = False
@@ -72,7 +78,7 @@ class BinanceMarket(CryptoMarket):
                 LOG.critical(e, exc_info=True)
                 retry_num += 1
                 LOG.error("Fail to load market... retry")
-                time.sleep(1)
+                time.sleep(5)
 
         if not success:
             return False
@@ -82,6 +88,8 @@ class BinanceMarket(CryptoMarket):
             caobj = CryptoAsset(base, quote, symbol, self)
             self.assets[caobj.name] = caobj
         LOG.info("Found %d crypto assets.", len(self.assets))
+
+        self._ready = True
         return True
 
     def fetch_ohlcv(self, asset:CryptoAsset, timeframe: str, since: int = -1,
@@ -114,7 +122,6 @@ class BinanceMarket(CryptoMarket):
         df.time = (df.time / 1000).astype(np.int64)
         df.set_index('time', inplace=True)
         return df
-
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
