@@ -94,7 +94,7 @@ def receive_signal(signalNumber, _):
     sys.exit()
 
 @asynccontextmanager
-async def lifespan():
+async def lifespan(_:FastAPI):
     LOG.info("Starting Up...")
     signal.signal(signal.SIGINT, receive_signal)
     data_server.init()
