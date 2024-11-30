@@ -70,15 +70,19 @@ class BinanceMarket(CryptoMarket):
         retry_num = 0
         success = False
         while retry_num < 5:
+            retry_num += 1
             try:
                 self._ccxt_inst.load_markets()
-                success = True
-                break
+            except ccxt.RequestTimeout:
+                LOG.critical("Request Timeout... retry[%d/5]", retry_num)
+                time.sleep(5)
             except Exception as e:
                 LOG.critical(e, exc_info=True)
-                retry_num += 1
-                LOG.error("Fail to load market... retry")
+                LOG.error("Fail to load market... retry[%d/5]", retry_num)
                 time.sleep(5)
+            else:
+                success = True
+                break
 
         if not success:
             return False
