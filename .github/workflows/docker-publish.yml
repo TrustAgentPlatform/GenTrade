@@ -29,7 +29,7 @@ jobs:
           ALIYUN_REPOSITORY: kenplusplus/tia_datahub
           IMAGE_TAG: ${{ env.RELEASE_VERSION }}
         run: |
-          docker build --no-cache -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker build --no-cache -t $ALIYUN_REGISTRY/$ALIYUN_REPOSITORY:$IMAGE_TAG -f Dockerfile.datahub .
+          docker push $ALIYUN_REGISTRY/$ALIYUN_REPOSITORY:$IMAGE_TAG
+          docker tag $ALIYUN_REGISTRY/$ALIYUN_REPOSITORY:$IMAGE_TAG $ALIYUN_REGISTRY/$ALIYUN_REPOSITORY:latest
+          docker push $ALIYUN_REGISTRY/$ALIYUN_REPOSITORY:latest
