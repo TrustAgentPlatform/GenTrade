@@ -63,6 +63,7 @@ class FinancialAsset(ABC):
         # correct limit to ensure correct range according to since
         if since != -1:
             max_limit = int((time.time() - since) / TIME_FRAME[timeframe])
+            assert max_limit > 0
             limit = min(limit, max_limit)
 
         if timeframe not in TIME_FRAME:
