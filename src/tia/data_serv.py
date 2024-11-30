@@ -110,7 +110,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/get_markets")
+@app.get("/markets/")
 async def get_markets():
     retval = {}
     for key, market in data_server.markets.items():
@@ -120,7 +120,20 @@ async def get_markets():
         }
     return retval
 
-@app.get("/get_ohlcv")
+@app.get("/assets/")
+async def get_asserts(market_id:str, start:int=0, max_count:int=1000):
+    if market_id is None or market_id not in data_server.markets:
+        return None
+    market_obj = data_server.markets[market_id]
+    assets = list(market_obj.assets.keys())
+    ret_count = min(max_count, len(assets) - start)
+    return {
+        "market": market_id,
+        "count": len(assets),
+        "assets": assets[start:start + ret_count]
+    }
+
+@app.get("/asset/get_ohlcv")
 async def get_ohlcv(market_id:str, asset:str="BTC_USDT",
                     timeframe:str="1m", since:int=-1, limit:int=10):
     if market_id not in data_server.markets:
