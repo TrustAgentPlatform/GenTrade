@@ -6,11 +6,11 @@ import os
 import sys
 import logging
 import signal
-import sched, time
+import time
 import datetime
 import asyncio
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
@@ -86,7 +86,7 @@ class DataServer:
 
 data_server = DataServer.inst()
 
-def receive_signal(signalNumber, frame):
+def receive_signal(signalNumber, _):
     """
     Quit on Control + C
     """
@@ -94,7 +94,7 @@ def receive_signal(signalNumber, frame):
     sys.exit()
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan():
     LOG.info("Starting Up...")
     signal.signal(signal.SIGINT, receive_signal)
     data_server.init()
