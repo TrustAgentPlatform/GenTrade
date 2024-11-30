@@ -7,14 +7,12 @@ import sys
 import logging
 import signal
 import time
-import datetime
-from threading import Thread
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from .market_data.core import FinancialMarket, TIME_FRAME
+from .market_data.core import FinancialMarket, TIME_FRAME, DataCollectorThread
 from .market_data.crypto import BinanceMarket
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
@@ -36,8 +34,7 @@ class DataServer:
                                     os.path.join(CURR_DIR, "cache"))
         LOG.info("Cache directory is %s", self._cache_dir)
         self._markets:dict[str, FinancialMarket] = {}
-        self._collect_threads:dict[str, Thread] = {}
-        self._terminate = False
+        self._collect_threads:dict[str, DataCollectorThread] = {}
 
     @property
     def markets(self):
@@ -60,50 +57,49 @@ class DataServer:
 
     def cleanup(self):
         LOG.info("Shutting Down ...")
-        self._terminate = True
+        for _, t in self._collect_threads.items():
+            t.terminate()
 
-    def collect(self, market_id:str, asset:str, timeframe:str, since:int):
-        if market_id not in list(self._markets.keys()):
+    def collect(self, market_id:str, asset:str, timeframe:str, since:int) -> int:
+        if market_id not in self._markets:
             return False
         if timeframe not in TIME_FRAME:
             return False
 
         new_thread_key = "%s|%s" % (market_id, asset)
 
-        if new_thread_key in list(self._collect_threads.keys()):
-            LOG.warn("The collect thread %s is already started.",
-                        new_thread_key)
-            return
-        self._collect_threads[new_thread_key] = Thread(
-            target=self._thread_collect_crypto,
-            args=(new_thread_key, market_id, asset, timeframe, since))
-        self._collect_threads[new_thread_key].start()
+        market_obj = self._markets[market_id]
+        asset_obj = market_obj.get_asset(asset.lower())
 
-    def _thread_collect_crypto(self, key:str, market_id:str, asset:str,
-                               timeframe:str, since:int):
-        LOG.info("Thread %s started.", key)
-        asset_obj = self.markets[market_id].get_asset(asset.lower())
-        remaining = 0
-        while not self._terminate and remaining >= 0:
-            now = time.time()
-            remaining = int((time.time() - since) / TIME_FRAME[timeframe])
-            LOG.info("=> %d: Collector[%s] ...",
-                 now, datetime.datetime.fromtimestamp(now).\
-                    strftime('%Y-%m-%d %H:%M:%S'))
-            ret = asset_obj.fetch_ohlcv(timeframe, since, limit=100)
-            if ret is not None:
-                since += 100 * TIME_FRAME[timeframe]
-                if since > now:
-                    break
-            time.sleep(5)
-        LOG.info("Thread %s completed.", key)
-        del self._collect_threads[key]
+        cache_start, cache_end = asset_obj.cache.get_index(timeframe)
+        if cache_end >= since >= cache_start:
+            since = cache_end + TIME_FRAME[timeframe]
+
+        now = time.time()
+        count = int((now - since) / TIME_FRAME[timeframe] - 1)
+        if count <= 0:
+            LOG.info("All data already cached.")
+            return -1
+
+        if new_thread_key in self._collect_threads:
+            if not self._collect_threads[new_thread_key].is_completed:
+                progress_now, progress_total = \
+                    self._collect_threads[new_thread_key].progress
+                LOG.info("[%s] progress: %d/%d",
+                        new_thread_key, progress_now, progress_total)
+                return int((progress_now / progress_total) * 100)
+
+        self._collect_threads[new_thread_key] = DataCollectorThread(
+              new_thread_key, market_obj, asset_obj, timeframe, since)
+        self._collect_threads[new_thread_key].start()
+        return 0
 
     @staticmethod
     def inst():
         if DataServer._inst is None:
             DataServer._inst = DataServer()
         return DataServer._inst
+
 
 data_server = DataServer.inst()
 
@@ -169,8 +165,8 @@ async def get_ohlcv(market_id:str, asset:str="BTC_USDT",
 async def start_collect(market_id:str=BinanceMarket.MARKET_ID,
                         asset:str="BTC_USDT",
                         timeframe:str="1h", since:int=-1):
-    data_server.collect(market_id, asset, timeframe, since)
-    return { "ret": True }
+    ret = data_server.collect(market_id, asset, timeframe, since)
+    return { "ret": ret }
 
 if __name__ == '__main__':
     uvicorn.run(app, host="0.0.0.0", port=8000)

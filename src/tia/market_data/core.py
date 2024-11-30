@@ -4,7 +4,9 @@ DataHub Core Package
 import os
 import logging
 import time
+import datetime
 from abc import ABC, abstractmethod
+from threading import Thread
 import uuid
 import pandas as pd
 
@@ -54,6 +56,9 @@ class FinancialAsset(ABC):
         Property market which belong to
         """
         return self._market
+    @property
+    def cache(self) -> FinancialAssetCache:
+        return self._cache
 
     def fetch_ohlcv(self, timeframe:str="1h", since: int = -1,
                     limit: int = 100) -> pd.DataFrame:
@@ -80,13 +85,15 @@ class FinancialAsset(ABC):
             from_ = int(since / tf_delta) * tf_delta
             to_ = since + (limit - 1) * tf_delta
 
+        LOG.info("fetch_ohlcv: timeframe=%s, since=%d, limit=%d, to=%d",
+                 timeframe, since, limit, to_)
+
         # search from cache first
         df_cached = self._cache.search(timeframe, from_, to_)
         if df_cached is None:
             df = self._market.fetch_ohlcv(self, timeframe, since, limit)
             self._cache.save(timeframe, df)
         else:
-            LOG.info("cache -1: %d to: %d", df_cached.index[-1], to_)
             if df_cached.index[-1] == to_:
                 # Find all data
                 df = df_cached
@@ -190,6 +197,12 @@ class FinancialAssetCache:
         self._save_in_progress = False
         self._init()
 
+    def get_index(self, timeframe:str):
+        if timeframe not in self._mem_cache:
+            return -1, -1
+        cache_obj = self._mem_cache[timeframe]
+        return cache_obj.index[0], cache_obj.index[-1]
+
     def _init(self):
         cache_dir = self._asset.market.cache_dir
         if cache_dir is None or not os.path.exists(cache_dir):
@@ -268,3 +281,52 @@ class FinancialAssetCache:
                       count, len(df))
             return False
         return True
+
+class DataCollectorThread(Thread):
+
+    def __init__(self, key:str, market_obj:FinancialMarket,
+                 asset_obj:FinancialAsset, timeframe:str, since:int):
+        Thread.__init__(self)
+        self._key = key
+        self._market_obj = market_obj
+        self._since = since
+        self._asset_obj = asset_obj
+        self._timeframe = timeframe
+        self._current = since
+        self._terminate = False
+        self._now = time.time()
+
+    def run(self):
+        LOG.info("Thread %s started.", self._key)
+        self._current = self._since
+        while not self._terminate:
+            LOG.info("=> %d: Collector[%s] since=%d ...",
+                 self._now, datetime.datetime.fromtimestamp(self._now).\
+                    strftime('%Y-%m-%d %H:%M:%S'),
+                    self._current)
+            ret = self._asset_obj.fetch_ohlcv(self._timeframe, self._current)
+            if ret is not None:
+                self._current = ret.index[-1] + TIME_FRAME[self._timeframe]
+                LOG.info("current:%d, now:%d", self._current, self._now)
+                if self._current >= self._now - TIME_FRAME[self._timeframe]:
+                    break
+            time.sleep(5)
+        self._terminate = True
+        LOG.info("Thread %s completed.", self._key)
+
+    @property
+    def is_completed(self):
+        return self._terminate
+
+    def terminate(self):
+        self._terminate = True
+
+    @property
+    def progress(self):
+        total = int((self._now - self._since) / TIME_FRAME[self._timeframe])
+        now = int((self._now - self._current) / TIME_FRAME[self._timeframe])
+        return now, total
+
+    @property
+    def since(self):
+        return self._since
