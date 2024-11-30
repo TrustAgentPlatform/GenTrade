@@ -73,7 +73,7 @@ class BinanceMarket(CryptoMarket):
             retry_num += 1
             try:
                 self._ccxt_inst.load_markets()
-            except ccxt.RequestTimeout:
+            except (ccxt.RequestTimeout, ccxt.NetworkError):
                 LOG.critical("Request Timeout... retry[%d/5]", retry_num)
                 time.sleep(5)
             except Exception as e:
