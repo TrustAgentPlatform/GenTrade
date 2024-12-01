@@ -71,13 +71,8 @@ class DataServer:
         market_obj = self._markets[market_id]
         asset_obj = market_obj.get_asset(asset.lower())
 
-        cache_start, cache_end = asset_obj.cache.get_index(timeframe)
-        if cache_end >= since >= cache_start:
-            since = cache_end + TIME_FRAME[timeframe]
-
         now = time.time()
-        count = int((now - since) / TIME_FRAME[timeframe] - 1)
-        if count <= 0:
+        if asset_obj.cache.check_cache(timeframe, since, now):
             LOG.info("All data already cached.")
             return -1
 
@@ -87,7 +82,7 @@ class DataServer:
                     self._collect_threads[new_thread_key].progress
                 LOG.info("[%s] progress: %d/%d",
                         new_thread_key, progress_now, progress_total)
-                return int((progress_now / progress_total) * 100)
+                return 100 - int((progress_now / progress_total) * 100)
 
         self._collect_threads[new_thread_key] = DataCollectorThread(
               new_thread_key, market_obj, asset_obj, timeframe, since)

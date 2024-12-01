@@ -94,6 +94,8 @@ class FinancialAsset(ABC):
             df = self._market.fetch_ohlcv(self, timeframe, since, limit)
             self._cache.save(timeframe, df)
         else:
+            LOG.info("cache: count=%d, index=%d, to=%d",
+                     len(df_cached), df_cached.index[-1], to_)
             if df_cached.index[-1] == to_:
                 # Find all data
                 df = df_cached
@@ -234,18 +236,19 @@ class FinancialAssetCache:
             LOG.info("No records found from cache")
             return None
 
+        df_part = None
         # if from_ in the range of existing cache
-        if to <= self._mem_cache[timeframe].index[-1]:
+        if to <= self._mem_cache[timeframe].index[-1] and \
+            self.check_cache(timeframe, since, to):
             LOG.info("All records found from cache")
             df_part = self._mem_cache[timeframe].loc[since:to]
         else:
-            df_part = self._mem_cache[timeframe].loc[since:]
-            LOG.info("Part of records found from cache: from %d -> %d",
-                     df_part.index[0], df_part.index[-1])
+            if self.check_cache(timeframe, since):
+                df_part = self._mem_cache[timeframe].loc[since:]
+                LOG.info("Part of records found from cache: from %d -> %d",
+                        df_part.index[0], df_part.index[-1])
 
-        if self._check_whether_continuous(df_part, timeframe):
-            return df_part
-        return None
+        return df_part
 
     def save(self, timeframe:str, df_new:pd.DataFrame):
         """
@@ -270,15 +273,27 @@ class FinancialAssetCache:
             self._mem_cache[timeframe].to_csv(fname)
         self._save_in_progress = False
 
-    def _check_whether_continuous(self, df:pd.DataFrame, timeframe):
+    def check_cache(self, timeframe:str, since:int, to:int=-1):
         """
         Check whether the dataframe is continuous
         """
-        count = int((df.index[-1] - df.index[0]) / TIME_FRAME[timeframe]) \
-            + 1
-        if count != len(df):
-            LOG.error("The data frame is not continuous: count=%d, len=%d",
-                      count, len(df))
+        df_cached = self._mem_cache[timeframe]
+        if to == -1:
+            to = self._mem_cache[timeframe].index[-1]
+
+        for item in [since, to]:
+            if item < df_cached.index[0] or item > df_cached.index[-1]:
+                return False
+
+        df_cached = self._mem_cache[timeframe].loc[since:to]
+        if len(df_cached) == 0 or df_cached.index[0] != since:
+            return False
+
+        count = int((df_cached.index[-1] - df_cached.index[0]) / \
+                    TIME_FRAME[timeframe]) + 1
+        if count != len(df_cached):
+            LOG.error("The cache[%d->%d] is not completed: count=%d, len=%d",
+                       since, to, count, len(df_cached))
             return False
         return True
 
@@ -299,16 +314,25 @@ class DataCollectorThread(Thread):
     def run(self):
         LOG.info("Thread %s started.", self._key)
         self._current = self._since
+        limit = 100
+        tf_delta = TIME_FRAME[self._timeframe]
         while not self._terminate:
             LOG.info("=> %d: Collector[%s] since=%d ...",
                  self._now, datetime.datetime.fromtimestamp(self._now).\
                     strftime('%Y-%m-%d %H:%M:%S'),
                     self._current)
-            ret = self._asset_obj.fetch_ohlcv(self._timeframe, self._current)
+            to = self._current + limit * tf_delta
+            if self._asset_obj.cache.check_cache(self._timeframe, self._current, to):
+                # skip for existing data
+                self._current = to + limit * tf_delta
+                continue
+
+            ret = self._asset_obj.fetch_ohlcv(
+                self._timeframe, self._current, limit)
             if ret is not None:
-                self._current = ret.index[-1] + TIME_FRAME[self._timeframe]
+                self._current = ret.index[-1] + tf_delta
                 LOG.info("current:%d, now:%d", self._current, self._now)
-                if self._current >= self._now - TIME_FRAME[self._timeframe]:
+                if self._current >= self._now - tf_delta:
                     break
             time.sleep(5)
         self._terminate = True
