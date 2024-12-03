@@ -8,6 +8,8 @@ from .core import FinancialAsset, FinancialMarket, TIME_FRAME
 
 LOG = logging.getLogger(__name__)
 
+BINANCE_MARKET_ID = "b13a4902-ad9d-11ef-a239-00155d3ba217"
+
 class CryptoMarket(FinancialMarket):
 
     def __init__(self, name: str, market_id:str=None, cache_dir:str=None):
@@ -44,12 +46,17 @@ class CryptoAsset(FinancialAsset):
 
 class BinanceMarket(CryptoMarket):
 
-    MARKET_ID = "b13a4902-ad9d-11ef-a239-00155d3ba217"
-
-    def __init__(self, market_id=MARKET_ID, cache_dir:str=None):
+    def __init__(self, cache_dir:str=None):
+        """
+        :param cache_dir: the root directory for the cache.
+        """
         if cache_dir is not None:
             cache_dir = os.path.join(cache_dir, "Binance")
-        super().__init__("Binance", market_id, cache_dir)
+        super().__init__("Binance", BINANCE_MARKET_ID, cache_dir)
+        assert self.api_key != None, \
+            "Please specify the Binance's API key via the environment variable TIA_BINANCE_API_KEY"
+        assert self.api_secret != None, \
+            "Please specify the Binance's API Secret via the environment variable TIA_BINANCE_API_SECRET"
         self._ccxt_inst = ccxt.binance({'apiKey': self.api_key,
                                         'secret': self.api_secret})
         self._ready = False
@@ -63,6 +70,11 @@ class BinanceMarket(CryptoMarket):
         return os.getenv("TIA_BINANCE_API_SECRET")
 
     def init(self):
+        """
+        Initiate the market instance.
+
+        :return: success or not
+        """
         if self._ready:
             return False
 
@@ -98,6 +110,14 @@ class BinanceMarket(CryptoMarket):
 
     def fetch_ohlcv(self, asset:CryptoAsset, timeframe: str, since: int = -1,
                     limit: int = 500):
+        """
+        Fetch OHLCV (Open High Low Close Volume).
+
+        :param     asset: the specific asset
+        :param timeframe: 1m/1h/1W/1M etc
+        :param     since: the timestamp for starting point
+        :param     limit: count
+        """
         LOG.info("Fetch from market: timeframe=%s since=%d, limit=%d",
                  timeframe, since, limit)
         remaining = limit

@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 from .market_data.core import FinancialMarket, TIME_FRAME, DataCollectorThread
-from .market_data.crypto import BinanceMarket
+from .market_data.crypto import BinanceMarket, BINANCE_MARKET_ID
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 LOG = logging.getLogger(__name__)
@@ -157,7 +157,7 @@ async def get_ohlcv(market_id:str, asset:str="BTC_USDT",
     return ret.to_json(orient="records")
 
 @app.post("/asset/start_collect")
-async def start_collect(market_id:str=BinanceMarket.MARKET_ID,
+async def start_collect(market_id:str=BINANCE_MARKET_ID,
                         asset:str="BTC_USDT",
                         timeframe:str="1h", since:int=-1):
     ret = data_server.collect(market_id, asset, timeframe, since)
