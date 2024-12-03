@@ -1,11 +1,7 @@
-import os
 import time
 import logging
 import pytest
 import pandas as pd
-import tia
-import tia.market_data
-import tia.market_data.crypto
 
 from tia.market_data.core import TIME_FRAME
 from tia.market_data.crypto import BinanceMarket
@@ -33,5 +29,3 @@ def test_fetch_ohlcv_eth(inst_binance:BinanceMarket, timeframe):
     ret = asset.fetch_ohlcv(timeframe, limit=10)
     LOG.info(ret)
     check_delta_count(timeframe, 10, ret)
-
-

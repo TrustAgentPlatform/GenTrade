@@ -53,10 +53,10 @@ class BinanceMarket(CryptoMarket):
         if cache_dir is not None:
             cache_dir = os.path.join(cache_dir, "Binance")
         super().__init__("Binance", BINANCE_MARKET_ID, cache_dir)
-        assert self.api_key != None, \
+        assert self.api_key is not None, \
             "Please specify the Binance's API key via the environment" \
             "variable TIA_BINANCE_API_KEY"
-        assert self.api_secret != None, \
+        assert self.api_secret is not None, \
             "Please specify the Binance's API Secret via the environment" \
             "variable TIA_BINANCE_API_SECRET"
         self._ccxt_inst = ccxt.binance({'apiKey': self.api_key,
