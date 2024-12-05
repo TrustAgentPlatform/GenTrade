@@ -29,3 +29,8 @@ def test_fetch_ohlcv_eth(inst_binance:BinanceMarket, timeframe):
     ret = asset.fetch_ohlcv(timeframe, limit=10)
     LOG.info(ret)
     check_delta_count(timeframe, 10, ret)
+
+def test_market_time(inst_binance:BinanceMarket):
+    LOG.debug(inst_binance.seconds())
+    LOG.debug(time.time())
+    assert abs(inst_binance.seconds() - time.time()) < 10
