@@ -9,3 +9,4 @@ ccxt
 fastapi[standard]
 uvicorn[standard]
 pytest
+backtrader

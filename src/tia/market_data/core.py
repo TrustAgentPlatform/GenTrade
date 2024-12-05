@@ -19,7 +19,7 @@ TIME_FRAME = {
     '1h':       1 * 60 * 60,
     '4h':       4 * 60 * 60,
     '1d':      24 * 60 * 60,
-    '1W':  7 * 24 * 60 * 60,
+    '1w':  7 * 24 * 60 * 60,
     '1M': 30 * 24 * 60 * 60
 }
 
@@ -105,13 +105,14 @@ class FinancialAsset(ABC):
                 new_since = df_cached.index[-1] + 1
                 df_remaining = self._market.fetch_ohlcv(
                     self, timeframe, new_since, new_limit)
-                df = pd.concat([df_cached, df_remaining]).drop_duplicates()
+                df = pd.concat([df_cached, df_remaining])
+                df = df[~df.index.duplicated(keep='first')]
                 df.sort_index(inplace=True)
                 self._cache.save(timeframe, df_remaining)
         return df
 
-    def ohlvc_to_datetime(self, df:pd.DataFrame):
-        df.index = pd.to_datetime(df.index, unit="ms")
+    def index_to_datetime(self, df:pd.DataFrame, unit="s"):
+        df.index = pd.to_datetime(df.index, unit=unit)
         return df
 
 class FinancialMarket(ABC):
@@ -255,7 +256,8 @@ class FinancialAssetCache:
         Save OHLCV to cache
         """
         self._mem_cache[timeframe] = pd.concat(
-            [self._mem_cache[timeframe], df_new]).drop_duplicates()
+            [self._mem_cache[timeframe], df_new])
+        self._mem_cache[timeframe] = self._mem_cache[timeframe][~self._mem_cache[timeframe].index.duplicated(keep='first')]
         self._mem_cache[timeframe].sort_index(inplace=True)
         self._save_cache_to_file(timeframe)
 
