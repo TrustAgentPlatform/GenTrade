@@ -12,6 +12,8 @@ from tia.market_data.crypto import BinanceMarket
 
 LOG = logging.getLogger(__name__)
 
+# pylint: disable=unexpected-keyword-arg, too-many-function-args
+
 class SmaCross(bt.Strategy):
 
     params = (
@@ -21,6 +23,7 @@ class SmaCross(bt.Strategy):
     )
 
     def __init__(self):
+        super().__init__()
         sma_fast = self.p._movav(period=self.p.fast)
         sma_slow = self.p._movav(period=self.p.slow)
 
@@ -37,7 +40,7 @@ class SmaCross(bt.Strategy):
 
     def log(self, txt, dt=None):
         dt = dt or self.datas[0].datetime.date(0)
-        LOG.info(f'{dt.strftime("%Y-%m-%d %H:%M:%S")} {txt}')
+        LOG.info('%s %s', dt.strftime("%Y-%m-%d %H:%M:%S"), txt)
         #Print date and close
 
 
@@ -66,7 +69,8 @@ def parse_args():
 
     parser = argparse.ArgumentParser(prog='tia_sma')
     parser.add_argument("-a", "--asset", default="btc",
-                        help="Crypto Asset name btc/eth/doge, it will append _usdt automatically")
+                        help="Crypto Asset name btc/eth/doge, it will"
+                             "append _usdt automatically")
     parser.add_argument("-s", "--slow", default=21, type=int,
                         help="The number of slow SMA, default is 21")
     parser.add_argument("-f", "--fast", help="The number of fast SMA, default is 9",
@@ -75,15 +79,13 @@ def parse_args():
                         default="1h", type=str)
     parser.add_argument("-l", "--limit", default=100, type=int,
                         help="The limit count of kline, default is 100")
-    parser.add_argument("-d", "--since", default=None, type=str,
-                        help="The starting date, default is None, use limit as the length of duration")
     parser.add_argument("-g", "--graphic", help="Draw graphic or not",
                         default=False, action="store_true")
     parser.add_argument("-c", "--cache", default=cache_dir, type=str,
                         help="Data cache for Binance market, default is ../../cache")
     return parser.parse_args()
 
-def get_data(cache_dir:str, asset_name:str, timeframe:str, limit:int, since=str):
+def get_data(cache_dir:str, asset_name:str, timeframe:str, limit:int):
     asset_name += "_usdt"
     bm_inst = BinanceMarket(cache_dir)
     if not bm_inst.init():
@@ -104,11 +106,9 @@ def get_data(cache_dir:str, asset_name:str, timeframe:str, limit:int, since=str)
 def start():
     args = parse_args()
 
-    kwargs = dict(
-        timeframe=bt.TimeFrame.Minutes,
-    )
+    df = get_data(args.cache, args.asset, args.timeframe, args.limit)
+    kwargs = { 'timeframe':bt.TimeFrame.Minutes }
 
-    df = get_data(args.cache, args.asset, args.timeframe, args.limit, args.since)
     pandas_data = bt.feeds.PandasData(dataname=df, **kwargs)
     cerebro = bt.Cerebro()
     cerebro.addstrategy(SmaCross, fast=args.fast, slow=args.slow)

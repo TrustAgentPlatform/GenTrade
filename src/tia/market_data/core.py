@@ -257,7 +257,9 @@ class FinancialAssetCache:
         """
         self._mem_cache[timeframe] = pd.concat(
             [self._mem_cache[timeframe], df_new])
-        self._mem_cache[timeframe] = self._mem_cache[timeframe][~self._mem_cache[timeframe].index.duplicated(keep='first')]
+        self._mem_cache[timeframe] = \
+            self._mem_cache[timeframe][~self._mem_cache[timeframe].\
+                                       index.duplicated(keep='first')]
         self._mem_cache[timeframe].sort_index(inplace=True)
         self._save_cache_to_file(timeframe)
 
