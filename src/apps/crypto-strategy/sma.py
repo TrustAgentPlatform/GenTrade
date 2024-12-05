@@ -12,6 +12,8 @@ from tia.market_data.crypto import BinanceMarket
 
 LOG = logging.getLogger(__name__)
 
+# pylint: disable=unexpected-keyword-arg, too-many-function-args
+
 class SmaCross(bt.Strategy):
 
     params = (
@@ -21,6 +23,7 @@ class SmaCross(bt.Strategy):
     )
 
     def __init__(self):
+        super().__init__()
         sma_fast = self.p._movav(period=self.p.fast)
         sma_slow = self.p._movav(period=self.p.slow)
 
@@ -82,7 +85,7 @@ def parse_args():
                         help="Data cache for Binance market, default is ../../cache")
     return parser.parse_args()
 
-def get_data(cache_dir:str, asset_name:str, timeframe:str, limit:int, since=str):
+def get_data(cache_dir:str, asset_name:str, timeframe:str, limit:int):
     asset_name += "_usdt"
     bm_inst = BinanceMarket(cache_dir)
     if not bm_inst.init():
@@ -103,8 +106,9 @@ def get_data(cache_dir:str, asset_name:str, timeframe:str, limit:int, since=str)
 def start():
     args = parse_args()
 
-    df = get_data(args.cache, args.asset, args.timeframe, args.limit, args.since)
+    df = get_data(args.cache, args.asset, args.timeframe, args.limit)
     kwargs = { 'timeframe':bt.TimeFrame.Minutes }
+
     pandas_data = bt.feeds.PandasData(dataname=df, **kwargs)
     cerebro = bt.Cerebro()
     cerebro.addstrategy(SmaCross, fast=args.fast, slow=args.slow)
