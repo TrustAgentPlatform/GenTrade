@@ -31,6 +31,7 @@ class FinancialAssetCache:
     # Forward Declaration
     pass
 
+
 class FinancialAsset(ABC):
     """
     Trading instruments are all the different types of assets and contracts that
@@ -169,6 +170,7 @@ class FinancialMarket(ABC):
     def market_id(self) -> str:
         return self._market_id
 
+
     def get_asset(self, name) -> FinancialAsset:
         """
         Get instrument object from its name
@@ -191,6 +193,19 @@ class FinancialMarket(ABC):
         Fetch OHLCV for the specific asset
         """
         raise NotImplementedError
+
+    @abstractmethod
+    def milliseconds(self) -> int:
+        """
+        Current timestamp in milliseconds
+        """
+        raise NotImplementedError
+
+    def seconds(self) -> int:
+        """
+        Current timestamp in seconds
+        """
+        return int(self.milliseconds() / 1000)
 
 class FinancialAssetCache:
 

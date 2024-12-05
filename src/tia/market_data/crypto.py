@@ -71,6 +71,9 @@ class BinanceMarket(CryptoMarket):
     def api_secret(self):
         return os.getenv("TIA_BINANCE_API_SECRET")
 
+    def milliseconds(self) -> int:
+        return self._ccxt_inst.milliseconds()
+
     def init(self):
         """
         Initiate the market instance.
