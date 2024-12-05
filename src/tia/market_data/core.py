@@ -31,6 +31,7 @@ class FinancialAssetCache:
     # Forward Declaration
     pass
 
+
 class FinancialAsset(ABC):
     """
     Trading instruments are all the different types of assets and contracts that
@@ -200,12 +201,11 @@ class FinancialMarket(ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
     def seconds(self) -> int:
         """
         Current timestamp in seconds
         """
-        return int(self.milliseconds / 1000)
+        return int(self.milliseconds() / 1000)
 
 class FinancialAssetCache:
 
