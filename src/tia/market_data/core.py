@@ -343,11 +343,16 @@ class DataCollectorThread(Thread):
                  self._now, datetime.datetime.fromtimestamp(self._now).\
                     strftime('%Y-%m-%d %H:%M:%S'),
                     self._current)
+            if tfobj.is_same_frame(self._current, self._now):
+                break
+
             to = tfobj.ts_since_limit(self._current, limit)
             if self._asset_obj.cache.check_cache(
                 self._timeframe, self._current, to):
                 # skip for existing data
-                self._current = tfobj.ts_since_limit(to, limit)
+                LOG.info("Skip the range [%d->%d] since already in cache.",
+                         self._current, to)
+                self._current = tfobj.ts_since_limit(to + 1, limit)
                 continue
 
             ret = self._asset_obj.fetch_ohlcv(
