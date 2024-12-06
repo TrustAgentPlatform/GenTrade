@@ -19,7 +19,7 @@ docker pull registry.cn-hangzhou.aliyuncs.com/kenplusplus/tia_datahub
 
 # Run OHLCV datahub service
 docker run -p 8000:8000 \
-    --env-file=.env -v <data folder>:/data \
+    --env-file=.env -v <data folder>:/app/cache \
     registry.cn-hangzhou.aliyuncs.com/kenplusplus/tia_datahub
 ```
 
@@ -47,3 +47,5 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -d ''
 ```
+
+The cached data can be found at [this directory](/src/cache/)
