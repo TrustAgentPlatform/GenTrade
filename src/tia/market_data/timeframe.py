@@ -23,6 +23,18 @@ class TimeFrame:
         WEEK   : 60 * 60 * 24 * 7
     }
 
+    SUPPORTED = {
+        "1m"  : "1min",
+        "15m" : "15min",
+        "1h"  : "1hour",
+        "4h"  : "4hour",
+        "8h"  : "8hour",
+        "12h" : "12hour",
+        "1d"  : "1day",
+        "1w"  : "1week",
+        "1M"  : "1mon",
+    }
+
     def __init__(self, name="1h") -> None:
         self.interval = name[-1]
         assert self.interval in [ TimeFrame.MINUTE, TimeFrame.HOUR,
@@ -107,21 +119,23 @@ class TimeFrame:
            ^             ^
            |             | xxxxxxxxxxx Time Frame  xxxxxxxxxxx
          since    first frame boundary
+        if since is just in the first frame boundary, then return it.
         """
-        if self.interval in [TimeFrame.MINUTE]:
-            # BUG: sound like binance API has issue to handle minute,
-            # so workaround here
+        if self.interval in [TimeFrame.MINUTE, TimeFrame.HOUR, TimeFrame.DAY]:
             delta_ts = TimeFrame._delta[self.interval] * self.count
-            next_ts = (int(since_ts / delta_ts)) * delta_ts
+            if int(since_ts) % delta_ts != 0:
+                next_ts = (int(since_ts / delta_ts) + 1) * delta_ts
+            else:
+                next_ts = (int(since_ts / delta_ts)) * delta_ts
             return next_ts
-
-        if self.interval in [TimeFrame.HOUR, TimeFrame.DAY]:
-            delta_ts = TimeFrame._delta[self.interval] * self.count
-            next_ts = (int(since_ts / delta_ts) + 1) * delta_ts
-            return next_ts
-
 
         since_day = datetime.datetime.fromtimestamp(since_ts)
+        if since_day.weekday() == 0:
+            this_week_first_day_ts = datetime.datetime(
+                since_day.year, since_day.month, since_day.day).replace(
+                    tzinfo=datetime.timezone.utc).timestamp()
+            if this_week_first_day_ts == since_ts:
+                return since_ts
         if self.interval == TimeFrame.WEEK:
             next_week = datetime.datetime(
                 since_day.year, since_day.month,
@@ -132,7 +146,11 @@ class TimeFrame:
 
         if self.interval == TimeFrame.MONTH:
             assert self.count == 1
-            LOG.info("since day: %s", since_day)
+            this_month_first_day_ts = datetime.datetime(
+                since_day.year, since_day.month,
+                1).replace(tzinfo=datetime.timezone.utc).timestamp()
+            if since_ts == this_month_first_day_ts:
+                return since_ts
             if since_day.month == 12:
                 next_month = datetime.datetime(
                     since_day.year + 1, 1, 1)
@@ -157,7 +175,7 @@ class TimeFrame:
             since_day = datetime.datetime.fromtimestamp(since_ts)
             next_month_index = since_day.month + (limit - 1)
             next_year_index = since_day.year
-            while next_month_index > 12:
+            while next_month_index >= 12:
                 next_month_index -= 12
                 next_year_index += 1
             next_month = datetime.datetime(
@@ -170,21 +188,51 @@ class TimeFrame:
 
         return next_last_ts
 
-    def calculate_count(self, since_ts:int, max_count:int) -> int:
-        start = self.ts_since(since_ts)
-        to = self.ts_since_limit(since_ts, max_count)
+    def calculate_count(self, since:int, max_count:int=-1, to:int=-1) -> int:
+        start = self.ts_since(since)
+        LOG.info("original since=%d, new start=%d", since, start)
+        if to == -1:
+            to = self.ts_since_limit(since, max_count)
+
+        assert to >= start, "start:%d to:%d" % (start, to)
 
         if self.interval in [TimeFrame.MINUTE, TimeFrame.HOUR,
                              TimeFrame.DAY, TimeFrame.WEEK]:
             delta_ts = TimeFrame._delta[self.interval] * self.count
-            return min(max_count, (to - start) / delta_ts + 1)
+            if max_count != -1:
+                return min(max_count, int((to - start) / delta_ts) + 1)
+            return int((to - start) / delta_ts) + 1
 
         if self.interval == TimeFrame.MONTH:
             start_date = datetime.datetime.fromtimestamp(start)
             to_date = datetime.datetime.fromtimestamp(to)
+            delta_year = to_date.year - start_date.year
             delta_month = to_date.month - start_date.month
             if delta_month < 0:
                 delta_month += 12
-            return min(max_count, delta_month + 1)
+                delta_year -= 1
+            if max_count == -1:
+                return delta_month + delta_year * 12 + 1
+            return min(max_count, delta_month + delta_year * 12 + 1)
 
         return None
+
+    def is_same_frame(self, source, target) -> bool:
+        if self.interval in [TimeFrame.MINUTE, TimeFrame.HOUR,
+                             TimeFrame.DAY, TimeFrame.WEEK]:
+            return abs(target -source) <= \
+                TimeFrame._delta[self.interval] * self.count
+
+        if self.interval == TimeFrame.MONTH:
+            date_source = datetime.datetime.fromtimestamp(source)
+            date_target = datetime.datetime.fromtimestamp(target)
+            return (date_source.year == date_target.year and \
+                date_target.month == date_source.month)
+        return False
+
+    @staticmethod
+    def check_valid(tf_str:str):
+        return tf_str[-1] in [
+            TimeFrame.MINUTE, TimeFrame.HOUR,
+            TimeFrame.DAY, TimeFrame.WEEK,
+            TimeFrame.MONTH ]

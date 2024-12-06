@@ -70,3 +70,35 @@ def test_timeframe_since(inst_ccxt_binance, tf_name):
 
     assert first_record_ts == next_first_ts
     assert next_last_ts == last_record_ts
+
+@pytest.mark.parametrize("tf_name, limit",
+                         [
+                             ("1m", 2),
+                             ("1h", 2),
+                             ("1d", 2),
+                             ("1w", 2),
+                             ("1M", 2)
+                        ])
+def test_timeframe_calculate_count(inst_ccxt_binance, tf_name, limit):
+    tfobj = TimeFrame(tf_name)
+    since_ts = int(datetime.datetime(2023, 10, 4, 13, 30, 0).timestamp())
+    LOG.info(since_ts)
+    data = inst_ccxt_binance.fetch_ohlcv("BTC/USDT", tf_name,
+                                         since=since_ts * 1000, limit=limit)
+    LOG.info("ccxt retune[ 0] - %d: %s", data[0][0]/1000,
+             datetime.datetime.fromtimestamp(data[0][0]/1000))
+    LOG.info("ccxt retune[-1] - %d: %s", data[-1][0]/1000,
+             datetime.datetime.fromtimestamp(data[-1][0]/1000))
+
+    next_first_ts = tfobj.ts_since(since_ts)
+    next_last_ts = tfobj.ts_since_limit(since_ts, limit)
+    new_limit = tfobj.calculate_count(since_ts, limit)
+
+    LOG.info("since_next - %d: %s", next_first_ts,
+              datetime.datetime.fromtimestamp(next_first_ts))
+    LOG.info("last_now  - %d: %s", next_last_ts,
+              datetime.datetime.fromtimestamp(next_last_ts))
+    LOG.info("limit:%d Real count%d", limit,
+             tfobj.calculate_count(since_ts, limit))
+
+    assert limit == new_limit
