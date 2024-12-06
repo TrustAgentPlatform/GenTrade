@@ -137,9 +137,11 @@ class TimeFrame:
             if this_week_first_day_ts == since_ts:
                 return since_ts
         if self.interval == TimeFrame.WEEK:
+            next_week_day = since_day + datetime.timedelta(
+                days=8 - since_day.isoweekday())
             next_week = datetime.datetime(
-                since_day.year, since_day.month,
-                since_day.day + (7 - since_day.weekday()))
+                next_week_day.year, next_week_day.month,
+                next_week_day.day)
             next_week_ts = next_week.replace(
                 tzinfo=datetime.timezone.utc).timestamp()
             return next_week_ts
@@ -190,7 +192,6 @@ class TimeFrame:
 
     def calculate_count(self, since:int, max_count:int=-1, to:int=-1) -> int:
         start = self.ts_since(since)
-        LOG.info("original since=%d, new start=%d", since, start)
         if to == -1:
             to = self.ts_since_limit(since, max_count)
 

@@ -247,6 +247,9 @@ class FinancialAssetCache:
             self._mem_cache[timeframe] = pd.DataFrame()
             return None
 
+        if len(self._mem_cache[timeframe]) == 0:
+            return None
+
         if since < self._mem_cache[timeframe].index[0] or \
             since > self._mem_cache[timeframe].index[-1]:
             LOG.info("No records found from cache")
@@ -297,7 +300,14 @@ class FinancialAssetCache:
         """
         Check whether the dataframe is continuous
         """
+        if timeframe not in self._mem_cache:
+            self._mem_cache[timeframe] = pd.DataFrame()
+            return False
+
         df_cached = self._mem_cache[timeframe]
+        if len(df_cached) == 0:
+            return False
+
         if to == -1:
             to = self._mem_cache[timeframe].index[-1]
 

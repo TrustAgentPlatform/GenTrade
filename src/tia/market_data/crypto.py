@@ -125,7 +125,7 @@ class BinanceMarket(CryptoMarket):
         :param     since: the timestamp for starting point
         :param     limit: count
         """
-        LOG.info("Fetch from market: timeframe=%s since=%d, limit=%d",
+        LOG.info("$$ Fetch from market: timeframe=%s since=%d, limit=%d",
                  timeframe, since, limit)
         remaining = limit
         all_ohlcv = []
