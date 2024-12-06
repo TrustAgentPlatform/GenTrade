@@ -138,7 +138,7 @@ class TimeFrame:
                 return since_ts
         if self.interval == TimeFrame.WEEK:
             next_week_day = since_day + datetime.timedelta(
-                days=(8 - since_day.isoweekday()))
+                days=8 - since_day.isoweekday())
             next_week = datetime.datetime(
                 next_week_day.year, next_week_day.month,
                 next_week_day.day)
