@@ -12,8 +12,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from .market_data.core import FinancialMarket, TIME_FRAME, DataCollectorThread
+from .market_data.core import FinancialMarket, DataCollectorThread
 from .market_data.crypto import BinanceMarket, BINANCE_MARKET_ID
+from .market_data.timeframe import TimeFrame
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 LOG = logging.getLogger(__name__)
@@ -63,7 +64,7 @@ class DataServer:
     def collect(self, market_id:str, asset:str, timeframe:str, since:int) -> int:
         if market_id not in self._markets:
             return False
-        if timeframe not in TIME_FRAME:
+        if timeframe not in TimeFrame.SUPPORTED:
             return False
 
         new_thread_key = "%s|%s" % (market_id, asset)

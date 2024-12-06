@@ -10,18 +10,9 @@ from threading import Thread
 import uuid
 import pandas as pd
 
-LOG = logging.getLogger(__name__)
+from .timeframe import TimeFrame
 
-# The delta of TIME FRAME in seconds
-TIME_FRAME = {
-    '1m':                60,
-    '15m':          15 * 60,
-    '1h':       1 * 60 * 60,
-    '4h':       4 * 60 * 60,
-    '1d':      24 * 60 * 60,
-    '1w':  7 * 24 * 60 * 60,
-    '1M': 30 * 24 * 60 * 60
-}
+LOG = logging.getLogger(__name__)
 
 class FinancialMarket(ABC):
     # Forward Declaration
@@ -30,7 +21,6 @@ class FinancialMarket(ABC):
 class FinancialAssetCache:
     # Forward Declaration
     pass
-
 
 class FinancialAsset(ABC):
     """
@@ -66,28 +56,37 @@ class FinancialAsset(ABC):
         """
         Fetch the specific asset
         """
-        # correct limit to ensure correct range according to since
-        if since != -1:
-            max_limit = int((time.time() - since) / TIME_FRAME[timeframe])
-            assert max_limit > 0
-            limit = min(limit, max_limit)
-
-        if timeframe not in TIME_FRAME:
+        if not TimeFrame.check_valid(timeframe):
             LOG.error("Time frame %s is invalid", timeframe)
             return None
 
-        tf_delta = TIME_FRAME[timeframe]
+        tfobj = TimeFrame(timeframe)
 
         # calculate the range from_ -> to_
         if since == -1:
-            to_ = int(time.time() / tf_delta - 1) * tf_delta
-            from_ = to_ - (limit - 1) * tf_delta
+            # If did not specify the since value, then calculate duration from
+            # time now
+            # <----------------------------------------->
+            #     ^                             ^       ^
+            #     |      timeframe duration     |       |
+            #    from_                         to_      now
+            #
+            to_ = tfobj.ts_last()
+            from_ = tfobj.ts_last_limit(limit)
         else:
-            from_ = int(since / tf_delta) * tf_delta
-            to_ = since + (limit - 1) * tf_delta
+            # <----------------------------------------->
+            #    ^     ^                             ^
+            #    |     |      timeframe duration     |
+            #  since  from_                         to_
+            #
+            from_ = tfobj.ts_since(since)
+            to_ = tfobj.ts_since_limit(since, limit)
+            # Calibrate the limit value according to the duration between
+            # since and now
+            limit = tfobj.calculate_count(since, limit)
 
-        LOG.info("fetch_ohlcv: timeframe=%s, since=%d, limit=%d, to=%d",
-                 timeframe, since, limit, to_)
+        LOG.info("fetch_ohlcv: timeframe=%s, since=%d, limit=%d, from=%d, to=%d",
+                 timeframe, since, limit, from_, to_)
 
         # search from cache first
         df_cached = self._cache.search(timeframe, from_, to_)
@@ -102,10 +101,11 @@ class FinancialAsset(ABC):
                 df = df_cached
             else:
                 # Find part data, continue fetch remaining from market
-                new_limit = int((to_ - df_cached.index[-1]) / tf_delta)
-                new_since = df_cached.index[-1] + 1
+                revised_limit = tfobj.calculate_count(
+                    df_cached.index[-1], limit)
+                revised_since = df_cached.index[-1] + 1
                 df_remaining = self._market.fetch_ohlcv(
-                    self, timeframe, new_since, new_limit)
+                    self, timeframe, revised_since, revised_limit)
                 df = pd.concat([df_cached, df_remaining])
                 df = df[~df.index.duplicated(keep='first')]
                 df.sort_index(inplace=True)
@@ -226,16 +226,16 @@ class FinancialAssetCache:
         if cache_dir is None or not os.path.exists(cache_dir):
             return
 
-        for timeframe in TIME_FRAME:
-            csv_name = self._get_csv_name(timeframe)
+        for name, _ in TimeFrame.SUPPORTED.items():
+            csv_name = self._get_csv_name(name)
             csv_path = os.path.join(cache_dir, csv_name)
             if os.path.exists(csv_path):
                 LOG.info("found: %s", csv_path)
                 try:
-                    self._mem_cache[timeframe] = \
+                    self._mem_cache[name] = \
                         pd.read_csv(csv_path, index_col=0)
                 except pd.errors.EmptyDataError:
-                    pass
+                    LOG.info("Found blank file %s", csv_path)
 
     def search(self, timeframe:str, since:int, to:int):
         """
@@ -279,7 +279,7 @@ class FinancialAssetCache:
         self._save_cache_to_file(timeframe)
 
     def _get_csv_name(self, timeframe):
-        return self._asset.name + "-" + timeframe + ".csv"
+        return self._asset.name + "-" + TimeFrame.SUPPORTED[timeframe] + ".csv"
 
     def _save_cache_to_file(self, timeframe):
         self._save_in_progress = True
@@ -290,6 +290,7 @@ class FinancialAssetCache:
             fname = os.path.join(self._asset.market.cache_dir,
                                 self._get_csv_name(timeframe))
             self._mem_cache[timeframe].to_csv(fname)
+            LOG.info("save to file: %s", fname)
         self._save_in_progress = False
 
     def check_cache(self, timeframe:str, since:int, to:int=-1):
@@ -308,8 +309,9 @@ class FinancialAssetCache:
         if len(df_cached) == 0 or df_cached.index[0] != since:
             return False
 
-        count = int((df_cached.index[-1] - df_cached.index[0]) / \
-                    TIME_FRAME[timeframe]) + 1
+        tfobj = TimeFrame(timeframe)
+        count = tfobj.calculate_count(
+            since=df_cached.index[0], to=df_cached.index[-1])
         if count != len(df_cached):
             LOG.error("The cache[%d->%d] is not completed: count=%d, len=%d",
                        since, to, count, len(df_cached))
@@ -334,24 +336,26 @@ class DataCollectorThread(Thread):
         LOG.info("Thread %s started.", self._key)
         self._current = self._since
         limit = 100
-        tf_delta = TIME_FRAME[self._timeframe]
+        tfobj = TimeFrame(self._timeframe)
+
         while not self._terminate:
             LOG.info("=> %d: Collector[%s] since=%d ...",
                  self._now, datetime.datetime.fromtimestamp(self._now).\
                     strftime('%Y-%m-%d %H:%M:%S'),
                     self._current)
-            to = self._current + limit * tf_delta
-            if self._asset_obj.cache.check_cache(self._timeframe, self._current, to):
+            to = tfobj.ts_since_limit(self._current, limit)
+            if self._asset_obj.cache.check_cache(
+                self._timeframe, self._current, to):
                 # skip for existing data
-                self._current = to + limit * tf_delta
+                self._current = tfobj.ts_since_limit(to, limit)
                 continue
 
             ret = self._asset_obj.fetch_ohlcv(
                 self._timeframe, self._current, limit)
             if ret is not None:
-                self._current = ret.index[-1] + tf_delta
+                self._current = tfobj.ts_since_limit(ret.index[-1] + 1, 1)
                 LOG.info("current:%d, now:%d", self._current, self._now)
-                if self._current >= self._now - tf_delta:
+                if tfobj.is_same_frame(self._current, self._now):
                     break
             time.sleep(5)
         self._terminate = True
@@ -366,8 +370,9 @@ class DataCollectorThread(Thread):
 
     @property
     def progress(self):
-        total = int((self._now - self._since) / TIME_FRAME[self._timeframe])
-        now = int((self._now - self._current) / TIME_FRAME[self._timeframe])
+        tfobj = TimeFrame(self._timeframe)
+        total = tfobj.calculate_count(since=self._since, to=self._now)
+        now = tfobj.calculate_count(since=self._current, to=self._now)
         return now, total
 
     @property

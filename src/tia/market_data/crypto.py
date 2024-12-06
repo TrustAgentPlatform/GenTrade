@@ -4,7 +4,8 @@ import time
 import ccxt
 import pandas as pd
 import numpy as np
-from .core import FinancialAsset, FinancialMarket, TIME_FRAME
+from .core import FinancialAsset, FinancialMarket
+from .timeframe import TimeFrame
 
 LOG = logging.getLogger(__name__)
 
@@ -50,8 +51,9 @@ class BinanceMarket(CryptoMarket):
         """
         :param cache_dir: the root directory for the cache.
         """
-        if cache_dir is not None:
-            cache_dir = os.path.join(cache_dir, "Binance")
+        if cache_dir is None:
+            cache_dir = os.path.join(os.path.dirname(__file__), "../../cache")
+        cache_dir = os.path.join(cache_dir, "Binance")
         super().__init__("Binance", BINANCE_MARKET_ID, cache_dir)
         assert self.api_key is not None, \
             "Please specify the Binance's API key via the environment" \
@@ -126,24 +128,25 @@ class BinanceMarket(CryptoMarket):
         LOG.info("Fetch from market: timeframe=%s since=%d, limit=%d",
                  timeframe, since, limit)
         remaining = limit
-        delta = TIME_FRAME[timeframe]
         all_ohlcv = []
 
+        tfobj = TimeFrame(timeframe)
+
+        # calculate the range from_ -> to_
         if since == -1:
-            to_ = int(time.time() / delta - 1) * delta
-            since = to_ - (limit - 1) * delta
+            since = tfobj.ts_last_limit(limit)
         else:
-            max_limit = int((time.time() - since) / delta)
-            limit = min(limit, max_limit)
-            to_ = int((since + (limit - 1)* delta) / delta) * delta
+            # Calibrate the limit value according to the duration between
+            # since and now
+            limit = tfobj.calculate_count(since, limit)
 
         # Continuous to fetching until get all data
         while remaining > 0:
             ohlcv = self._ccxt_inst.fetch_ohlcv(asset.symbol, timeframe,
-                                                since * 1000, limit)
+                                                int(since * 1000), limit)
             all_ohlcv += ohlcv
             remaining = remaining - len(ohlcv)
-            since = to_ - remaining * delta
+            since = tfobj.ts_since_limit(since, limit)
             time.sleep(0.1)
 
         df = pd.DataFrame(all_ohlcv, columns =
