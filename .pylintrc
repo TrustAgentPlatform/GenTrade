@@ -452,7 +452,8 @@ disable=raw-checker-failed,
         too-many-instance-attributes,
         too-many-arguments,
         too-many-positional-arguments,
-        attribute-defined-outside-init
+        attribute-defined-outside-init,
+        fixme
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

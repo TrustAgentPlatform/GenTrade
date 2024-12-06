@@ -88,6 +88,7 @@ class TimeFrame:
             last_month = datetime.datetime.fromtimestamp(last_ts)
             previous_month_index = last_month.month - (limit - 1)
             previous_year_index = last_month.year
+
             while previous_month_index < 0:
                 previous_month_index += 12
                 previous_year_index -= 1
@@ -142,6 +143,7 @@ class TimeFrame:
             next_month_ts = next_month.replace(
                 tzinfo=datetime.timezone.utc).timestamp()
             return next_month_ts
+
         return None
 
     def ts_since_limit(self, since_ts:int, limit:int) -> int:
@@ -158,14 +160,15 @@ class TimeFrame:
             while next_month_index > 12:
                 next_month_index -= 12
                 next_year_index += 1
-            next_month = datetime.datetime(next_year_index, next_month_index+1, 1)
+            next_month = datetime.datetime(
+                next_year_index, next_month_index+1, 1)
             next_last_ts = next_month.replace(
                 tzinfo=datetime.timezone.utc).timestamp()
 
         if next_last_ts > time.time():
-            return self.ts_last()
-        else:
-            return next_last_ts
+            next_last_ts = self.ts_last()
+
+        return next_last_ts
 
     def calculate_count(self, since_ts:int, max_count:int) -> int:
         start = self.ts_since(since_ts)
@@ -183,3 +186,5 @@ class TimeFrame:
             if delta_month < 0:
                 delta_month += 12
             return min(max_count, delta_month + 1)
+
+        return None

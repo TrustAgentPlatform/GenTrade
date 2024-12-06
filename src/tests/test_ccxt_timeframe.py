@@ -18,6 +18,7 @@ LOG = logging.getLogger(__name__)
 def test_timeframe_limit(inst_ccxt_binance, tf_name):
     tfobj = TimeFrame(tf_name)
     limit = 40
+
     data = inst_ccxt_binance.fetch_ohlcv("BTC/USDT", tf_name, limit=limit)
     LOG.info("ccxt retune[ 0] - %d: %s", data[0][0]/1000,
              datetime.datetime.fromtimestamp(data[0][0]/1000))
@@ -26,6 +27,7 @@ def test_timeframe_limit(inst_ccxt_binance, tf_name):
 
     last_record_ts = int(int(data[-1][0]) / 1000)
     first_record_ts = int(int(data[0][0]) / 1000)
+
 
     last_now_ts = tfobj.ts_last(time.time())
     first_now_ts = tfobj.ts_last_limit(limit, time.time())
@@ -58,7 +60,6 @@ def test_timeframe_since(inst_ccxt_binance, tf_name):
 
     next_first_ts = tfobj.ts_since(since_ts)
     next_last_ts = tfobj.ts_since_limit(since_ts, limit)
-
 
     LOG.info("since_next - %d: %s", next_first_ts,
               datetime.datetime.fromtimestamp(next_first_ts))
