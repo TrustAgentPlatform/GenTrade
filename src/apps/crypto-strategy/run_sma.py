@@ -6,63 +6,14 @@ import logging
 import argparse
 
 import backtrader as bt
-import backtrader.indicators as btind
+
+from basic_strategies import StrategySma
 
 from tia.market_data.crypto import BinanceMarket
 
 LOG = logging.getLogger(__name__)
 
 # pylint: disable=unexpected-keyword-arg, too-many-function-args
-
-class SmaCross(bt.Strategy):
-
-    params = (
-        ('fast', 9),
-        ('slow', 21),
-        ('_movav', btind.MovAv.SMA)
-    )
-
-    def __init__(self):
-        super().__init__()
-        sma_fast = self.p._movav(period=self.p.fast)
-        sma_slow = self.p._movav(period=self.p.slow)
-
-        self.buysig = btind.CrossOver(sma_fast, sma_slow)
-
-    def next(self):
-
-        if self.position.size:
-            if self.buysig < 0:
-                self.sell()
-
-        elif self.buysig > 0:
-            self.buy()
-
-    def log(self, txt, dt=None):
-        dt = dt or self.datas[0].datetime.date(0)
-        LOG.info('%s %s', dt.strftime("%Y-%m-%d %H:%M:%S"), txt)
-        #Print date and close
-
-
-    def notify_order(self, order):
-        if order.status in [order.Submitted, order.Accepted]:
-            # Buy/Sell order submitted/accepted to/by broker - Nothing to do
-            return
-
-        if order.status in [order.Completed]:
-            if order.isbuy():
-                self.log('LONG EXECUTED, %.2f' % order.executed.price)
-
-            elif order.issell():
-                self.log('SELL EXECUTED, %.2f' % order.executed.price)
-
-            self.bar_executed = len(self)
-
-        elif order.status in [order.Canceled, order.Margin, order.Rejected]:
-            self.log('Order Canceled/Margin/Rejected')
-
-        # Write down: no pending order
-        self.order = None
 
 def parse_args():
     cache_dir = os.path.join(os.path.dirname(__file__), "../../", "cache")
@@ -99,9 +50,10 @@ def get_data(cache_dir:str, asset_name:str, timeframe:str, limit:int):
 
     df = asset_inst.fetch_ohlcv(timeframe=timeframe, limit=limit)
     df = asset_inst.index_to_datetime(df)
-    df['openinterest'] = 0
-    df.index.name="datetime"
-    return df
+    df_new = df.copy()
+    df_new['openinterest'] = 0
+    df_new.index.name="datetime"
+    return df_new
 
 def start():
     args = parse_args()
@@ -111,7 +63,7 @@ def start():
 
     pandas_data = bt.feeds.PandasData(dataname=df, **kwargs)
     cerebro = bt.Cerebro()
-    cerebro.addstrategy(SmaCross, fast=args.fast, slow=args.slow)
+    cerebro.addstrategy(StrategySma, fast=args.fast, slow=args.slow)
     cerebro.adddata(pandas_data)
 
     cerebro.broker.setcash(10000000.0)
