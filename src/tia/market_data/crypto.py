@@ -146,7 +146,13 @@ class BinanceMarket(CryptoMarket):
                                                 int(since * 1000), limit)
             all_ohlcv += ohlcv
             remaining = remaining - len(ohlcv)
+            count = tfobj.calculate_count(since, limit)
+            if count == 1:
+                break
             since = tfobj.ts_since_limit(since, limit)
+
+            LOG.info("len=%d, remaining=%d, since=%d count=%d",
+                     len(ohlcv), remaining, since, count)
             time.sleep(0.1)
 
         df = pd.DataFrame(all_ohlcv, columns =
