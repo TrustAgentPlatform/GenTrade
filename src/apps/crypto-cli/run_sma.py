@@ -7,8 +7,7 @@ import argparse
 
 import backtrader as bt
 
-from basic_strategies import StrategySma
-
+from tia.strategy.basic import StrategySma
 from tia.market_data.crypto import BinanceMarket
 
 LOG = logging.getLogger(__name__)

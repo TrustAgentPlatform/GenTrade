@@ -7,7 +7,7 @@ import argparse
 
 import backtrader as bt
 
-from basic_strategies import StrategyBb, StrategyMacd, StrategyRsi, \
+from tia.strategy.basic import StrategyBb, StrategyMacd, StrategyRsi, \
     StrategySma, StrategyWma
 from tia.market_data.crypto import BinanceMarket
 
