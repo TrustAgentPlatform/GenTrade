@@ -10,3 +10,4 @@ fastapi[standard]
 uvicorn[standard]
 pytest
 backtrader
+pyautogen
