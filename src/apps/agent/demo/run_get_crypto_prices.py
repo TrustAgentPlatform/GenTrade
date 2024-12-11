@@ -46,7 +46,7 @@ llm_config = {
 
 crypto_data = None
 
-def get_crypto_price(name:str, timeframe:str="1h", limit:int=100) -> dict:
+def get_crypto_price(name:str, timeframe:str="1h", limit:int=100) -> bool:
     name += "_usdt"
     bm_inst = BinanceMarket()
     if not bm_inst.init():
@@ -65,7 +65,7 @@ def get_crypto_price(name:str, timeframe:str="1h", limit:int=100) -> dict:
     df_new.index.name="datetime"
     global crypto_data
     crypto_data = df_new
-    return df_new.to_json()
+    return True
 
 def do_bt_sma(slow:int=9, fast:int=26) -> None:
     global crypto_data
