@@ -12,9 +12,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
-from .market_data.core import FinancialMarket, DataCollectorThread
-from .market_data.crypto import BinanceMarket, BINANCE_MARKET_ID
-from .market_data.timeframe import TimeFrame
+from gentrade.market_data.core import FinancialMarket, DataCollectorThread
+from gentrade.market_data.crypto import BinanceMarket, BINANCE_MARKET_ID
+from gentrade.market_data.timeframe import TimeFrame
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 LOG = logging.getLogger(__name__)
@@ -25,14 +25,14 @@ class DataServer:
     """
     Data Server to provide market data.
 
-    please set `TIA_CACHE_DIR`.
+    please set `GENTRADE_CACHE_DIR`.
     """
 
     _inst = None
 
     def __init__(self) -> None:
-        self._cache_dir = os.getenv("TIA_CACHE_DIR",
-                                    os.path.join(CURR_DIR, "cache"))
+        self._cache_dir = os.getenv("GENTRADE_CACHE_DIR",
+                                    os.path.join(CURR_DIR, "../../cache"))
         LOG.info("Cache directory is %s", self._cache_dir)
         self._markets:dict[str, FinancialMarket] = {}
         self._collect_threads:dict[str, DataCollectorThread] = {}

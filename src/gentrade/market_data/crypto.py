@@ -47,6 +47,12 @@ class CryptoAsset(FinancialAsset):
 
 class BinanceMarket(CryptoMarket):
 
+    """
+    Binance Market Class to provide crypto information via Binance API.
+
+    Please set the environment variable BINANCE_API_SECRET and BINANCE_API_SECRET.
+
+    """
     def __init__(self, cache_dir:str=None):
         """
         :param cache_dir: the root directory for the cache.
@@ -57,21 +63,21 @@ class BinanceMarket(CryptoMarket):
         super().__init__("Binance", BINANCE_MARKET_ID, cache_dir)
         assert self.api_key is not None, \
             "Please specify the Binance's API key via the environment" \
-            "variable TIA_BINANCE_API_KEY"
+            "variable BINANCE_API_KEY"
         assert self.api_secret is not None, \
             "Please specify the Binance's API Secret via the environment" \
-            "variable TIA_BINANCE_API_SECRET"
+            "variable BINANCE_API_SECRET"
         self._ccxt_inst = ccxt.binance({'apiKey': self.api_key,
                                         'secret': self.api_secret})
         self._ready = False
 
     @property
     def api_key(self):
-        return os.getenv("TIA_BINANCE_API_KEY")
+        return os.getenv("BINANCE_API_KEY")
 
     @property
     def api_secret(self):
-        return os.getenv("TIA_BINANCE_API_SECRET")
+        return os.getenv("BINANCE_API_SECRET")
 
     def milliseconds(self) -> int:
         return self._ccxt_inst.milliseconds()

@@ -26,10 +26,10 @@ jobs:
         id: build-image
         env:
           ALIYUN_REGISTRY: "registry.cn-hangzhou.aliyuncs.com"
-          ALIYUN_REPOSITORY: kenplusplus/tia_datahub
+          ALIYUN_REPOSITORY: kenplusplus/gentrade_data_serv
           IMAGE_TAG: ${{ env.RELEASE_VERSION }}
         run: |
-          docker build --no-cache -t $ALIYUN_REGISTRY/$ALIYUN_REPOSITORY:$IMAGE_TAG -f Dockerfile.datahub .
+          docker build --no-cache -t $ALIYUN_REGISTRY/$ALIYUN_REPOSITORY:$IMAGE_TAG -f Dockerfile.data_serv .
           docker push $ALIYUN_REGISTRY/$ALIYUN_REPOSITORY:$IMAGE_TAG
           docker tag $ALIYUN_REGISTRY/$ALIYUN_REPOSITORY:$IMAGE_TAG $ALIYUN_REGISTRY/$ALIYUN_REPOSITORY:latest
           docker push $ALIYUN_REGISTRY/$ALIYUN_REPOSITORY:latest

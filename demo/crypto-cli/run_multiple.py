@@ -7,9 +7,9 @@ import argparse
 
 import backtrader as bt
 
-from tia.strategy.basic import StrategyBb, StrategyMacd, StrategyRsi, \
+from gentrade.strategy.basic import StrategyBb, StrategyMacd, StrategyRsi, \
     StrategySma, StrategyWma
-from tia.market_data.crypto import BinanceMarket
+from gentrade.market_data.crypto import BinanceMarket
 
 LOG = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ LOG = logging.getLogger(__name__)
 
 
 def parse_args():
-    cache_dir = os.path.join(os.path.dirname(__file__), "../../", "cache")
+    cache_dir = os.path.join(os.path.dirname(__file__), "../../../", "cache")
 
     parser = argparse.ArgumentParser(prog='tia_sma')
     parser.add_argument("-a", "--asset", default="btc",

@@ -3,8 +3,8 @@ import logging
 import pytest
 import pandas as pd
 
-from tia.market_data.crypto import BinanceMarket
-from tia.market_data.timeframe import TimeFrame
+from gentrade.market_data.crypto import BinanceMarket
+from gentrade.market_data.timeframe import TimeFrame
 
 LOG = logging.getLogger(__name__)
 

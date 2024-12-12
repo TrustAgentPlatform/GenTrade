@@ -9,8 +9,8 @@ For example: if the tia library is put at D:\\work\\fintech\\TrustedInvestAgent\
 then "set PYTHONPATH=D:\\work\\fintech\\TrustedInvestAgent\\src"
 
 2. Set environment variables:
-    - TIA_BINANCE_API_KEY
-    - TIA_BINANCE_API_SECRET
+    - BINANCE_API_KEY
+    - BINANCE_API_SECRET
     - OPENAI_API_KEY
     - OPENAI_API_URL (optional)
     - OPENAI_API_MODEL (optional)
@@ -22,15 +22,15 @@ import logging
 import backtrader as bt
 
 from autogen import ConversableAgent
-from tia.market_data.crypto import BinanceMarket
-from tia.strategy.basic import StrategySma
+from gentrade.market_data.crypto import BinanceMarket
+from gentrade.strategy.basic import StrategySma, StrategyWma, StrategyBb, StrategyMacd, StrategyRsi
 
 LOG = logging.getLogger(__name__)
 
 # pylint: disable=unexpected-keyword-arg, global-variable-not-assigned, global-statement
 API_KEY  = os.environ.get("OPENAI_API_KEY", "empty")
 BASE_URL = os.environ.get("OPENAI_API_URL", "https://oa.api2d.net")
-MODEL    = os.environ.get("OPENAI_API_MODEL", "gpt-4o")
+MODEL    = os.environ.get("OPENAI_API_MODEL", "gpt-3.5-turbo")
 
 config_list= [
     {
@@ -67,13 +67,23 @@ def get_crypto_price(name:str, timeframe:str="1h", limit:int=100) -> bool:
     crypto_data = df_new
     return True
 
-def do_bt_sma(slow:int=9, fast:int=26) -> None:
-    global crypto_data
+def do_strategy(name:str) -> int:
     kwargs = { 'timeframe':bt.TimeFrame.Minutes }
-    pandas_data = bt.feeds.PandasData(dataname=crypto_data, **kwargs)
 
+    pandas_data = bt.feeds.PandasData(dataname=crypto_data, **kwargs)
     cerebro = bt.Cerebro()
-    cerebro.addstrategy(StrategySma, fast=fast, slow=slow)
+
+    if name == "sma":
+        cerebro.addstrategy(StrategySma)
+    elif name == "wma":
+        cerebro.addstrategy(StrategyWma)
+    elif name == "macd":
+        cerebro.addstrategy(StrategyMacd)
+    elif name == "bb":
+        cerebro.addstrategy(StrategyBb)
+    elif name == "rsi":
+        cerebro.addstrategy(StrategyRsi)
+
     cerebro.adddata(pandas_data)
 
     cerebro.broker.setcash(10000000.0)
@@ -110,8 +120,7 @@ def do_bt_sma(slow:int=9, fast:int=26) -> None:
     print('Max Money Down         : %.2f' % \
           strat.analyzers.DrawDown.get_analysis()['max']['moneydown'])
     print("=====================================\n\n")
-
-    cerebro.plot(volume=False)
+    return portfolio_end
 
 # Let's first define the assistant agent that suggests tool calls.
 assistant = ConversableAgent(
@@ -144,33 +153,31 @@ assistant.register_for_llm(
         """
     )(get_crypto_price)
 assistant.register_for_llm(
-    name="do_bt_sma",
+    name="do_strategy",
     description="""
-        The tool of do_bt_sma is using simple moving average strategy for back
-        testing, the params are:
+        The tool of do_strategy can do different strategy including sma, wma, macd, rsi, bb
+        for back testing, and return the final portfolio money value. It accept following
+        params:
 
-        slow: the slow line value
-        fast: the fast line value
+        name: the short name of strategy, it can be sma, wma, macd, rsi, bb
         """
-    )(do_bt_sma)
+    )(do_strategy)
 
 # Register the tool function with the user proxy agent.
 user_proxy.register_for_execution(name="get_crypto_price")(get_crypto_price)
-user_proxy.register_for_execution(name="do_bt_sma")(do_bt_sma)
+user_proxy.register_for_execution(name="do_strategy")(do_strategy)
 
 # chat_result = user_proxy.initiate_chat(
 #     assistant,
 #     message="""
-#         Please get past 400 days price for bitcoin, then use simple moving average
-#         strategy for back testing, please try to use 7 for slow line, and 21 for
-#         fast line
-#         please terminate after call function
+#         Please get past 400 days price for bitcoin, then different strategy to
+#         do back testing, and figure out what strategy is the best according to final
+#         portfolio value
 #         """)
 
 chat_result = user_proxy.initiate_chat(
     assistant,
     message="""
-        请获取过去300天的以太坊的价格，并使用简单平均移动策略来进行回测，在这个策略中，
-        请设置慢线为9，请设置快线为26
+        请获取过去300天的以太坊的价格，并使用不同的策略进行回测，最后选出最佳的策略
         please terminate after call function
         """)
