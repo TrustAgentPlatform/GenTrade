@@ -6,7 +6,7 @@ import logging
 import datetime
 import pytest
 
-from tia.market_data.timeframe import TimeFrame
+from gentrade.market_data.timeframe import TimeFrame
 
 # pylint: disable=unused-argument
 

@@ -7,15 +7,15 @@ import argparse
 
 import backtrader as bt
 
-from tia.strategy.basic import StrategySma
-from tia.market_data.crypto import BinanceMarket
+from gentrade.strategy.basic import StrategySma
+from gentrade.market_data.crypto import BinanceMarket
 
 LOG = logging.getLogger(__name__)
 
 # pylint: disable=unexpected-keyword-arg, too-many-function-args
 
 def parse_args():
-    cache_dir = os.path.join(os.path.dirname(__file__), "../../", "cache")
+    cache_dir = os.path.join(os.path.dirname(__file__), "../../../", "cache")
 
     parser = argparse.ArgumentParser(prog='tia_sma')
     parser.add_argument("-a", "--asset", default="btc",

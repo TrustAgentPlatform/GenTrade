@@ -1,13 +1,9 @@
-Streamlit
-vectorbt
 pandas
 numpy
 plotly
-pytz
 yfinance
 ccxt
-fastapi[standard]
-uvicorn[standard]
 pytest
 backtrader
 pyautogen
+mplfinance
