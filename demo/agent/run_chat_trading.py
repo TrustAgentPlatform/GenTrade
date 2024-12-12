@@ -1,21 +1,4 @@
-"""
-Agent to call TIA datahub API to get crypto prices.
 
-Please prepare below steps to run this script:
-
-1. Set the PYTHONPATH for the library of tia.
-
-For example: if the tia library is put at D:\\work\\fintech\\TrustedInvestAgent\\src
-then "set PYTHONPATH=D:\\work\\fintech\\TrustedInvestAgent\\src"
-
-2. Set environment variables:
-    - BINANCE_API_KEY
-    - BINANCE_API_SECRET
-    - OPENAI_API_KEY
-    - OPENAI_API_URL (optional)
-    - OPENAI_API_MODEL (optional)
-
-"""
 import os
 import logging
 
@@ -120,7 +103,40 @@ def do_strategy(name:str) -> int:
     print('Max Money Down         : %.2f' % \
           strat.analyzers.DrawDown.get_analysis()['max']['moneydown'])
     print("=====================================\n\n")
+
+    cerebro.plot(volume=False)
     return portfolio_end
+
+def do_bt_sma(slow:int=9, fast:int=26) -> None:
+    global crypto_data
+    kwargs = { 'timeframe':bt.TimeFrame.Minutes }
+    pandas_data = bt.feeds.PandasData(dataname=crypto_data, **kwargs)
+
+    cerebro = bt.Cerebro()
+    cerebro.addstrategy(StrategySma, fast=fast, slow=slow)
+    cerebro.adddata(pandas_data)
+
+    cerebro.broker.setcash(10000000.0)
+    cerebro.broker.setcommission(commission=0.0004)
+
+    cerebro.addanalyzer(bt.analyzers.AnnualReturn, _name="AnnualReturn")
+    cerebro.addanalyzer(bt.analyzers.Calmar, _name="Calmar")
+    cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name = 'SharpeRatio')
+    cerebro.addanalyzer(bt.analyzers.DrawDown, _name='DrawDown')
+    cerebro.addanalyzer(bt.analyzers.PyFolio, _name='pyfolio')
+
+    portfolio_start = cerebro.broker.getvalue()
+    print('Starting Portfolio Value: %.2f' % portfolio_start)
+    results = cerebro.run()
+    strat = results[0]
+    portfolio_end = cerebro.broker.getvalue()
+    earn_percent = (portfolio_end - portfolio_start) * 100 / portfolio_start
+    if earn_percent > 0:
+        earn_value = "+%.2f" % earn_percent + "%"
+    else:
+        earn_value = "%.2f" % earn_percent + "%"
+
+    cerebro.plot(volume=False)
 
 # Let's first define the assistant agent that suggests tool calls.
 assistant = ConversableAgent(
@@ -162,23 +178,29 @@ assistant.register_for_llm(
         name: the short name of strategy, it can be sma, wma, macd, rsi, bb
         """
     )(do_strategy)
+assistant.register_for_llm(
+    name="do_bt_sma",
+    description="""
+        The tool of do_bt_sma is using simple moving average strategy for back
+        testing, the params are:
+
+        slow: the slow line value
+        fast: the fast line value
+        """
+    )(do_bt_sma)
 
 # Register the tool function with the user proxy agent.
 user_proxy.register_for_execution(name="get_crypto_price")(get_crypto_price)
 user_proxy.register_for_execution(name="do_strategy")(do_strategy)
+user_proxy.register_for_execution(name="do_bt_sma")(do_bt_sma)
 
 #logging.basicConfig(level=logging.INFO)
-chat_result = user_proxy.initiate_chat(
-    assistant,
-    message="""
-        Please get past 400 days price for bitcoin, then different strategy to
-        do back testing, and figure out what strategy is the best according to final
-        portfolio value
-        """)
 
-# chat_result = user_proxy.initiate_chat(
-#     assistant,
-#     message="""
-#         请获取过去300天的以太坊的价格，并使用不同的策略进行回测，最后选出最佳的策略
-#         please terminate after call function
-#         """)
+while True:
+    print("\n\n")
+    message = input("Please input your question(请提问):")
+    chat_result = user_proxy.initiate_chat(
+        assistant,
+        message=message + ".\nplease terminate after call function")
+
+
