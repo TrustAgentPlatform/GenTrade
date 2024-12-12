@@ -29,7 +29,7 @@ LOG = logging.getLogger(__name__)
 
 # pylint: disable=unexpected-keyword-arg, global-variable-not-assigned, global-statement
 API_KEY  = os.environ.get("OPENAI_API_KEY", "empty")
-BASE_URL = os.environ.get("OPENAI_API_URL", "https://oa.api2d.net")
+BASE_URL = os.environ.get("OPENAI_API_URL", "https://api.openai.com/v1")
 MODEL    = os.environ.get("OPENAI_API_MODEL", "gpt-3.5-turbo")
 
 config_list= [
@@ -147,7 +147,7 @@ assistant.register_for_llm(
     description="""
         The tool of get_crypto_price, the params are
         name: the abbreviate name for crypto currency, for example it is btc for
-              bitcoin or BTC, eth for Ethereum
+              bitcoin or BTC, eth for Ethereum, please make sure lower case.
         timeframe: the duration of time frame like 1d for 1 day, 1h for 1 hour
         limit: the count of timeframe since from today to calculate
         """
@@ -167,17 +167,18 @@ assistant.register_for_llm(
 user_proxy.register_for_execution(name="get_crypto_price")(get_crypto_price)
 user_proxy.register_for_execution(name="do_strategy")(do_strategy)
 
-# chat_result = user_proxy.initiate_chat(
-#     assistant,
-#     message="""
-#         Please get past 400 days price for bitcoin, then different strategy to
-#         do back testing, and figure out what strategy is the best according to final
-#         portfolio value
-#         """)
-
+logging.basicConfig(level=logging.INFO)
 chat_result = user_proxy.initiate_chat(
     assistant,
     message="""
-        请获取过去300天的以太坊的价格，并使用不同的策略进行回测，最后选出最佳的策略
-        please terminate after call function
+        Please get past 400 days price for bitcoin, then different strategy to
+        do back testing, and figure out what strategy is the best according to final
+        portfolio value
         """)
+
+# chat_result = user_proxy.initiate_chat(
+#     assistant,
+#     message="""
+#         请获取过去300天的以太坊的价格，并使用不同的策略进行回测，最后选出最佳的策略
+#         please terminate after call function
+#         """)

@@ -29,8 +29,8 @@ LOG = logging.getLogger(__name__)
 
 # pylint: disable=unexpected-keyword-arg, global-variable-not-assigned, global-statement
 API_KEY  = os.environ.get("OPENAI_API_KEY", "empty")
-BASE_URL = os.environ.get("OPENAI_API_URL", "https://oa.api2d.net")
-MODEL    = os.environ.get("OPENAI_API_MODEL", "gpt-4o")
+BASE_URL = os.environ.get("OPENAI_API_URL", "https://api.openai.com/v1")
+MODEL    = os.environ.get("OPENAI_API_MODEL", "gpt-3.5-turbo")
 
 config_list= [
     {
