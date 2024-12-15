@@ -2,9 +2,11 @@ import os
 import logging
 import time
 import datetime
+import ssl
+import requests
 import yfinance as yf
 import pandas as pd
-import numpy as np
+
 from .core import FinancialAsset, FinancialMarket
 from .timeframe import TimeFrame
 
@@ -28,7 +30,6 @@ class StockUSAsset(FinancialAsset):
     @property
     def ticket_type(self):
         return self._ticker_type
-
 
 class StockUSMarket(FinancialMarket):
 
@@ -57,7 +58,7 @@ class StockUSMarket(FinancialMarket):
         return os.getenv("BINANCE_API_SECRET")
 
     def milliseconds(self) -> int:
-        return self._ccxt_inst.milliseconds()
+        return round(time.time() * 1000)
 
     def init(self):
         """
@@ -68,8 +69,8 @@ class StockUSMarket(FinancialMarket):
         if self._ready:
             return False
 
-        for ticket_name in ["MSFT", "AAPL", "TELA"]:
-            caobj = StockUSAsset(ticket_name, self)
+        for ticket_name in ["MSFT", "AAPL", "TSLA"]:
+            caobj = StockUSAsset(ticket_name.lower(), self)
             self.assets[caobj.name] = caobj
 
         self._ready = True
@@ -79,11 +80,13 @@ class StockUSMarket(FinancialMarket):
         if timeframe in ["1h", "1m", "1d"]:
             return timeframe
 
-        if timeframe == "1mo":
-            return "1M"
+        if timeframe == "1M":
+            return "1mo"
 
-        if timeframe == "1wk":
-            return "1w"
+        if timeframe == "1w":
+            return "1wk"
+
+        return None
 
     def fetch_ohlcv(self, asset:StockUSAsset, timeframe: str, since: int = -1,
                     limit: int = 500):
@@ -97,8 +100,6 @@ class StockUSMarket(FinancialMarket):
         """
         LOG.info("$$ Fetch from market: timeframe=%s since=%d, limit=%d",
                  timeframe, since, limit)
-        remaining = limit
-        all_ohlcv = []
 
         tfobj = TimeFrame(timeframe)
 
@@ -110,30 +111,30 @@ class StockUSMarket(FinancialMarket):
             # since and now
             limit = tfobj.calculate_count(since, limit)
 
-        # Continuous to fetching until get all data
-        while remaining > 0:
-            #ohlcv = self._ccxt_inst.fetch_ohlcv(asset.symbol, timeframe,
-            #                                    int(since * 1000), limit)
-
-            ohlcv = yf.download(
-                asset.name,
-                start=datetime.datetime.fromtimestamp(since),
-                interval=self._to_interval(timeframe))
-            LOG.info(ohlcv)
-            all_ohlcv += ohlcv
-            remaining = remaining - len(ohlcv)
-            count = tfobj.calculate_count(since, limit)
-            if count == 1:
-                break
-            since = tfobj.ts_since_limit(since, limit)
-
-            LOG.info("len=%d, remaining=%d, since=%d count=%d",
-                     len(ohlcv), remaining, since, count)
-            time.sleep(0.1)
-
-        df = pd.DataFrame(all_ohlcv, columns =
-                          ['time', 'open', 'high', 'low', 'close', 'vol'])
-        df.time = (df.time / 1000).astype(np.int64)
-        df.set_index('time', inplace=True)
-        return df
-
+        download_ok = False
+        while not download_ok:
+            try:
+                ohlcv = yf.download(
+                    asset.name,
+                    group_by="Ticker",
+                    start=datetime.datetime.fromtimestamp(since),
+                    interval=self._to_interval(timeframe))
+                download_ok = True
+            except yf.exceptions.YFPricesMissingError:
+                LOG.error("No data for date %s",
+                            datetime.datetime.fromtimestamp(since))
+                return None
+            except ssl.SSLEOFError:
+                time.sleep(1)
+            except requests.exceptions.SSLError:
+                time.sleep(1)
+        ohlcv = ohlcv.stack(level=0).rename_axis(['time', 'Ticker']).reset_index(level=1)
+        ohlcv = ohlcv[["Open", "High", "Low", "Close", "Volume"]]
+        ohlcv.index = pd.to_datetime(ohlcv.index)
+        ohlcv.index = ohlcv.index.astype('int64')
+        ohlcv.index = ohlcv.index.to_series().div(10**9).astype('int64')
+        ohlcv.rename(columns={
+            "Open":"open", "High":"high", "Low":"low",
+            "Close":"close", "Volume":"vol"}, inplace=True)
+        LOG.info(ohlcv)
+        return ohlcv
