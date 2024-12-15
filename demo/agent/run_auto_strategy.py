@@ -167,7 +167,9 @@ assistant.register_for_llm(
 user_proxy.register_for_execution(name="get_crypto_price")(get_crypto_price)
 user_proxy.register_for_execution(name="do_strategy")(do_strategy)
 
-#logging.basicConfig(level=logging.INFO)
+
+logging.basicConfig(level=logging.INFO)
+
 chat_result = user_proxy.initiate_chat(
     assistant,
     message="""
