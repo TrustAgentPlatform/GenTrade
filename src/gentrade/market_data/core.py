@@ -175,8 +175,8 @@ class FinancialMarket(ABC):
         """
         Get instrument object from its name
         """
-        if name in self._assets:
-            return self._assets[name]
+        if name.lower() in self._assets:
+            return self._assets[name.lower()]
         return None
 
     @abstractmethod
