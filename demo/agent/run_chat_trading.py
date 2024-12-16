@@ -126,16 +126,15 @@ def do_bt_sma(slow:int=9, fast:int=26) -> None:
     cerebro.addanalyzer(bt.analyzers.PyFolio, _name='pyfolio')
 
     portfolio_start = cerebro.broker.getvalue()
-    print('Starting Portfolio Value: %.2f' % portfolio_start)
-    results = cerebro.run()
-    strat = results[0]
+    LOG.info('Starting Portfolio Value: %.2f', portfolio_start)
+    cerebro.run()
     portfolio_end = cerebro.broker.getvalue()
     earn_percent = (portfolio_end - portfolio_start) * 100 / portfolio_start
     if earn_percent > 0:
         earn_value = "+%.2f" % earn_percent + "%"
     else:
         earn_value = "%.2f" % earn_percent + "%"
-
+    LOG.info("earn value: %s", earn_value)
     cerebro.plot(volume=False)
 
 # Let's first define the assistant agent that suggests tool calls.
@@ -202,5 +201,3 @@ while True:
     chat_result = user_proxy.initiate_chat(
         assistant,
         message=message + ".\nplease terminate after call function")
-
-
