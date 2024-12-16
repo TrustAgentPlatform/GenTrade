@@ -83,7 +83,38 @@ class StockUSMarket(FinancialMarket):
         if self._ready:
             return False
 
-        self._load_ticker()
+        ticker_list_path = os.path.join(self.cache_dir, self.TICKER_LIST_FILE)
+        if not os.path.exists(ticker_list_path):
+            url = "https://www.sec.gov/files/company_tickers.json"
+            user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+
+            try:
+                response = requests.get(url=url,
+                                        headers={'User-Agent': user_agent},
+                                        timeout=10)
+            except requests.exceptions.Timeout:
+                LOG.error("request timeout")
+                return False
+
+            response.raise_for_status()
+            data = response.json()
+
+            # pylint: disable=unspecified-encoding
+            with open(ticker_list_path, 'w') as out_file:
+                json.dump(data, out_file, sort_keys = True, indent = 4,
+                        ensure_ascii = False)
+
+        # pylint: disable=unspecified-encoding
+        with open(ticker_list_path, 'r') as input_file:
+            ticker_data = json.load(input_file)
+            for item in ticker_data.items():
+                sa_obj = StockUSAsset(
+                    item[1]['ticker'].lower(), self,
+                    ticker_cik=item[1]['cik_str'],
+                    ticker_title=item[1]['title']
+                    )
+                self.assets[item[1]['ticker'].lower()] = sa_obj
+
         LOG.info("Found %d assets for US stock market", len(self.assets))
 
         self._ready = True
@@ -182,36 +213,3 @@ class StockUSMarket(FinancialMarket):
             LOG.error("Could not find the searching ticker %s", search_ticker)
             return None
         return asset
-
-    def _load_ticker(self) -> None:
-        ticker_list_path = os.path.join(self.cache_dir, self.TICKER_LIST_FILE)
-        if not os.path.exists(ticker_list_path):
-            url = "https://www.sec.gov/files/company_tickers.json"
-            user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-
-            try:
-                response = requests.get(url=url,
-                                        headers={'User-Agent': user_agent},
-                                        timeout=10)
-            except requests.exceptions.Timeout:
-                LOG.error("request timeout")
-                return
-
-            response.raise_for_status()
-            data = response.json()
-
-            # pylint: disable=unspecified-encoding
-            with open(ticker_list_path, 'w') as out_file:
-                json.dump(data, out_file, sort_keys = True, indent = 4,
-                        ensure_ascii = False)
-
-        # pylint: disable=unspecified-encoding
-        with open(ticker_list_path, 'r') as input_file:
-            ticker_data = json.load(input_file)
-            for item in ticker_data.items():
-                sa_obj = StockUSAsset(
-                    item[1]['ticker'].lower(), self,
-                    ticker_cik=item[1]['cik_str'],
-                    ticker_title=item[1]['title']
-                    )
-                self.assets[item[1]['ticker'].lower()] = sa_obj

@@ -1,0 +1,25 @@
+name: Run Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run_test:
+    name: Run Test Cases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Checkout action repository
+        uses: actions/checkout@v3
+
+      - name: Publish package
+        env:
+          BINANCE_API_KEY: ${{ secrets.BINANCE_API_KEY }}
+          BINANCE_API_SECRET: ${{ secrets.BINANCE_API_SECRET }}
+        run: |
+          expose PYTHONPATH=$(realpath ./src)
+          python3 -m pip install -r requirements.txt
+          cd tests
+          pytest --log-cli-level INFO
