@@ -14,12 +14,12 @@ jobs:
       - name: Checkout action repository
         uses: actions/checkout@v3
 
-      - name: Publish package
+      - name: Run Test Cases
         env:
           BINANCE_API_KEY: ${{ secrets.BINANCE_API_KEY }}
           BINANCE_API_SECRET: ${{ secrets.BINANCE_API_SECRET }}
         run: |
-          expose PYTHONPATH=$(realpath ./src)
+          export PYTHONPATH=$(realpath ./src)
           python3 -m pip install -r requirements.txt
           cd tests
           pytest --log-cli-level INFO
