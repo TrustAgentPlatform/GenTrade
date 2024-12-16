@@ -17,7 +17,7 @@ LOG = logging.getLogger(__name__)
 
 
 def parse_args():
-    cache_dir = os.path.join(os.path.dirname(__file__), "../../../", "cache")
+    cache_dir = os.path.join(os.path.dirname(__file__), "../../cache")
 
     parser = argparse.ArgumentParser(prog='tia_sma')
     parser.add_argument("-a", "--asset", default="btc",

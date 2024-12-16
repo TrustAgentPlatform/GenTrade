@@ -1,4 +1,5 @@
 import os
+import logging
 import pytest
 
 import ccxt
@@ -10,12 +11,15 @@ from gentrade.market_data.stock_us import StockUSMarket
 
 CURR = os.path.dirname(__file__)
 
+LOG = logging.getLogger(__name__)
+
 @pytest.fixture(scope="session")
 def inst_binance() -> BinanceMarket:
     """
     Binance Market Instance in session scope
     """
     cache_dir = os.getenv("GENTRADE_CACHE_DIR", os.path.join(CURR, "../cache/"))
+    LOG.info("Cache Directory: %s", cache_dir)
     market_inst = gentrade.market_data.crypto.BinanceMarket(cache_dir)
     assert market_inst.init(), "Fail to initiate the market instance"
     return market_inst
