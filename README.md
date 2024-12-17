@@ -1,7 +1,10 @@
 # GenTrade
 
-The python GenTrade package provide the core functions, model and data to support
-GenAI based algorithms trading.
+The python GenTrade package provide the core functions and agentic trading workflow
+to support GenAI based algorithms trading for crypto and stock markets.
+
+It can help algorithms traders smoothly transfering from service API programming
+to prompt based agentic programming.
 
 
 ![](./docs/overview.png)
@@ -25,60 +28,80 @@ GenAI based algorithms trading.
   - [Apps](./apps/): the application or microservices based on gentrade.
 
 
-## Demo
+## 1. Demo
 
 _NOTE: please set environment variable like `BINANCE_API_KEY`, `BINANCE_API_SECRET`, \
 `OPENAI_API_KEY` before running below demos._
 
-1. Draw the latest 100 hours btcoin's prices (OHLCV)
+### 1.1 Use traditional API approach for crypto currency or US stock:
 
-  ```shell
-  cd demo/crypto-cli
-  python run_matplot.py -a btc -t 1h -l 100
-  ```
-  Output:
-  ![](docs/demo_crypto_cli_run_matplot.png)
+  1. Draw the latest 100 hours btcoin's prices (OHLCV)
 
-2. Use SMA (Simple Moving Average) to analyze the ETH's prices
+      ```shell
+      cd demo/crypto-cli
+      python run_matplot.py -a btc -t 1h -l 100
+      ```
 
-  ```shell
-  cd demo/crypto-cli
-  python run_sma.py -a eth -t 1d -l 200 -g
-  ```
-  Output:
-  ![](docs/demo_crypto_cli_run_sma.png)
+      Output:
 
-3. If want try other strategy like RSI
+      <img src="docs/demo_crypto_cli_run_matplot.png" width="400px">
 
-  ```shell
-  cd demo/crypto-cli
-  python run_multiple.py -s rsi
-  ```
-  ![](docs/demo_crypto_cli_run_rsi.png)
-  _NOTE: of course you can try more strategies like macd, bb, wma etc_
+  2. Use SMA (Simple Moving Average) to analyze the ETH's prices
 
-4. If want ask LLM to select a strategy via a simple prompt like
+      ```shell
+      cd demo/crypto-cli
+      python run_sma.py -a eth -t 1d -l 200 -g
+      ```
+      Output:
 
-  - Please get past 400 days price for bitcoin, then different strategy to do
-    back testing, and figure out what strategy is the best according to final
-    portfolio value
-  - 请获取过去300天的以太坊的价格，并使用不同的策略进行回测，最后选出最佳的策略
+      <img src="docs/demo_crypto_cli_run_sma.png" width="400px">
 
-  ```shell
-  cd demo/agent
-  python run_auto_strategy.py
-  ```
-  ![](docs/demo_agent_auto_strategy.png)
+      It also support US stock like applying SMA on TESLA (TSLA)'s price:
 
-5. If want ask LLM to generate strategy according to your idea and do back test,
-  for example:
-  "请获取过去300天的以太坊的价格，并使用简单平均移动策略来进行回测，在这个策略中，请设置慢线为9，请设置快线为26"
+      ```shell
+      cd demo/stock-us-cli
+      python run_multiple.py -a TSLA -t 1d -l 200 -g
+      ```
 
-  ![](docs/demo_agent_configure_strategy.png)
+      <img src="docs/demo_stock_us_tsla.png" width="400px">
 
-## App Services
+  3. If want try other strategy like RSI
 
-### OHLCV Data Service
+      ```shell
+      cd demo/crypto-cli
+      python run_multiple.py -s rsi
+      ```
+
+      <img src="docs/demo_crypto_cli_run_rsi.png" width="400px">
+
+      _NOTE: of course you can try more strategies like macd, bb, wma etc_
+
+### 1.2 Use Agentic LLM approaches:
+
+  1. If want ask LLM to select a strategy via a simple prompt like
+
+      - Prompt: **Please get past 400 days price for bitcoin, then different strategy to do
+        back testing, and figure out what strategy is the best according to final
+        portfolio value**
+      - Prompt: **请获取过去300天的以太坊的价格，并使用不同的策略进行回测，最后选出最佳的策略**
+
+      ```shell
+      cd demo/agent
+      python run_auto_strategy.py
+      ```
+
+      <img src="docs/demo_agent_auto_strategy.png" width="400px">
+
+  2. If want ask LLM to generate strategy according to your idea and do back test,
+    for example:
+
+      - Prompt: **"请获取过去300天的以太坊的价格，并使用简单平均移动策略来进行回测，在这个策略中，请设置慢线为9，请设置快线为26"**
+
+      <img src="docs/demo_agent_configure_strategy.png" width="400px">
+
+## 2. App Services
+
+### 2.1 OHLCV Data Service
 
 - Start Server
 
