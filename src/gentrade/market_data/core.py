@@ -368,10 +368,13 @@ class DataCollectorThread(Thread):
             ret = self._asset_obj.fetch_ohlcv(
                 self._timeframe, self._current, limit)
             if ret is not None:
+                if len(ret) == 1:
+                    break
                 self._current = tfobj.ts_since_limit(ret.index[-1] + 1, 1)
                 LOG.info("current:%d, now:%d", self._current, self._now)
                 if tfobj.is_same_frame(self._current, self._now):
                     break
+
             time.sleep(5)
         self._terminate = True
         LOG.info("Thread %s completed.", self._key)

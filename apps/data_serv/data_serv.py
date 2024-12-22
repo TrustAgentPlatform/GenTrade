@@ -15,6 +15,7 @@ import uvicorn
 from gentrade.market_data.core import FinancialMarket, DataCollectorThread
 from gentrade.market_data.crypto import BinanceMarket, BINANCE_MARKET_ID
 from gentrade.market_data.timeframe import TimeFrame
+from gentrade.market_data.stock_us import StockUSMarket
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 LOG = logging.getLogger(__name__)
@@ -43,8 +44,10 @@ class DataServer:
 
     def _add_markets(self):
         crypto_market = BinanceMarket(cache_dir=self._cache_dir)
+        stockus_market = StockUSMarket(cache_dir=self._cache_dir)
         self._markets:dict[str, FinancialMarket] = {
-            crypto_market.market_id: BinanceMarket(cache_dir=self._cache_dir)
+            crypto_market.market_id: crypto_market,
+            stockus_market.market_id: stockus_market
         }
 
     def _init_markets(self):
