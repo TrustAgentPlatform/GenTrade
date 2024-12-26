@@ -92,7 +92,8 @@ class FinancialAsset(ABC):
         df_cached = self._cache.search(timeframe, from_, to_)
         if df_cached is None:
             df = self._market.fetch_ohlcv(self, timeframe, since, limit)
-            self._cache.save(timeframe, df)
+            if df is not None and len(df) != 0:
+                self._cache.save(timeframe, df)
         else:
             LOG.info("cache: count=%d, index=%d, to=%d",
                      len(df_cached), df_cached.index[-1], to_)
@@ -368,12 +369,14 @@ class DataCollectorThread(Thread):
             ret = self._asset_obj.fetch_ohlcv(
                 self._timeframe, self._current, limit)
             if ret is not None:
-                if len(ret) == 1:
+                if len(ret) <= 1:
                     break
                 self._current = tfobj.ts_since_limit(ret.index[-1] + 1, 1)
                 LOG.info("current:%d, now:%d", self._current, self._now)
                 if tfobj.is_same_frame(self._current, self._now):
                     break
+            else:
+                break
 
             time.sleep(5)
         self._terminate = True
