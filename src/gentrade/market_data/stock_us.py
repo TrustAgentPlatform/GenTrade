@@ -164,6 +164,8 @@ class StockUSMarket(FinancialMarket):
                     start=datetime.datetime.fromtimestamp(since),
                     interval=self._to_interval(timeframe))
                 download_ok = True
+                if ohlcv is None or len(ohlcv) == 0:
+                    return None
             except yf.exceptions.YFPricesMissingError:
                 LOG.error("No data for date %s",
                             datetime.datetime.fromtimestamp(since))
@@ -182,7 +184,6 @@ class StockUSMarket(FinancialMarket):
         ohlcv.rename(columns={
             "Open":"open", "High":"high", "Low":"low",
             "Close":"close", "Volume":"vol"}, inplace=True)
-        LOG.info(ohlcv)
         return ohlcv
 
     def search_ticker(self, company_name:str) -> str:
