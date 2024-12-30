@@ -79,12 +79,15 @@ class CryptoAsset(FinancialAsset):
         """
         df = FinancialAsset.fetch_ohlcv(self, timeframe, since, to, limit)
         LOG.info("Double check whether the dataframe is valid")
-        if not self._cache.check_cache(timeframe, df.index[0], df.index[-1]):
-            LOG.error("Cache is wrong")
-            df = self._cache.save(timeframe,
-                             self._market.fetch_ohlcv(
-                                 self, timeframe, df.index[0],
-                                 df.index[-1]))
+
+        if df is None or len(df) == 0 or \
+            not self._cache.check_cache(timeframe, df.index[0], df.index[-1]):
+            tfobj = TimeFrame(timeframe)
+            (since_new, to_new) = tfobj.normalize(since, to, limit)
+            df = self._market.fetch_ohlcv(
+                                 self, timeframe, since_new,
+                                 to_new)
+            self._cache.save(timeframe, df)
 
         return df
 
@@ -203,7 +206,6 @@ class BinanceMarket(CryptoMarket):
         all_ohlcv = []
 
         tfobj = TimeFrame(timeframe)
-
         limit = tfobj.calculate_count(since, to=to)
 
         remaining = limit
@@ -211,11 +213,15 @@ class BinanceMarket(CryptoMarket):
         # Continuous to fetching until get all data
         while remaining > 0:
             LOG.info("since=%d remaining=%d", index, remaining)
-            ohlcv = self._ccxt_inst.fetch_ohlcv(asset.symbol, timeframe,
-                                                index, remaining)
+            try:
+                ohlcv = self._ccxt_inst.fetch_ohlcv(asset.symbol, timeframe,
+                                                    index, remaining)
+            except TimeoutError:
+                LOG.critical("Network Timeout")
+                time.sleep(1)
+                continue
             all_ohlcv += ohlcv
             remaining = remaining - len(ohlcv)
-            LOG.info(ohlcv[-1][0])
             index = ohlcv[-1][0]
             time.sleep(1)
 

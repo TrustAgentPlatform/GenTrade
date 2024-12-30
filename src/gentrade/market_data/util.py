@@ -36,7 +36,7 @@ def check_ntp_offset() -> float:
 
 def get_timezone():
     """
-    Get server time
+    Get timezone info
     """
     now_ts_local = time.time()
     now_date_utc   = datetime.datetime.fromtimestamp(now_ts_local, datetime.UTC)
@@ -46,6 +46,3 @@ def get_timezone():
         'tz_name': tl.tzname(now_date_utc),
         'tz_offset': int(tl.utcoffset(now_date_utc).total_seconds()),
     }
-
-if __name__=='__main__':
-    print(get_server_time())

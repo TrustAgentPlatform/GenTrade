@@ -66,45 +66,37 @@ class FinancialAsset(ABC):
         tfobj = TimeFrame(timeframe)
 
         # Normalize the since and to, so improve hit ratio in cache
-        if limit == -1:
-            assert since != -1, "since must be set without limit"
-            since_new = tfobj.ts_since(since)
-            to_new = tfobj.ts_last(to)
-        else:
-            if since == -1:
-                since_new = tfobj.ts_last_limit(limit, to)
-            else:
-                since_new = tfobj.ts_since(since)
-            to_new = tfobj.ts_since_limit(since_new, limit)
+        (since_new, to_new) = tfobj.normalize(since, to, limit)
         LOG.info("Normalize: [%d<->%d] => [%d<->%d]", since, to, since_new,
                  to_new)
 
         # Case 1: no any data in cache
         cache_start, cache_end = self._cache.get_index(timeframe)
+        LOG.info('cache start=%d, end=%d', cache_start, cache_end)
         if cache_start == -1 or cache_end == -1:
             LOG.info("case 1")
             self._cache.save(timeframe, self._market.fetch_ohlcv(
                 self, timeframe, since_new, to_new))
+        else:
+            # Case 2: since < cache_start
+            if since_new < cache_start:
+                LOG.info("case 2")
+                if cache_start > to_new:
+                    LOG.warning("The cache will not be continuous after this fetch")
+                self._cache.save(timeframe,
+                                self._market.fetch_ohlcv(
+                                    self, timeframe, since_new,
+                                    min(cache_start, to_new)))
 
-        # Case 2: since < cache_start
-        if since_new < cache_start:
-            LOG.info("case 2")
-            if cache_start > to_new:
-                LOG.warning("The cache will not be continuous after this fetch")
-            self._cache.save(timeframe,
-                             self._market.fetch_ohlcv(
-                                 self, timeframe, since_new,
-                                 min(cache_start, to_new)))
-
-        # Case 3: to > cache_end
-        if to_new > cache_end:
-            LOG.info("case 3")
-            if since_new > cache_end:
-                LOG.warning("The cache will not be continuous after this fetch")
-            self._cache.save(timeframe,
-                             self._market.fetch_ohlcv(
-                                 self, timeframe, max(cache_end, since_new),
-                                 to_new))
+            # Case 3: to > cache_end
+            if to_new > cache_end:
+                LOG.info("case 3")
+                if since_new > cache_end:
+                    LOG.warning("The cache will not be continuous after this fetch")
+                self._cache.save(timeframe,
+                                self._market.fetch_ohlcv(
+                                    self, timeframe, max(cache_end, since_new),
+                                    to_new))
 
         return self._cache.get_part(timeframe, since_new, to_new)
 
@@ -281,7 +273,7 @@ class FinancialAssetCache:
         Save OHLCV to cache
         """
         if df_new is None or len(df_new) == 0:
-            LOG.warn("Invalid dataframe for save")
+            LOG.warning("Invalid dataframe for save")
             return
         self._mem_cache[timeframe] = pd.concat(
             [self._mem_cache[timeframe], df_new])
@@ -355,7 +347,7 @@ class DataCollectorThread(Thread):
     def run(self):
         LOG.info("Thread %s started.", self._key)
         self._current = self._since
-        limit = 100
+        limit = -1
         tfobj = TimeFrame(self._timeframe)
 
         while not self._terminate:
@@ -376,7 +368,7 @@ class DataCollectorThread(Thread):
                 continue
 
             ret = self._asset_obj.fetch_ohlcv(
-                self._timeframe, self._current, limit)
+                self._timeframe, self._current, limit=limit)
             if ret is not None:
                 if len(ret) <= 1:
                     break

@@ -9,7 +9,6 @@ import yfinance as yf
 import pandas as pd
 
 from .core import FinancialAsset, FinancialMarket
-from .timeframe import TimeFrame
 
 LOG = logging.getLogger(__name__)
 
@@ -132,8 +131,26 @@ class StockUSMarket(FinancialMarket):
 
         return None
 
-    def fetch_ohlcv(self, asset:StockUSAsset, timeframe: str, since: int = -1,
-                    limit: int = 500):
+    def _split_ranges(self, since, to, interval):
+        ranges = []
+        if to == -1:
+            to = time.time()
+        index = since
+        while index + interval < to:
+            ranges.append((index, index + interval))
+            index += interval
+        ranges.append((index, to))
+        LOG.info(ranges)
+        return ranges
+
+    def _is_valid_range(self, timeframe, since, to):
+        if timeframe == '1m':
+            return (to - since) < 8 * 24 * 3600
+        if timeframe == '1h':
+            return (to - since) < 300 * 24 * 3600
+        return True
+
+    def fetch_ohlcv(self, asset:StockUSAsset, timeframe: str, since: int, to: int=-1):
         """
         Fetch OHLCV (Open High Low Close Volume).
 
@@ -142,38 +159,38 @@ class StockUSMarket(FinancialMarket):
         :param     since: the timestamp for starting point
         :param     limit: count
         """
-        LOG.info("$$ Fetch from market: timeframe=%s since=%d, limit=%d",
-                 timeframe, since, limit)
+        LOG.info("$$ Fetch from market: timeframe=%s since=%d, to=%d",
+                 timeframe, since, to)
 
-        tfobj = TimeFrame(timeframe)
+        if not self._is_valid_range(timeframe, since, to):
+            LOG.error("invalid range")
+            return None
 
-        # calculate the range from_ -> to_
-        if since == -1:
-            since = tfobj.ts_last_limit(limit)
-        else:
-            # Calibrate the limit value according to the duration between
-            # since and now
-            limit = tfobj.calculate_count(since, limit)
-
-        download_ok = False
-        while not download_ok:
-            try:
+        ohlcv = pd.DataFrame()
+        try:
+            if to != -1:
                 ohlcv = yf.download(
                     asset.name,
                     group_by="Ticker",
-                    start=datetime.datetime.fromtimestamp(since),
+                    start=datetime.datetime.fromtimestamp(since, tz=datetime.UTC),
+                    end=datetime.datetime.fromtimestamp(to, tz=datetime.UTC),
                     interval=self._to_interval(timeframe))
-                download_ok = True
-                if ohlcv is None or len(ohlcv) == 0:
-                    return None
-            except yf.exceptions.YFPricesMissingError:
-                LOG.error("No data for date %s",
-                            datetime.datetime.fromtimestamp(since))
+            else:
+                ohlcv = yf.download(
+                    asset.name,
+                    group_by="Ticker",
+                    start=datetime.datetime.fromtimestamp(since, tz=datetime.UTC),
+                    interval=self._to_interval(timeframe))
+            if ohlcv is None or len(ohlcv) == 0:
                 return None
-            except ssl.SSLEOFError:
-                time.sleep(1)
-            except requests.exceptions.SSLError:
-                time.sleep(1)
+        except yf.exceptions.YFPricesMissingError:
+            LOG.error("No data for date %s",
+                        datetime.datetime.fromtimestamp(since))
+            return None
+        except ssl.SSLEOFError:
+            time.sleep(1)
+        except requests.exceptions.SSLError:
+            time.sleep(1)
 
         ohlcv = ohlcv.stack(level=0).rename_axis(
             ['time', 'Ticker']).reset_index(level=1)

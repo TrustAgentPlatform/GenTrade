@@ -237,3 +237,16 @@ class TimeFrame:
             TimeFrame.MINUTE, TimeFrame.HOUR,
             TimeFrame.DAY, TimeFrame.WEEK,
             TimeFrame.MONTH ]
+
+    def normalize(self, since, to, limit):
+        if limit == -1:
+            assert since != -1, "since must be set without limit"
+            since_new = self.ts_since(since)
+            to_new = self.ts_last(to)
+        else:
+            if since == -1:
+                since_new = self.ts_last_limit(limit, to)
+            else:
+                since_new = self.ts_since(since)
+            to_new = self.ts_since_limit(since_new, limit)
+        return (since_new, to_new)
