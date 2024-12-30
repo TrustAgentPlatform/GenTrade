@@ -25,6 +25,7 @@ from autogen import ConversableAgent
 from gentrade.market_data.crypto import BinanceMarket
 from gentrade.strategy.basic import StrategySma, StrategyWma, StrategyBb, StrategyMacd, StrategyRsi
 
+CURR = os.path.dirname(__file__)
 LOG = logging.getLogger(__name__)
 
 # pylint: disable=unexpected-keyword-arg, global-variable-not-assigned, global-statement
@@ -48,7 +49,9 @@ crypto_data = None
 
 def get_crypto_price(name:str, timeframe:str="1h", limit:int=100) -> bool:
     name += "_usdt"
-    bm_inst = BinanceMarket()
+    cache_dir = os.getenv("GENTRADE_CACHE_DIR", os.path.join(CURR, "../../cache/"))
+    LOG.info("Cache Directory: %s", cache_dir)
+    bm_inst = BinanceMarket(cache_dir)
     if not bm_inst.init():
         LOG.error("Fail to create Binance instance")
         return None

@@ -14,7 +14,7 @@ LOG = logging.getLogger(__name__)
 API_KEY  = os.environ.get("OPENAI_API_KEY", "empty")
 BASE_URL = os.environ.get("OPENAI_API_URL", "https://api.openai.com/v1")
 MODEL    = os.environ.get("OPENAI_API_MODEL", "gpt-3.5-turbo")
-
+CURR     = os.path.dirname(__file__)
 config_list= [
     {
         'base_url': BASE_URL,
@@ -31,7 +31,9 @@ crypto_data = None
 
 def get_crypto_price(name:str, timeframe:str="1h", limit:int=100) -> bool:
     name += "_usdt"
-    bm_inst = BinanceMarket()
+    cache_dir = os.getenv("GENTRADE_CACHE_DIR", os.path.join(CURR, "../../cache/"))
+    LOG.info("Cache Directory: %s", cache_dir)
+    bm_inst = BinanceMarket(cache_dir)
     if not bm_inst.init():
         LOG.error("Fail to create Binance instance")
         return None
