@@ -67,6 +67,27 @@ class CryptoAsset(FinancialAsset):
             "symbol": self._symbol
         }
 
+    def fetch_ohlcv(self, timeframe:str = '1d', since: int = -1, to: int = -1,
+                    limit=-1) -> pd.DataFrame:
+        """Fetch the OHLCV
+
+        Args:
+            timeframe (str, optional): Defaults to '1d'.
+            since (int): the start of UTC timestamp.
+            to (int, optional): Defaults to -1 for now
+            limit (int, optional): the max count of returned value
+        """
+        df = FinancialAsset.fetch_ohlcv(self, timeframe, since, to, limit)
+        LOG.info("Double check whether the dataframe is valid")
+        if not self._cache.check_cache(timeframe, df.index[0], df.index[-1]):
+            LOG.error("Cache is wrong")
+            df = self._cache.save(timeframe,
+                             self._market.fetch_ohlcv(
+                                 self, timeframe, df.index[0],
+                                 df.index[-1]))
+
+        return df
+
 class BinanceMarket(CryptoMarket):
 
     """
@@ -167,8 +188,7 @@ class BinanceMarket(CryptoMarket):
         self._ready = True
         return True
 
-    def fetch_ohlcv(self, asset:CryptoAsset, timeframe: str, since: int = -1,
-                    limit: int = 500):
+    def fetch_ohlcv(self, asset:CryptoAsset, timeframe: str, since: int, to:int ):
         """
         Fetch OHLCV (Open High Low Close Volume).
 
@@ -177,35 +197,27 @@ class BinanceMarket(CryptoMarket):
         :param     since: the timestamp for starting point
         :param     limit: count
         """
-        LOG.info("$$ Fetch from market: timeframe=%s since=%d, limit=%d",
-                 timeframe, since, limit)
-        remaining = limit
+        LOG.info("$$ Fetch from market: timeframe=%s since=%d, to=%d",
+                 timeframe, since, to)
+
         all_ohlcv = []
 
         tfobj = TimeFrame(timeframe)
 
-        # calculate the range from_ -> to_
-        if since == -1:
-            since = tfobj.ts_last_limit(limit)
-        else:
-            # Calibrate the limit value according to the duration between
-            # since and now
-            limit = tfobj.calculate_count(since, limit)
+        limit = tfobj.calculate_count(since, to=to)
 
+        remaining = limit
+        index = int(since * 1000)
         # Continuous to fetching until get all data
         while remaining > 0:
+            LOG.info("since=%d remaining=%d", index, remaining)
             ohlcv = self._ccxt_inst.fetch_ohlcv(asset.symbol, timeframe,
-                                                int(since * 1000), limit)
+                                                index, remaining)
             all_ohlcv += ohlcv
             remaining = remaining - len(ohlcv)
-            count = tfobj.calculate_count(since, limit)
-            if count == 1:
-                break
-            since = tfobj.ts_since_limit(since, limit)
-
-            LOG.info("len=%d, remaining=%d, since=%d count=%d",
-                     len(ohlcv), remaining, since, count)
-            time.sleep(0.1)
+            LOG.info(ohlcv[-1][0])
+            index = ohlcv[-1][0]
+            time.sleep(1)
 
         df = pd.DataFrame(all_ohlcv, columns =
                           ['time', 'open', 'high', 'low', 'close', 'vol'])

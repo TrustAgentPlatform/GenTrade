@@ -85,12 +85,12 @@ class TimeFrame:
             return last_month_ts
         return None
 
-    def ts_last_limit(self, limit, refer_ts=-1):
+    def ts_last_limit(self, limit, to=-1):
         """
         Get the timestamp back in the time before limit count's interval
         till reference timestamp.
         """
-        last_ts = self.ts_last(refer_ts)
+        last_ts = self.ts_last(to)
         if self.interval in [TimeFrame.MINUTE, TimeFrame.HOUR,
                              TimeFrame.DAY, TimeFrame.WEEK]:
             delta_ts = TimeFrame._delta[self.interval] * self.count

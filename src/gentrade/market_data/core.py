@@ -51,67 +51,62 @@ class FinancialAsset(ABC):
     def cache(self) -> FinancialAssetCache:
         return self._cache
 
-    def fetch_ohlcv(self, timeframe:str="1h", since: int = -1,
-                    limit: int = 100) -> pd.DataFrame:
-        """
-        Fetch the specific asset
-        """
-        if not TimeFrame.check_valid(timeframe):
-            LOG.error("Time frame %s is invalid", timeframe)
-            return None
+    def fetch_ohlcv(self, timeframe:str = '1d', since: int = -1, to: int = -1,
+                    limit=-1) -> pd.DataFrame:
+        """Fetch the OHLCV
 
+        Args:
+            timeframe (str, optional): Defaults to '1d'.
+            since (int): the start of UTC timestamp.
+            to (int, optional): Defaults to -1 for now
+            limit (int, optional): the max count of returned value
+        """
+        LOG.info("fetch_ohlcv: since:%d, to:%d, limit:%d tf:%s", since, to,
+                 limit, timeframe)
         tfobj = TimeFrame(timeframe)
 
-        # calculate the range from_ -> to_
-        if since == -1:
-            # If did not specify the since value, then calculate duration from
-            # time now
-            # <----------------------------------------->
-            #     ^                             ^       ^
-            #     |      timeframe duration     |       |
-            #    from_                         to_      now
-            #
-            to_ = tfobj.ts_last()
-            from_ = tfobj.ts_last_limit(limit)
+        # Normalize the since and to, so improve hit ratio in cache
+        if limit == -1:
+            assert since != -1, "since must be set without limit"
+            since_new = tfobj.ts_since(since)
+            to_new = tfobj.ts_last(to)
         else:
-            # <----------------------------------------->
-            #    ^     ^                             ^
-            #    |     |      timeframe duration     |
-            #  since  from_                         to_
-            #
-            from_ = tfobj.ts_since(since)
-            to_ = tfobj.ts_since_limit(since, limit)
-            # Calibrate the limit value according to the duration between
-            # since and now
-            limit = tfobj.calculate_count(since, limit)
-
-        LOG.info("fetch_ohlcv: timeframe=%s, since=%d, limit=%d, from=%d, to=%d",
-                 timeframe, since, limit, from_, to_)
-
-        # search from cache first
-        df_cached = self._cache.search(timeframe, from_, to_)
-        if df_cached is None:
-            df = self._market.fetch_ohlcv(self, timeframe, since, limit)
-            if df is not None and len(df) != 0:
-                self._cache.save(timeframe, df)
-        else:
-            LOG.info("cache: count=%d, index=%d, to=%d",
-                     len(df_cached), df_cached.index[-1], to_)
-            if df_cached.index[-1] == to_:
-                # Find all data
-                df = df_cached
+            if since == -1:
+                since_new = tfobj.ts_last_limit(limit, to)
             else:
-                # Find part data, continue fetch remaining from market
-                revised_limit = tfobj.calculate_count(
-                    df_cached.index[-1], limit)
-                revised_since = df_cached.index[-1] + 1
-                df_remaining = self._market.fetch_ohlcv(
-                    self, timeframe, revised_since, revised_limit)
-                df = pd.concat([df_cached, df_remaining])
-                df = df[~df.index.duplicated(keep='first')]
-                df.sort_index(inplace=True)
-                self._cache.save(timeframe, df_remaining)
-        return df
+                since_new = tfobj.ts_since(since)
+            to_new = tfobj.ts_since_limit(since_new, limit)
+        LOG.info("Normalize: [%d<->%d] => [%d<->%d]", since, to, since_new,
+                 to_new)
+
+        # Case 1: no any data in cache
+        cache_start, cache_end = self._cache.get_index(timeframe)
+        if cache_start == -1 or cache_end == -1:
+            LOG.info("case 1")
+            self._cache.save(timeframe, self._market.fetch_ohlcv(
+                self, timeframe, since_new, to_new))
+
+        # Case 2: since < cache_start
+        if since_new < cache_start:
+            LOG.info("case 2")
+            if cache_start > to_new:
+                LOG.warning("The cache will not be continuous after this fetch")
+            self._cache.save(timeframe,
+                             self._market.fetch_ohlcv(
+                                 self, timeframe, since_new,
+                                 min(cache_start, to_new)))
+
+        # Case 3: to > cache_end
+        if to_new > cache_end:
+            LOG.info("case 3")
+            if since_new > cache_end:
+                LOG.warning("The cache will not be continuous after this fetch")
+            self._cache.save(timeframe,
+                             self._market.fetch_ohlcv(
+                                 self, timeframe, max(cache_end, since_new),
+                                 to_new))
+
+        return self._cache.get_part(timeframe, since_new, to_new)
 
     def index_to_datetime(self, df:pd.DataFrame, unit="s"):
         df.index = pd.to_datetime(df.index, unit=unit)
@@ -188,10 +183,17 @@ class FinancialMarket(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def fetch_ohlcv(self, asset:FinancialAsset, timeframe:str,
-                    since: int = None, limit: int = None):
-        """
-        Fetch OHLCV for the specific asset
+    def fetch_ohlcv(self, asset:FinancialAsset, timeframe:str, since:int, to:int):
+        """Fetch OHLCV value for specific asset via Market API
+
+        Args:
+            asset (FinancialAsset): _description_
+            timeframe (str): _description_
+            since (int): _description_
+            to (int): _description_
+
+        Raises:
+            NotImplementedError: _description_
         """
         raise NotImplementedError
 
@@ -218,9 +220,13 @@ class FinancialAssetCache:
 
     def get_index(self, timeframe:str):
         if timeframe not in self._mem_cache:
+            self._mem_cache[timeframe] = pd.DataFrame()
             return -1, -1
         cache_obj = self._mem_cache[timeframe]
         return cache_obj.index[0], cache_obj.index[-1]
+
+    def get_part(self, timeframe:str, since:int, to:int) -> pd.DataFrame:
+        return self._mem_cache[timeframe].loc[since:to]
 
     def _init(self):
         cache_dir = self._asset.market.cache_dir
@@ -274,6 +280,9 @@ class FinancialAssetCache:
         """
         Save OHLCV to cache
         """
+        if df_new is None or len(df_new) == 0:
+            LOG.warn("Invalid dataframe for save")
+            return
         self._mem_cache[timeframe] = pd.concat(
             [self._mem_cache[timeframe], df_new])
         self._mem_cache[timeframe] = \
