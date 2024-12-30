@@ -7,3 +7,4 @@ pytest
 backtrader
 pyautogen
 mplfinance
+ntplib

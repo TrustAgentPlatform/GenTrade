@@ -85,12 +85,12 @@ class TimeFrame:
             return last_month_ts
         return None
 
-    def ts_last_limit(self, limit, refer_ts=-1):
+    def ts_last_limit(self, limit, to=-1):
         """
         Get the timestamp back in the time before limit count's interval
         till reference timestamp.
         """
-        last_ts = self.ts_last(refer_ts)
+        last_ts = self.ts_last(to)
         if self.interval in [TimeFrame.MINUTE, TimeFrame.HOUR,
                              TimeFrame.DAY, TimeFrame.WEEK]:
             delta_ts = TimeFrame._delta[self.interval] * self.count
@@ -237,3 +237,16 @@ class TimeFrame:
             TimeFrame.MINUTE, TimeFrame.HOUR,
             TimeFrame.DAY, TimeFrame.WEEK,
             TimeFrame.MONTH ]
+
+    def normalize(self, since, to, limit):
+        if limit == -1:
+            assert since != -1, "since must be set without limit"
+            since_new = self.ts_since(since)
+            to_new = self.ts_last(to)
+        else:
+            if since == -1:
+                since_new = self.ts_last_limit(limit, to)
+            else:
+                since_new = self.ts_since(since)
+            to_new = self.ts_since_limit(since_new, limit)
+        return (since_new, to_new)
