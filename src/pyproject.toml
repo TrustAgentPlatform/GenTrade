@@ -1,6 +1,6 @@
 [project]
 name = "gentrade"
-version = "0.0.16"
+version = "0.0.17"
 authors = [
   { name="Lu Ken", email="bluewish.ken.lu@live.cn" },
 ]
