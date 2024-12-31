@@ -234,6 +234,8 @@ class BinanceMarket(CryptoMarket):
                 time.sleep(1)
                 continue
             all_ohlcv += ohlcv
+            if len(ohlcv) <= 1:
+                break
             remaining = remaining - len(ohlcv)
             index = ohlcv[-1][0]
             time.sleep(1)
