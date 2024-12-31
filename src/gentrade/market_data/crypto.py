@@ -33,23 +33,23 @@ class CryptoAsset(FinancialAsset):
 
     _CRYPTO_TYPES = [ _CRYPTO_TYPE_SPOT, _CRYPTO_TYPE_SWAP, _CRYPTO_TYPE_FUTURE]
 
-    def __init__(self, currency_base:str, currency_quote:str,
+    def __init__(self, base:str, quote:str,
                  symbol:str, crypto_type:str, market:CryptoMarket):
-        self._currency_base = currency_base.lower()
-        self._currency_quote = currency_quote.lower()
+        self._base = base.lower()
+        self._quote = quote.lower()
         assert crypto_type in self._CRYPTO_TYPES
         self._crypto_type = crypto_type
         self._symbol = symbol
-        super().__init__("%s_%s" %(currency_base.lower(),
-                                   currency_quote.lower()), market)
+        super().__init__("%s_%s" %(base.lower(),
+                                   quote.lower()), market)
 
     @property
-    def currency_base(self) -> str:
-        return self._currency_base
+    def base(self) -> str:
+        return self._base
 
     @property
-    def currency_quote(self) -> str:
-        return self._currency_quote
+    def quote(self) -> str:
+        return self._quote
 
     @property
     def symbol(self) -> str:
@@ -59,13 +59,15 @@ class CryptoAsset(FinancialAsset):
     def crypto_type(self) -> str:
         return self._crypto_type
 
+    @property
+    def asset_type(self):
+        return self.crypto_type
+
     def to_dict(self) -> dict:
-        return {
-            "base": self.currency_base,
-            "quote": self.currency_quote,
-            "type": self.crypto_type,
-            "symbol": self._symbol
-        }
+        retval = super().to_dict()
+        retval['base'] = self.base
+        retval['symbol'] = self._symbol
+        return retval
 
     def fetch_ohlcv(self, timeframe:str = '1d', since: int = -1, to: int = -1,
                     limit=-1) -> pd.DataFrame:

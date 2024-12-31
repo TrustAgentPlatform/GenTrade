@@ -42,14 +42,35 @@ class FinancialAsset(ABC):
         return self._name
 
     @property
+    @abstractmethod
+    def quote(self) -> str:
+        """Quote name, it will be usd for US stock market, cny for chinese stock
+        market and usdt for crypto market
+        """
+
+    @property
     def market(self) -> FinancialMarket:
         """
         Property market which belong to
         """
         return self._market
+
     @property
     def cache(self) -> FinancialAssetCache:
         return self._cache
+
+    @property
+    @abstractmethod
+    def asset_type(self):
+        pass
+
+    def to_dict(self) -> dict:
+        return {
+            'name': self.name,
+            'type': self.asset_type,
+            'market': self.market.market_id,
+            'quote': self.quote
+        }
 
     def fetch_ohlcv(self, timeframe:str = '1d', since: int = -1, to: int = -1,
                     limit=-1) -> pd.DataFrame:
