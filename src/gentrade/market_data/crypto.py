@@ -229,6 +229,10 @@ class BinanceMarket(CryptoMarket):
                 LOG.critical("Network Timeout")
                 time.sleep(1)
                 continue
+            except ccxt.NetworkError:
+                LOG.critical("Network Error")
+                time.sleep(1)
+                continue
             all_ohlcv += ohlcv
             remaining = remaining - len(ohlcv)
             index = ohlcv[-1][0]
