@@ -116,8 +116,15 @@ class BinanceMarket(CryptoMarket):
         assert self.api_secret is not None, \
             "Please specify the Binance's API Secret via the environment" \
             "variable BINANCE_API_SECRET"
-        self._ccxt_inst = ccxt.binance({'apiKey': self.api_key,
-                                        'secret': self.api_secret})
+
+        params = {'apiKey': self.api_key, 'secret': self.api_secret}
+        if 'HTTP_PROXY' in os.environ:
+            params['proxies'] = {
+                    'http': os.environ['HTTP_PROXY'],
+                    'https': os.environ['HTTP_PROXY']
+                    }
+
+        self._ccxt_inst = ccxt.binance(params)
         self._ready = False
 
     @property
