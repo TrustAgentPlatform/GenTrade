@@ -44,12 +44,25 @@ class StockUSAsset(FinancialAsset):
         return self._ticker_type
 
     @property
+    def asset_type(self):
+        return self.ticker_type
+
+    @property
     def ticker_cik(self):
         return self._ticker_cik
 
     @property
     def ticker_title(self):
         return self._ticker_title
+
+    @property
+    def quote(self):
+        return "usd"
+
+    def to_dict(self) -> dict:
+        ret = super().to_dict()
+        ret['cik'] = self.ticker_cik
+        return ret
 
 class StockUSMarket(FinancialMarket):
 
