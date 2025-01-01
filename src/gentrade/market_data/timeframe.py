@@ -67,22 +67,21 @@ class TimeFrame:
 
         today = datetime.datetime.fromtimestamp(refer_ts)
         if self.interval == TimeFrame.WEEK:
-            # TODO: now only support 1w, but 4w or 8w
-            assert self.count == 1
-            last_week = datetime.datetime(
-                today.year, today.month, today.day - today.weekday())
-            last_week_ts = last_week.replace(
-                tzinfo=datetime.timezone.utc).timestamp()
-            return last_week_ts
+            delta = datetime.timedelta(-today.weekday(), weeks=-1 * self.count)
+            pre = today + delta
+            pre_date = datetime.datetime(pre.year, pre.month, pre.day, 0, 0, 0,
+                                         tzinfo=datetime.UTC)
+            return pre_date.timestamp()
 
         if self.interval == TimeFrame.MONTH:
-            # TODO: now only support 1M, but 4M or 8M
-            assert self.count == 1
-            today = datetime.datetime.now()
-            last_month = datetime.datetime(today.year, today.month, 1)
-            last_month_ts = last_month.replace(
-                tzinfo=datetime.timezone.utc).timestamp()
-            return last_month_ts
+            pre_year = today.year
+            pre_month = today.month - 1 * self.count
+            if pre_month <= 0:
+                pre_month += 12
+                pre_year -= 1
+            pre_date = datetime.datetime(pre_year, pre_month, 1, 0, 0, 0,
+                                         tzinfo=datetime.UTC)
+            return pre_date.timestamp()
         return None
 
     def ts_last_limit(self, limit, to=-1):
@@ -104,11 +103,10 @@ class TimeFrame:
             while previous_month_index < 0:
                 previous_month_index += 12
                 previous_year_index -= 1
-            first_month = datetime.datetime(previous_year_index,
-                                            previous_month_index, 1)
-            first_month_ts = first_month.replace(
-                tzinfo=datetime.timezone.utc).timestamp()
-            return first_month_ts
+            first_month = datetime.datetime(
+                previous_year_index, previous_month_index, 1,
+                tzinfo=datetime.UTC)
+            return first_month.timestamp()
 
         return None
 
