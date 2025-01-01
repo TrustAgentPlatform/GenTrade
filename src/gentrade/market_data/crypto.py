@@ -224,17 +224,23 @@ class BinanceMarket(CryptoMarket):
         # Continuous to fetching until get all data
         while remaining > 0:
             LOG.info("since=%d remaining=%d", index, remaining)
-            try:
-                ohlcv = self._ccxt_inst.fetch_ohlcv(asset.symbol, timeframe,
-                                                    index, remaining)
-            except TimeoutError:
-                LOG.critical("Network Timeout")
-                time.sleep(1)
-                continue
-            except ccxt.NetworkError:
-                LOG.critical("Network Error")
-                time.sleep(1)
-                continue
+            retry = 5
+            ohlcv = []
+            while retry > 0:
+                try:
+                    ohlcv = self._ccxt_inst.fetch_ohlcv(asset.symbol, timeframe,
+                                                        index, remaining)
+                    break
+                except TimeoutError:
+                    LOG.critical("Network Timeout")
+                    time.sleep(1)
+                    retry -= 1
+                    continue
+                except ccxt.NetworkError:
+                    LOG.critical("Network Error")
+                    time.sleep(1)
+                    retry -= 1
+                    continue
             all_ohlcv += ohlcv
             if len(ohlcv) <= 1:
                 break

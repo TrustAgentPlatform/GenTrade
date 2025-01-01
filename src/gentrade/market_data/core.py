@@ -238,6 +238,8 @@ class FinancialAssetCache:
             self._mem_cache[timeframe] = pd.DataFrame()
             return -1, -1
         cache_obj = self._mem_cache[timeframe]
+        if len(cache_obj) == 0:
+            return -1, -1
         return cache_obj.index[0], cache_obj.index[-1]
 
     def get_part(self, timeframe:str, since:int, to:int) -> pd.DataFrame:
