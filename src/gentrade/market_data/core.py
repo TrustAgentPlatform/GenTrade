@@ -90,6 +90,8 @@ class FinancialAsset(ABC):
         (since_new, to_new) = tfobj.normalize(since, to, limit)
         LOG.info("Normalize: [%d<->%d] => [%d<->%d]", since, to, since_new,
                  to_new)
+        if since_new >= to_new:
+            return pd.DataFrame()
 
         # Case 1: no any data in cache
         cache_start, cache_end = self._cache.get_index(timeframe)

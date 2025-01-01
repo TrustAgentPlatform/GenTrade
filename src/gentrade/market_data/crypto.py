@@ -82,8 +82,10 @@ class CryptoAsset(FinancialAsset):
         df = FinancialAsset.fetch_ohlcv(self, timeframe, since, to, limit)
         LOG.info("Double check whether the dataframe is valid")
 
-        if df is None or len(df) == 0 or \
-            not self._cache.check_cache(timeframe, df.index[0], df.index[-1]):
+        if df is None or len(df) == 0:
+            return df
+
+        if not self._cache.check_cache(timeframe, df.index[0], df.index[-1]):
             tfobj = TimeFrame(timeframe)
             (since_new, to_new) = tfobj.normalize(since, to, limit)
             df = self._market.fetch_ohlcv(
