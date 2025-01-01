@@ -4,11 +4,13 @@ on:
   pull_request:
     paths:
     - 'src/**/*.py'
+    - 'tests/**/*.py'
   push:
     branches:
     - main
     paths:
     - 'src/**/*.py'
+    - 'tests/**/*.py'
   workflow_dispatch:
 
 jobs:
