@@ -1,4 +1,6 @@
+
 import argparse
+
 import requests
 import json
 import yfinance as yf
@@ -71,3 +73,4 @@ def start():
 
 if __name__ == "__main__":
     start()
+
