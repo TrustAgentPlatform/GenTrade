@@ -1,0 +1,4282 @@
+{
+    "98": {
+        "cik_str": 313838,
+        "ticker": "SONY",
+        "title": "Sony Group Corp"
+    },
+    "1336": {
+        "cik_str": 2007855,
+        "ticker": "VG",
+        "title": "Venture Global, Inc."
+    },
+    "1337": {
+        "cik_str": 1745916,
+        "ticker": "PFSI",
+        "title": "PennyMac Financial Services, Inc."
+    },
+    "1338": {
+        "cik_str": 912242,
+        "ticker": "MAC",
+        "title": "MACERICH CO"
+    },
+    "1339": {
+        "cik_str": 1451809,
+        "ticker": "SITM",
+        "title": "SITIME Corp"
+    },
+    "1340": {
+        "cik_str": 916540,
+        "ticker": "DAR",
+        "title": "DARLING INGREDIENTS INC."
+    },
+    "1925": {
+        "cik_str": 1362988,
+        "ticker": "AYR",
+        "title": "Aircastle LTD"
+    },
+    "1926": {
+        "cik_str": 1759655,
+        "ticker": "PRVA",
+        "title": "Privia Health Group, Inc."
+    },
+    "2172": {
+        "cik_str": 2009460,
+        "ticker": "JAG",
+        "title": "Job Aire Group Inc."
+    },
+    "3370": {
+        "cik_str": 2033383,
+        "ticker": "FUSE",
+        "title": "CSLM Holdings Inc."
+    },
+    "3371": {
+        "cik_str": 1737287,
+        "ticker": "ALLO",
+        "title": "Allogene Therapeutics, Inc."
+    },
+    "3372": {
+        "cik_str": 912603,
+        "ticker": "RDUS",
+        "title": "RADIUS RECYCLING, INC."
+    },
+    "4080": {
+        "cik_str": 1890361,
+        "ticker": "ASPC",
+        "title": "ASPAC III Acquisition Corp."
+    },
+    "4082": {
+        "cik_str": 1593773,
+        "ticker": "KGNR",
+        "title": "AMJ Global Technology"
+    },
+    "4146": {
+        "cik_str": 66901,
+        "ticker": "EMP",
+        "title": "ENTERGY MISSISSIPPI, LLC"
+    },
+    "4246": {
+        "cik_str": 1926599,
+        "ticker": "TDAC",
+        "title": "Translational Development Acquisition Corp."
+    },
+    "5277": {
+        "cik_str": 2029492,
+        "ticker": "MLAC",
+        "title": "Mountain Lake Acquisition Corp."
+    },
+    "5278": {
+        "cik_str": 719733,
+        "ticker": "KTCC",
+        "title": "KEY TRONIC CORP"
+    },
+    "5279": {
+        "cik_str": 1661998,
+        "ticker": "QTTB",
+        "title": "Q32 Bio Inc."
+    },
+    "5280": {
+        "cik_str": 1826889,
+        "ticker": "BODI",
+        "title": "Beachbody Company, Inc."
+    },
+    "5281": {
+        "cik_str": 1562733,
+        "ticker": "SNYR",
+        "title": "Synergy CHC Corp."
+    },
+    "6737": {
+        "cik_str": 1807765,
+        "ticker": "PMVC",
+        "title": "PMV Consumer Acquisition Corp."
+    },
+    "6738": {
+        "cik_str": 1922639,
+        "ticker": "OILCF",
+        "title": "Permex Petroleum Corp"
+    },
+    "6739": {
+        "cik_str": 1639142,
+        "ticker": "AETHF",
+        "title": "Aether Global Innovations Corp."
+    },
+    "6740": {
+        "cik_str": 1416090,
+        "ticker": "IMII",
+        "title": "INCEPTION MINING INC."
+    },
+    "6741": {
+        "cik_str": 1543637,
+        "ticker": "NUMD",
+        "title": "Nu-Med Plus, Inc."
+    },
+    "6847": {
+        "cik_str": 2024283,
+        "ticker": "PAPA",
+        "title": "Papa Medical Inc."
+    },
+    "7003": {
+        "cik_str": 1709628,
+        "ticker": "CSAI",
+        "title": "CLOUDASTRUCTURE, INC."
+    },
+    "7004": {
+        "cik_str": 1702015,
+        "ticker": "AIDG",
+        "title": "AIS Holdings Group, Inc."
+    },
+    "7008": {
+        "cik_str": 1633369,
+        "ticker": "CAST",
+        "title": "FreeCast, Inc."
+    },
+    "7014": {
+        "cik_str": 1753681,
+        "ticker": "BYLT",
+        "title": "Elite Performance Holding Corp"
+    },
+    "7015": {
+        "cik_str": 2018222,
+        "ticker": "MKR",
+        "title": "707 Cayman Holdings Ltd."
+    },
+    "7016": {
+        "cik_str": 2022308,
+        "ticker": "KIDZ",
+        "title": "Classover Holdings, Inc."
+    },
+    "7017": {
+        "cik_str": 2025774,
+        "ticker": "ALPS",
+        "title": "Alps Global Holding Pubco"
+    },
+    "7018": {
+        "cik_str": 2025942,
+        "ticker": "CURX",
+        "title": "Curanex Pharmaceuticals Inc"
+    },
+    "7019": {
+        "cik_str": 2029976,
+        "ticker": "KFII",
+        "title": "K&F GROWTH ACQUISITION CORP. II"
+    },
+    "7020": {
+        "cik_str": 2030277,
+        "ticker": "LFS",
+        "title": "LEIFRAS Co., Ltd."
+    },
+    "7021": {
+        "cik_str": 2035016,
+        "ticker": "RIBB",
+        "title": "Ribbon Acquisition Corp."
+    },
+    "7022": {
+        "cik_str": 2035149,
+        "ticker": "FLOC",
+        "title": "Flowco Holdings Inc."
+    },
+    "7023": {
+        "cik_str": 2041208,
+        "ticker": "TREO",
+        "title": "Plum III Merger Corp."
+    },
+    "7024": {
+        "cik_str": 2012219,
+        "ticker": "OMSE",
+        "title": "OMS Energy Technologies Inc."
+    },
+    "7025": {
+        "cik_str": 2012318,
+        "ticker": "IPCX",
+        "title": "Inflection Point Acquisition Corp. III"
+    },
+    "7026": {
+        "cik_str": 1983897,
+        "ticker": "GMCG",
+        "title": "GLAMOORE Capital Group Co Ltd."
+    },
+    "7027": {
+        "cik_str": 1987101,
+        "ticker": "CABI",
+        "title": "EL-0713 Fund I, a series of Roll Up Vehicles, LP"
+    },
+    "7028": {
+        "cik_str": 1987189,
+        "ticker": "SLGB",
+        "title": "Smart Logistics Global Ltd"
+    },
+    "7030": {
+        "cik_str": 2003770,
+        "ticker": "KMYGY",
+        "title": "Kumyang Co., Ltd./ADR"
+    },
+    "7031": {
+        "cik_str": 2000530,
+        "ticker": "GMHS",
+        "title": "Gamehaus Holdings Inc."
+    },
+    "7033": {
+        "cik_str": 1996450,
+        "ticker": "DMNT",
+        "title": "DMINT, Inc."
+    },
+    "7034": {
+        "cik_str": 2000366,
+        "ticker": "SCAG",
+        "title": "Scage Future"
+    },
+    "7035": {
+        "cik_str": 1813744,
+        "ticker": "WDSP",
+        "title": "World Scan Project, Inc."
+    },
+    "7039": {
+        "cik_str": 1971828,
+        "ticker": "ENGS",
+        "title": "Energys Group Ltd"
+    },
+    "7040": {
+        "cik_str": 1903464,
+        "ticker": "AIMA",
+        "title": "Aimfinity Investment Corp. I"
+    },
+    "7041": {
+        "cik_str": 1946025,
+        "ticker": "SUNH",
+        "title": "Xuhang Holdings Ltd"
+    },
+    "7042": {
+        "cik_str": 1975641,
+        "ticker": "ZYBT",
+        "title": "Zhengye Biotechnology Holding Ltd"
+    },
+    "7043": {
+        "cik_str": 1993097,
+        "ticker": "MASK",
+        "title": "3 E Network Technology Group Ltd"
+    },
+    "7046": {
+        "cik_str": 2003977,
+        "ticker": "CRE",
+        "title": "Cre8 Enterprise Ltd"
+    },
+    "7047": {
+        "cik_str": 2004340,
+        "ticker": "SYNSY",
+        "title": "Syensqo SA/ADR"
+    },
+    "7048": {
+        "cik_str": 2004385,
+        "ticker": "FGO",
+        "title": "FG Holdings Ltd"
+    },
+    "7049": {
+        "cik_str": 2006468,
+        "ticker": "NUTR",
+        "title": "NUSATRIP Inc"
+    },
+    "7050": {
+        "cik_str": 2010499,
+        "ticker": "DGNX",
+        "title": "Diginex Ltd"
+    },
+    "7051": {
+        "cik_str": 2018462,
+        "ticker": "PCLA",
+        "title": "PicoCELA Inc."
+    },
+    "7052": {
+        "cik_str": 2018529,
+        "ticker": "NCT",
+        "title": "Intercont (Cayman) Ltd"
+    },
+    "7053": {
+        "cik_str": 2018836,
+        "ticker": "TTG",
+        "title": "Transten Global Group Ltd"
+    },
+    "7054": {
+        "cik_str": 2021688,
+        "ticker": "UFG",
+        "title": "Uni-Fuels Holdings Ltd"
+    },
+    "7055": {
+        "cik_str": 2021728,
+        "ticker": "CBRS",
+        "title": "Cerebras Systems Inc."
+    },
+    "7056": {
+        "cik_str": 2026514,
+        "ticker": "NAMM",
+        "title": "Namib Minerals"
+    },
+    "7057": {
+        "cik_str": 2030763,
+        "ticker": "WGRX",
+        "title": "Wellgistics Health, Inc."
+    },
+    "7058": {
+        "cik_str": 2030829,
+        "ticker": "SPHA",
+        "title": "Shepherd Ave Capital Acquisition Corp"
+    },
+    "7059": {
+        "cik_str": 1946485,
+        "ticker": "FPAQ",
+        "title": "FPA ENERGY ACQUISITION CORP."
+    },
+    "7060": {
+        "cik_str": 2042648,
+        "ticker": "YTTA",
+        "title": "Nidar Infrastructure Ltd"
+    },
+    "7062": {
+        "cik_str": 2030954,
+        "ticker": "XHLD",
+        "title": "TEN Holdings, Inc."
+    },
+    "7063": {
+        "cik_str": 2031009,
+        "ticker": "SKBL",
+        "title": "Skyline Builders Group Holding Ltd"
+    },
+    "7064": {
+        "cik_str": 2042187,
+        "ticker": "KYTFY",
+        "title": "Kyoto Financial Group Inc/ADR"
+    },
+    "7070": {
+        "cik_str": 1926314,
+        "ticker": "OCAC",
+        "title": "Ocean Capital Acquisition Corp"
+    },
+    "7074": {
+        "cik_str": 1851322,
+        "ticker": "PIF",
+        "title": "North Haven Private Income Fund LLC"
+    },
+    "7077": {
+        "cik_str": 1878371,
+        "ticker": "OHHH",
+        "title": "Orion Haus Homes & Hotels Inc."
+    },
+    "7078": {
+        "cik_str": 1859225,
+        "ticker": "FFSH",
+        "title": "Flag Fish Acquisition Corp"
+    },
+    "7080": {
+        "cik_str": 1894525,
+        "ticker": "APUS",
+        "title": "Apimeds Pharmaceuticals US, Inc."
+    },
+    "7082": {
+        "cik_str": 1880189,
+        "ticker": "SLRA",
+        "title": "SOLERA CORP."
+    },
+    "7085": {
+        "cik_str": 1867506,
+        "ticker": "DDCIU",
+        "title": "Diffuse Digital 30, LP"
+    },
+    "7086": {
+        "cik_str": 1861371,
+        "ticker": "ESPA",
+        "title": "Expectation Acquisition Corp"
+    },
+    "7088": {
+        "cik_str": 1871181,
+        "ticker": "FOFA",
+        "title": "Qualis Innovations, Inc."
+    },
+    "7089": {
+        "cik_str": 1872421,
+        "ticker": "GACW",
+        "title": "GACW Inc"
+    },
+    "7090": {
+        "cik_str": 1875016,
+        "ticker": "YMAT",
+        "title": "J-Star Holding Co., Ltd."
+    },
+    "7091": {
+        "cik_str": 1958133,
+        "ticker": "DXST",
+        "title": "Decent Holding Inc."
+    },
+    "7092": {
+        "cik_str": 1938534,
+        "ticker": "FBGL",
+        "title": "FBS Global Ltd"
+    },
+    "7095": {
+        "cik_str": 1762506,
+        "ticker": "VISTA",
+        "title": "Vista Energy, S.A.B. de C.V."
+    },
+    "7097": {
+        "cik_str": 1846416,
+        "ticker": "HVII",
+        "title": "Hennessy Capital Investment Corp. VII"
+    },
+    "7098": {
+        "cik_str": 1621459,
+        "ticker": "DIMR",
+        "title": "DIAMIR BIOSCIENCES CORP."
+    },
+    "7099": {
+        "cik_str": 1873454,
+        "ticker": "RYET",
+        "title": "Ruanyun Edai Technology Inc."
+    },
+    "7104": {
+        "cik_str": 1472033,
+        "ticker": "JTGEY",
+        "title": "Citibank,N.A./ADR"
+    },
+    "7105": {
+        "cik_str": 1503658,
+        "ticker": "LVDW",
+        "title": "LiquidValue Development Inc."
+    },
+    "7106": {
+        "cik_str": 1611282,
+        "ticker": "BABY",
+        "title": "PishPosh, Inc."
+    },
+    "7109": {
+        "cik_str": 1610718,
+        "ticker": "ODRS",
+        "title": "Outdoor Specialty Products, Inc."
+    },
+    "7111": {
+        "cik_str": 1555812,
+        "ticker": "CPAXF",
+        "title": "Siam Makro Public Co Limited/ADR"
+    },
+    "7131": {
+        "cik_str": 1265521,
+        "ticker": "PMHS",
+        "title": "Polomar Health Services, Inc."
+    },
+    "7134": {
+        "cik_str": 761648,
+        "ticker": "CDRPB",
+        "title": "CEDAR REALTY TRUST, INC."
+    },
+    "7143": {
+        "cik_str": 1009919,
+        "ticker": "IVHI",
+        "title": "Invech Holdings, Inc."
+    },
+    "7146": {
+        "cik_str": 1990643,
+        "ticker": "HPOT",
+        "title": "Great Restaurant Development Holdings Ltd"
+    },
+    "7147": {
+        "cik_str": 1941158,
+        "ticker": "WETO",
+        "title": "Webus International Ltd."
+    },
+    "7149": {
+        "cik_str": 1897532,
+        "ticker": "MJID",
+        "title": "Majestic Ideal Holdings Ltd"
+    },
+    "7151": {
+        "cik_str": 1979610,
+        "ticker": "WXM",
+        "title": "WF International Ltd."
+    },
+    "7152": {
+        "cik_str": 1982012,
+        "ticker": "TLIH",
+        "title": "Ten-League International Holdings Ltd"
+    },
+    "7153": {
+        "cik_str": 1969928,
+        "ticker": "MCTR",
+        "title": "CTRL GROUP Ltd"
+    },
+    "7154": {
+        "cik_str": 1969766,
+        "ticker": "SEPS",
+        "title": "Asep Medical Holdings Inc."
+    },
+    "7155": {
+        "cik_str": 2008007,
+        "ticker": "MAMK",
+        "title": "MaxsMaking Inc."
+    },
+    "7156": {
+        "cik_str": 2001794,
+        "ticker": "CIGL",
+        "title": "Concorde International Group Ltd."
+    },
+    "7157": {
+        "cik_str": 2007702,
+        "ticker": "HKPD",
+        "title": "Hong Kong Pharma Digital Technology Holdings Ltd"
+    },
+    "7158": {
+        "cik_str": 2028891,
+        "ticker": "CGGJ",
+        "title": "Guo Jin Sheng Shi Gold Jewelry Group Holding Ltd"
+    },
+    "7159": {
+        "cik_str": 2029118,
+        "ticker": "INR",
+        "title": "INFINITY NATURAL RESOURCES, INC."
+    },
+    "7160": {
+        "cik_str": 2033377,
+        "ticker": "MGRT",
+        "title": "Mega Fortune Co Ltd"
+    },
+    "7161": {
+        "cik_str": 2033515,
+        "ticker": "TOPW",
+        "title": "Top Win International Ltd"
+    },
+    "7162": {
+        "cik_str": 2033593,
+        "ticker": "SVCC",
+        "title": "Stellar V Capital Corp. (Cayman Islands)"
+    },
+    "7163": {
+        "cik_str": 2033738,
+        "ticker": "GTSG",
+        "title": "GATES GROUP Inc."
+    },
+    "7164": {
+        "cik_str": 2033770,
+        "ticker": "DAIC ",
+        "title": "CID Holdco, Inc."
+    },
+    "7165": {
+        "cik_str": 2048394,
+        "ticker": "YZRY",
+        "title": "Gansu Yunzhao Ruyi Technology Development Co., Ltd."
+    },
+    "7166": {
+        "cik_str": 2021364,
+        "ticker": "NCG",
+        "title": "HTL Capital Ltd."
+    },
+    "7167": {
+        "cik_str": 2024306,
+        "ticker": "JFB",
+        "title": "JFB Construction Holdings"
+    },
+    "7169": {
+        "cik_str": 2024460,
+        "ticker": "CHPG",
+        "title": "ChampionsGate Acquisition Corp"
+    },
+    "7170": {
+        "cik_str": 2024656,
+        "ticker": "FMFC",
+        "title": "Kandal M Venture Ltd"
+    },
+    "7172": {
+        "cik_str": 1958489,
+        "ticker": "CRGT",
+        "title": "Cortigent, Inc."
+    },
+    "7174": {
+        "cik_str": 2017758,
+        "ticker": "LHAI",
+        "title": "Linkhome Holdings Inc."
+    },
+    "7175": {
+        "cik_str": 2045489,
+        "ticker": "JHKC",
+        "title": "JuHe KC Holdings Ltd"
+    },
+    "7177": {
+        "cik_str": 2017206,
+        "ticker": "MRP",
+        "title": "Millrose Properties, Inc."
+    },
+    "7178": {
+        "cik_str": 2014955,
+        "ticker": "SDM",
+        "title": "Smart Digital Group Ltd"
+    },
+    "7183": {
+        "cik_str": 217410,
+        "ticker": "ULVR",
+        "title": "UNILEVER PLC"
+    },
+    "7194": {
+        "cik_str": 1130889,
+        "ticker": "CNCL",
+        "title": "CANCER CAPITAL CORP"
+    },
+    "7196": {
+        "cik_str": 1954705,
+        "ticker": "FFFZ",
+        "title": "Fuxing China Group Ltd"
+    },
+    "7200": {
+        "cik_str": 1999119,
+        "ticker": "LBRJ",
+        "title": "Libera Gaming Operations, Inc"
+    },
+    "7202": {
+        "cik_str": 2011674,
+        "ticker": "YDES",
+        "title": "YD Bio Ltd"
+    },
+    "7204": {
+        "cik_str": 1971387,
+        "ticker": "LIMN",
+        "title": "Iris Parent Holding Corp."
+    },
+    "7205": {
+        "cik_str": 1987363,
+        "ticker": "WTF",
+        "title": "Waton Financial Ltd"
+    },
+    "7206": {
+        "cik_str": 1991879,
+        "ticker": "TMGX",
+        "title": "Thoughtful Media Group Inc."
+    },
+    "7207": {
+        "cik_str": 1998560,
+        "ticker": "MIMI",
+        "title": "Mint Inc Ltd"
+    },
+    "7208": {
+        "cik_str": 1995075,
+        "ticker": "MGN",
+        "title": "Megan Holdings Ltd."
+    },
+    "7209": {
+        "cik_str": 2005569,
+        "ticker": "EMPG",
+        "title": "Empro Group Inc."
+    },
+    "7210": {
+        "cik_str": 2009714,
+        "ticker": "TMDE",
+        "title": "TMD Energy Ltd"
+    },
+    "7211": {
+        "cik_str": 2011954,
+        "ticker": "TWNP",
+        "title": "Twin Hospitality Group Inc."
+    },
+    "7212": {
+        "cik_str": 2002453,
+        "ticker": "STAK",
+        "title": "STAK Inc."
+    },
+    "7213": {
+        "cik_str": 2002045,
+        "ticker": "GCL",
+        "title": "GCL Global Holdings Ltd"
+    },
+    "7215": {
+        "cik_str": 1900720,
+        "ticker": "EPWK",
+        "title": "EPWK Holdings Ltd."
+    },
+    "7216": {
+        "cik_str": 2034334,
+        "ticker": "AACB",
+        "title": "Artius II Acquisition Inc."
+    },
+    "7217": {
+        "cik_str": 2040290,
+        "ticker": "LGPS",
+        "title": "LOGPROSTYLE INC."
+    },
+    "7220": {
+        "cik_str": 2025049,
+        "ticker": "AURS",
+        "title": "Aurous Resources"
+    },
+    "7221": {
+        "cik_str": 2025218,
+        "ticker": "DLXY",
+        "title": "Delixy Holdings Ltd"
+    },
+    "7222": {
+        "cik_str": 1980210,
+        "ticker": "WFF",
+        "title": "WF Holding Ltd"
+    },
+    "7223": {
+        "cik_str": 1982960,
+        "ticker": "KNRX",
+        "title": "KNOREX LTD."
+    },
+    "7224": {
+        "cik_str": 1960847,
+        "ticker": "TOPP",
+        "title": "Toppoint Holdings Inc."
+    },
+    "7225": {
+        "cik_str": 1956648,
+        "ticker": "NOEM",
+        "title": "CO2 Energy Transition Corp."
+    },
+    "7228": {
+        "cik_str": 1985488,
+        "ticker": "LZIG",
+        "title": "Leizig Thermal Management Co., Ltd"
+    },
+    "7229": {
+        "cik_str": 2028201,
+        "ticker": "COLA",
+        "title": "Columbus Acquisition Corp/Cayman Islands"
+    },
+    "7230": {
+        "cik_str": 2020228,
+        "ticker": "MSGY",
+        "title": "Masonglory Ltd"
+    },
+    "7231": {
+        "cik_str": 2023719,
+        "ticker": "GFTTY",
+        "title": "GFT Technologies SE/ADR"
+    },
+    "7232": {
+        "cik_str": 2023796,
+        "ticker": "FCHL",
+        "title": "Fitness Champs Holdings Ltd"
+    },
+    "7233": {
+        "cik_str": 2024114,
+        "ticker": "TGHL",
+        "title": "GrowHub Ltd"
+    },
+    "7234": {
+        "cik_str": 1995704,
+        "ticker": "CUPR",
+        "title": "Cuprina Holdings (Cayman) LTD"
+    },
+    "7236": {
+        "cik_str": 2028516,
+        "ticker": "ATII",
+        "title": "Archimedes Tech SPAC Partners II Co."
+    },
+    "7237": {
+        "cik_str": 2028614,
+        "ticker": "DMAA",
+        "title": "Drugs Made In America Acquisition Corp."
+    },
+    "7238": {
+        "cik_str": 2032950,
+        "ticker": "HSPT",
+        "title": "Horizon Space Acquisition II Corp."
+    },
+    "7239": {
+        "cik_str": 2039058,
+        "ticker": "JACS",
+        "title": "Jackson Acquisition Co II"
+    },
+    "7240": {
+        "cik_str": 2047235,
+        "ticker": "WSBK",
+        "title": "Winchester Bancorp, Inc./MD/"
+    },
+    "7241": {
+        "cik_str": 1995520,
+        "ticker": "YB",
+        "title": "Yuanbao Inc."
+    },
+    "7243": {
+        "cik_str": 2023554,
+        "ticker": "SNDK",
+        "title": "Sandisk Corp"
+    },
+    "7244": {
+        "cik_str": 2027708,
+        "ticker": "CEPO",
+        "title": "Cantor Equity Partners I, Inc."
+    },
+    "7245": {
+        "cik_str": 2027722,
+        "ticker": "GRAN",
+        "title": "Grande Group Ltd/HK"
+    },
+    "7248": {
+        "cik_str": 2032528,
+        "ticker": "DRDB",
+        "title": "Roman DBDR Acquisition Corp. II"
+    },
+    "7249": {
+        "cik_str": 2032545,
+        "ticker": "CJMB",
+        "title": "CALLAN JMB INC."
+    },
+    "7250": {
+        "cik_str": 2037646,
+        "ticker": "MDER",
+        "title": "KVAC (Cayman) Ltd"
+    },
+    "7251": {
+        "cik_str": 1997698,
+        "ticker": "PRGY",
+        "title": "IGTA Merger Sub Ltd"
+    },
+    "7252": {
+        "cik_str": 1982448,
+        "ticker": "BLIV",
+        "title": "BeLive Holdings"
+    },
+    "7253": {
+        "cik_str": 2001288,
+        "ticker": "PN",
+        "title": "Skycorp Solar Group Ltd"
+    },
+    "7254": {
+        "cik_str": 2004489,
+        "ticker": "BMGL",
+        "title": "Basel Medical Group Ltd"
+    },
+    "7255": {
+        "cik_str": 2009312,
+        "ticker": "AGH",
+        "title": "Aureus Greenway Holdings Inc"
+    },
+    "7256": {
+        "cik_str": 2009342,
+        "ticker": "CUNO",
+        "title": "Specialty Copper Listco Plc"
+    },
+    "7257": {
+        "cik_str": 2014245,
+        "ticker": "SYH",
+        "title": "Mountain&Sea Health Inc."
+    },
+    "7258": {
+        "cik_str": 2014254,
+        "ticker": "KBSX",
+        "title": "FST Corp."
+    },
+    "7260": {
+        "cik_str": 2035644,
+        "ticker": "RANG",
+        "title": "Range Capital Acquisition Corp."
+    },
+    "7261": {
+        "cik_str": 2044327,
+        "ticker": "CFND",
+        "title": "C1 Fund Inc."
+    },
+    "7262": {
+        "cik_str": 2012600,
+        "ticker": "RYOJ",
+        "title": "rYojbaba Co., Ltd."
+    },
+    "7263": {
+        "cik_str": 2013320,
+        "ticker": "ELOG",
+        "title": "Eastern International Ltd."
+    },
+    "7264": {
+        "cik_str": 2027262,
+        "ticker": "FTRK",
+        "title": "Fast Track Group"
+    },
+    "7265": {
+        "cik_str": 2027265,
+        "ticker": "MB",
+        "title": "MASTERBEEF GROUP"
+    },
+    "7266": {
+        "cik_str": 2027360,
+        "ticker": "RCT",
+        "title": "RedCloud Holdings plc"
+    },
+    "7576": {
+        "cik_str": 1004980,
+        "ticker": "PCG-PC",
+        "title": "PG&E Corp"
+    },
+    "7594": {
+        "cik_str": 1004980,
+        "ticker": "PCG-PI",
+        "title": "PG&E Corp"
+    },
+    "7605": {
+        "cik_str": 78814,
+        "ticker": "PBI-PB",
+        "title": "PITNEY BOWES INC /DE/"
+    },
+    "7778": {
+        "cik_str": 1799191,
+        "ticker": "DFPH",
+        "title": "Oncology Institute, Inc."
+    },
+    "7823": {
+        "cik_str": 1347123,
+        "ticker": "EBRCZ",
+        "title": "EBR Systems, Inc."
+    },
+    "8126": {
+        "cik_str": 1584831,
+        "ticker": "OXBRW",
+        "title": "OXBRIDGE RE HOLDINGS Ltd"
+    },
+    "8286": {
+        "cik_str": 2028699,
+        "ticker": "DYNXW",
+        "title": "Dynamix Corp"
+    },
+    "8288": {
+        "cik_str": 2024459,
+        "ticker": "CHARR",
+        "title": "Charlton Aria Acquisition Corp"
+    },
+    "8291": {
+        "cik_str": 2028935,
+        "ticker": "FACTW",
+        "title": "FACT II Acquisition Corp."
+    },
+    "8294": {
+        "cik_str": 2028707,
+        "ticker": "BACQR",
+        "title": "Bleichroeder Acquisition Corp. I"
+    },
+    "8296": {
+        "cik_str": 2021042,
+        "ticker": "EQV-WT",
+        "title": "EQV Ventures Acquisition Corp."
+    },
+    "8298": {
+        "cik_str": 2001557,
+        "ticker": "INVLW",
+        "title": "Innventure, Inc."
+    },
+    "8299": {
+        "cik_str": 2001699,
+        "ticker": "HPAIW",
+        "title": "Helport AI Ltd"
+    },
+    "8300": {
+        "cik_str": 2020987,
+        "ticker": "YHNAR",
+        "title": "YHN Acquisition I Ltd"
+    },
+    "8303": {
+        "cik_str": 2015502,
+        "ticker": "LPAAW",
+        "title": "Launch One Acquisition Corp."
+    },
+    "8305": {
+        "cik_str": 1979484,
+        "ticker": "ABVEW",
+        "title": "Above Food Ingredients Inc."
+    },
+    "8307": {
+        "cik_str": 1858007,
+        "ticker": "GDSTR",
+        "title": "Goldenstone Acquisition Ltd."
+    },
+    "8309": {
+        "cik_str": 1858007,
+        "ticker": "GDSTW",
+        "title": "Goldenstone Acquisition Ltd."
+    },
+    "8310": {
+        "cik_str": 1861841,
+        "ticker": "ARBEW",
+        "title": "Arbe Robotics Ltd."
+    },
+    "8311": {
+        "cik_str": 1863006,
+        "ticker": "VLN-WT",
+        "title": "Valens Semiconductor Ltd."
+    },
+    "8312": {
+        "cik_str": 1875931,
+        "ticker": "OFSWF",
+        "title": "Carbon Streaming Corp"
+    },
+    "8314": {
+        "cik_str": 1881741,
+        "ticker": "AOGOW",
+        "title": "Arogo Capital Acquisition Corp."
+    },
+    "8315": {
+        "cik_str": 1874315,
+        "ticker": "SATLW",
+        "title": "Satellogic Inc."
+    },
+    "8316": {
+        "cik_str": 1871321,
+        "ticker": "DRTSW",
+        "title": "Alpha Tau Medical Ltd."
+    },
+    "8318": {
+        "cik_str": 1856161,
+        "ticker": "PRLHW",
+        "title": "Pearl Holdings Acquisition Corp"
+    },
+    "8319": {
+        "cik_str": 1855485,
+        "ticker": "CLDWW",
+        "title": "Calidi Biotherapeutics, Inc."
+    },
+    "8320": {
+        "cik_str": 1854463,
+        "ticker": "WINVR",
+        "title": "WinVest Acquisition Corp."
+    },
+    "8322": {
+        "cik_str": 1854463,
+        "ticker": "WINVW",
+        "title": "WinVest Acquisition Corp."
+    },
+    "8323": {
+        "cik_str": 1852551,
+        "ticker": "NVAWW",
+        "title": "Nova Minerals Ltd"
+    },
+    "8327": {
+        "cik_str": 2014982,
+        "ticker": "SIMAW",
+        "title": "SIM Acquisition Corp. I"
+    },
+    "8330": {
+        "cik_str": 2000775,
+        "ticker": "BKHAR",
+        "title": "Black Hawk Acquisition Corp"
+    },
+    "8332": {
+        "cik_str": 1849058,
+        "ticker": "CLOER",
+        "title": "Clover Leaf Capital Corp."
+    },
+    "8336": {
+        "cik_str": 1953530,
+        "ticker": "OCSAW",
+        "title": "Oculis Holding AG"
+    },
+    "8337": {
+        "cik_str": 1951378,
+        "ticker": "QLUNF",
+        "title": "Qilun Group Inc."
+    },
+    "8338": {
+        "cik_str": 1964504,
+        "ticker": "CLGDF",
+        "title": "Aris Mining Corp"
+    },
+    "8339": {
+        "cik_str": 1884082,
+        "ticker": "PLSAY",
+        "title": "Polestar Automotive Holding UK PLC"
+    },
+    "8341": {
+        "cik_str": 1887673,
+        "ticker": "WLDSW",
+        "title": "Wearable Devices Ltd."
+    },
+    "8343": {
+        "cik_str": 1889450,
+        "ticker": "FTIIW",
+        "title": "FutureTech II Acquisition Corp."
+    },
+    "8345": {
+        "cik_str": 1894176,
+        "ticker": "CCIRW",
+        "title": "Cohen Circle Acquisition Corp. I"
+    },
+    "8348": {
+        "cik_str": 1894057,
+        "ticker": "PPYAW",
+        "title": "Papaya Growth Opportunity Corp. I"
+    },
+    "8352": {
+        "cik_str": 1903145,
+        "ticker": "GRRRW",
+        "title": "Gorilla Technology Group Inc."
+    },
+    "8355": {
+        "cik_str": 831609,
+        "ticker": "CWLXF",
+        "title": "C21 Investments Inc."
+    },
+    "8359": {
+        "cik_str": 314808,
+        "ticker": "VAL-WT",
+        "title": "Valaris Ltd"
+    },
+    "8366": {
+        "cik_str": 750004,
+        "ticker": "LAWIL",
+        "title": "Light & Wonder, Inc."
+    },
+    "8375": {
+        "cik_str": 37996,
+        "ticker": "F-PB",
+        "title": "FORD MOTOR CO"
+    },
+    "8376": {
+        "cik_str": 37996,
+        "ticker": "F-PC",
+        "title": "FORD MOTOR CO"
+    },
+    "8377": {
+        "cik_str": 37996,
+        "ticker": "F-PD",
+        "title": "FORD MOTOR CO"
+    },
+    "8380": {
+        "cik_str": 320335,
+        "ticker": "GL-PD",
+        "title": "GLOBE LIFE INC."
+    },
+    "8394": {
+        "cik_str": 720672,
+        "ticker": "SFB",
+        "title": "STIFEL FINANCIAL CORP"
+    },
+    "8397": {
+        "cik_str": 1812173,
+        "ticker": "RBOT-WT",
+        "title": "Vicarious Surgical Inc."
+    },
+    "8398": {
+        "cik_str": 1789029,
+        "ticker": "AEVA-WT",
+        "title": "Aeva Technologies, Inc."
+    },
+    "8403": {
+        "cik_str": 1781162,
+        "ticker": "MNTSW",
+        "title": "Momentus Inc."
+    },
+    "8404": {
+        "cik_str": 1826011,
+        "ticker": "BNZIW",
+        "title": "Banzai International, Inc."
+    },
+    "8405": {
+        "cik_str": 1812727,
+        "ticker": "RELIW",
+        "title": "Reliance Global Group, Inc."
+    },
+    "8406": {
+        "cik_str": 1818382,
+        "ticker": "HUMAW",
+        "title": "Humacyte, Inc."
+    },
+    "8407": {
+        "cik_str": 1817640,
+        "ticker": "BRZHW",
+        "title": "Breeze Holdings Acquisition Corp."
+    },
+    "8408": {
+        "cik_str": 1817640,
+        "ticker": "BRZHR",
+        "title": "Breeze Holdings Acquisition Corp."
+    },
+    "8409": {
+        "cik_str": 1829247,
+        "ticker": "BFRGW",
+        "title": "BullFrog AI Holdings, Inc."
+    },
+    "8411": {
+        "cik_str": 1830033,
+        "ticker": "PCTTW",
+        "title": "PureCycle Technologies, Inc."
+    },
+    "8412": {
+        "cik_str": 1835378,
+        "ticker": "CTV-WT",
+        "title": "Innovid Corp."
+    },
+    "8413": {
+        "cik_str": 1833835,
+        "ticker": "PSFE-WT",
+        "title": "Paysafe Ltd"
+    },
+    "8414": {
+        "cik_str": 1839341,
+        "ticker": "CORZW",
+        "title": "Core Scientific, Inc./tx"
+    },
+    "8415": {
+        "cik_str": 1839341,
+        "ticker": "CORZR",
+        "title": "Core Scientific, Inc./tx"
+    },
+    "8416": {
+        "cik_str": 1839341,
+        "ticker": "CORZZ",
+        "title": "Core Scientific, Inc./tx"
+    },
+    "8417": {
+        "cik_str": 1835972,
+        "ticker": "AILEW",
+        "title": "iLearningEngines, Inc."
+    },
+    "8418": {
+        "cik_str": 1836981,
+        "ticker": "BBAI-WT",
+        "title": "BigBear.ai Holdings, Inc."
+    },
+    "8419": {
+        "cik_str": 1826889,
+        "ticker": "BODYW",
+        "title": "Beachbody Company, Inc."
+    },
+    "8420": {
+        "cik_str": 1822145,
+        "ticker": "PRSTW",
+        "title": "Presto Automation Inc."
+    },
+    "8421": {
+        "cik_str": 1825024,
+        "ticker": "OPADW",
+        "title": "Offerpad Solutions Inc."
+    },
+    "8422": {
+        "cik_str": 1823794,
+        "ticker": "ARKOW",
+        "title": "ARKO Corp."
+    },
+    "8423": {
+        "cik_str": 1818605,
+        "ticker": "DISTR",
+        "title": "Distoken Acquisition Corp"
+    },
+    "8424": {
+        "cik_str": 1818605,
+        "ticker": "DISTW",
+        "title": "Distoken Acquisition Corp"
+    },
+    "8425": {
+        "cik_str": 1816431,
+        "ticker": "QSIAW",
+        "title": "Quantum-Si Inc"
+    },
+    "8426": {
+        "cik_str": 1815849,
+        "ticker": "ATIPW",
+        "title": "ATI Physical Therapy, Inc."
+    },
+    "8427": {
+        "cik_str": 1815846,
+        "ticker": "MSOGF",
+        "title": "MINISO Group Holding Ltd"
+    },
+    "8428": {
+        "cik_str": 1841330,
+        "ticker": "KTTAW",
+        "title": "Pasithea Therapeutics Corp."
+    },
+    "8432": {
+        "cik_str": 1830188,
+        "ticker": "UHGWW",
+        "title": "United Homes Group, Inc."
+    },
+    "8433": {
+        "cik_str": 1836100,
+        "ticker": "PUCKW",
+        "title": "Goal Acquisitions Corp."
+    },
+    "8434": {
+        "cik_str": 1846253,
+        "ticker": "OABIW",
+        "title": "OmniAb, Inc."
+    },
+    "8435": {
+        "cik_str": 1846235,
+        "ticker": "IMAQR",
+        "title": "International Media Acquisition Corp."
+    },
+    "8437": {
+        "cik_str": 1846235,
+        "ticker": "IMAQW",
+        "title": "International Media Acquisition Corp."
+    },
+    "8438": {
+        "cik_str": 1845437,
+        "ticker": "NPWR-WT",
+        "title": "NET Power Inc."
+    },
+    "8439": {
+        "cik_str": 1845459,
+        "ticker": "NKGNW",
+        "title": "NKGen Biotech, Inc."
+    },
+    "8440": {
+        "cik_str": 1852353,
+        "ticker": "DC-WT",
+        "title": "Dakota Gold Corp."
+    },
+    "8441": {
+        "cik_str": 1847462,
+        "ticker": "AYWWF",
+        "title": "Ayr Wellness Inc."
+    },
+    "8443": {
+        "cik_str": 1848437,
+        "ticker": "CITEW",
+        "title": "Cartica Acquisition Corp"
+    },
+    "8445": {
+        "cik_str": 1861063,
+        "ticker": "AQUNR",
+        "title": "Aquaron Acquisition Corp."
+    },
+    "8447": {
+        "cik_str": 1869601,
+        "ticker": "EMCGW",
+        "title": "Embrace Change Acquisition Corp."
+    },
+    "8448": {
+        "cik_str": 1862150,
+        "ticker": "CINGW",
+        "title": "Cingulate Inc."
+    },
+    "8449": {
+        "cik_str": 1875091,
+        "ticker": "NRSNW",
+        "title": "NeuroSense Therapeutics Ltd."
+    },
+    "8450": {
+        "cik_str": 1869601,
+        "ticker": "EMCGR",
+        "title": "Embrace Change Acquisition Corp."
+    },
+    "8452": {
+        "cik_str": 1876716,
+        "ticker": "ASCWF",
+        "title": "ASPAC II Acquisition Corp."
+    },
+    "8453": {
+        "cik_str": 1876716,
+        "ticker": "ASCRF",
+        "title": "ASPAC II Acquisition Corp."
+    },
+    "8456": {
+        "cik_str": 1959994,
+        "ticker": "COOTW",
+        "title": "Australian Oilseeds Holdings Ltd"
+    },
+    "8457": {
+        "cik_str": 1963088,
+        "ticker": "ATCHW",
+        "title": "AtlasClear Holdings, Inc."
+    },
+    "8459": {
+        "cik_str": 1970509,
+        "ticker": "HYAC-WT",
+        "title": "Haymaker Acquisition Corp. 4"
+    },
+    "8461": {
+        "cik_str": 1945422,
+        "ticker": "OAKUW",
+        "title": "Oak Woods Acquisition Corp"
+    },
+    "8463": {
+        "cik_str": 1997296,
+        "ticker": "MDCXW",
+        "title": "Medicus Pharma Ltd."
+    },
+    "8465": {
+        "cik_str": 1970622,
+        "ticker": "IPXXW",
+        "title": "Inflection Point Acquisition Corp. II"
+    },
+    "8467": {
+        "cik_str": 1899287,
+        "ticker": "AMPX-WT",
+        "title": "Amprius Technologies, Inc."
+    },
+    "8471": {
+        "cik_str": 1889106,
+        "ticker": "ATMCR",
+        "title": "ALPHATIME ACQUISITION CORP"
+    },
+    "8473": {
+        "cik_str": 1889106,
+        "ticker": "ATMCW",
+        "title": "ALPHATIME ACQUISITION CORP"
+    },
+    "8475": {
+        "cik_str": 1930313,
+        "ticker": "SBCWW",
+        "title": "SBC Medical Group Holdings Inc"
+    },
+    "8476": {
+        "cik_str": 1901336,
+        "ticker": "ALCYW",
+        "title": "Alchemy Investments Acquisition Corp 1"
+    },
+    "8478": {
+        "cik_str": 1915380,
+        "ticker": "DMYY-UN",
+        "title": "dMY Squared Technology Group, Inc."
+    },
+    "8479": {
+        "cik_str": 1915380,
+        "ticker": "DMYY-WT",
+        "title": "dMY Squared Technology Group, Inc."
+    },
+    "8481": {
+        "cik_str": 1648087,
+        "ticker": "AREBW",
+        "title": "AMERICAN REBEL HOLDINGS INC"
+    },
+    "8488": {
+        "cik_str": 1716583,
+        "ticker": "HYZNW",
+        "title": "Hyzon Motors Inc."
+    },
+    "8491": {
+        "cik_str": 1748137,
+        "ticker": "NEOVW",
+        "title": "NeoVolta Inc."
+    },
+    "8492": {
+        "cik_str": 1760689,
+        "ticker": "MVSTW",
+        "title": "Microvast Holdings, Inc."
+    },
+    "8495": {
+        "cik_str": 1610853,
+        "ticker": "HSDTW",
+        "title": "HELIUS MEDICAL TECHNOLOGIES, INC."
+    },
+    "8503": {
+        "cik_str": 1718405,
+        "ticker": "HYMCW",
+        "title": "HYCROFT MINING HOLDING CORP"
+    },
+    "8504": {
+        "cik_str": 1805385,
+        "ticker": "EVLVW",
+        "title": "Evolv Technologies Holdings, Inc."
+    },
+    "8505": {
+        "cik_str": 1801602,
+        "ticker": "SBIGW",
+        "title": "SpringBig Holdings, Inc."
+    },
+    "8506": {
+        "cik_str": 1777921,
+        "ticker": "AVPTW",
+        "title": "AvePoint, Inc."
+    },
+    "8507": {
+        "cik_str": 1744676,
+        "ticker": "TCMEF",
+        "title": "Tencent Music Entertainment Group"
+    },
+    "8512": {
+        "cik_str": 827876,
+        "ticker": "CLSKW",
+        "title": "CLEANSPARK, INC."
+    },
+    "8513": {
+        "cik_str": 1023458,
+        "ticker": "XAEIU",
+        "title": "AEI INCOME & GROWTH FUND XXII LTD PARTNERSHIP"
+    },
+    "8516": {
+        "cik_str": 1034670,
+        "ticker": "ALIV",
+        "title": "AUTOLIV INC"
+    },
+    "8553": {
+        "cik_str": 6176,
+        "ticker": "AP-WT",
+        "title": "AMPCO PITTSBURGH CORP"
+    },
+    "8554": {
+        "cik_str": 1357671,
+        "ticker": "CRTDW",
+        "title": "Creatd, Inc."
+    },
+    "8555": {
+        "cik_str": 1349706,
+        "ticker": "TOGIW",
+        "title": "TurnOnGreen, Inc."
+    },
+    "8561": {
+        "cik_str": 1400891,
+        "ticker": "IHETW",
+        "title": "iHeartMedia, Inc."
+    },
+    "8568": {
+        "cik_str": 1408057,
+        "ticker": "ICCRW",
+        "title": "iCoreConnect Inc."
+    },
+    "8572": {
+        "cik_str": 61004,
+        "ticker": "LGL-WT",
+        "title": "LGL GROUP INC"
+    },
+    "8585": {
+        "cik_str": 886744,
+        "ticker": "GERNW",
+        "title": "GERON CORP"
+    },
+    "8599": {
+        "cik_str": 886163,
+        "ticker": "LGNDZ",
+        "title": "LIGAND PHARMACEUTICALS INC"
+    },
+    "8600": {
+        "cik_str": 886163,
+        "ticker": "LGNXZ",
+        "title": "LIGAND PHARMACEUTICALS INC"
+    },
+    "8601": {
+        "cik_str": 886163,
+        "ticker": "LGNYZ",
+        "title": "LIGAND PHARMACEUTICALS INC"
+    },
+    "8611": {
+        "cik_str": 1372514,
+        "ticker": "KPHMW",
+        "title": "KIORA PHARMACEUTICALS INC"
+    },
+    "8626": {
+        "cik_str": 1159508,
+        "ticker": "DEENF",
+        "title": "DEUTSCHE BANK AKTIENGESELLSCHAFT"
+    },
+    "8627": {
+        "cik_str": 1159508,
+        "ticker": "ADZCF",
+        "title": "DEUTSCHE BANK AKTIENGESELLSCHAFT"
+    },
+    "8640": {
+        "cik_str": 1232384,
+        "ticker": "TCNCF",
+        "title": "TC ENERGY CORP"
+    },
+    "8645": {
+        "cik_str": 1022321,
+        "ticker": "GELPP",
+        "title": "GENESIS ENERGY LP"
+    },
+    "8649": {
+        "cik_str": 1070050,
+        "ticker": "APCXW",
+        "title": "AppTech Payments Corp."
+    },
+    "8655": {
+        "cik_str": 798949,
+        "ticker": "UNTCW",
+        "title": "UNIT CORP"
+    },
+    "8660": {
+        "cik_str": 701818,
+        "ticker": "KGCRF",
+        "title": "KINROSS GOLD CORP"
+    },
+    "8686": {
+        "cik_str": 1462223,
+        "ticker": "NIXXW",
+        "title": "Nixxy, Inc."
+    },
+    "8687": {
+        "cik_str": 1475260,
+        "ticker": "CVE-WT",
+        "title": "CENOVUS ENERGY INC."
+    },
+    "8702": {
+        "cik_str": 1577552,
+        "ticker": "BBAAY",
+        "title": "Alibaba Group Holding Ltd"
+    },
+    "8704": {
+        "cik_str": 1560293,
+        "ticker": "TNONW",
+        "title": "Tenon Medical, Inc."
+    },
+    "8706": {
+        "cik_str": 1534043,
+        "ticker": "FUPEY",
+        "title": "Fuchs Petrolub SE/ADR"
+    },
+    "8720": {
+        "cik_str": 98222,
+        "ticker": "TDDWW",
+        "title": "TIDEWATER INC"
+    },
+    "8721": {
+        "cik_str": 98222,
+        "ticker": "TDGMW",
+        "title": "TIDEWATER INC"
+    },
+    "8723": {
+        "cik_str": 14930,
+        "ticker": "BC-PA",
+        "title": "BRUNSWICK CORP"
+    },
+    "8724": {
+        "cik_str": 14930,
+        "ticker": "BC-PB",
+        "title": "BRUNSWICK CORP"
+    },
+    "8725": {
+        "cik_str": 14930,
+        "ticker": "BC-PC",
+        "title": "BRUNSWICK CORP"
+    },
+    "8735": {
+        "cik_str": 797468,
+        "ticker": "OXY-WT",
+        "title": "OCCIDENTAL PETROLEUM CORP /DE/"
+    },
+    "8739": {
+        "cik_str": 862831,
+        "ticker": "FIISP",
+        "title": "FINANCIAL INSTITUTIONS INC"
+    },
+    "8740": {
+        "cik_str": 832489,
+        "ticker": "GOVXW",
+        "title": "GeoVax Labs, Inc."
+    },
+    "8742": {
+        "cik_str": 72573,
+        "ticker": "MOVAA",
+        "title": "MOVADO GROUP INC"
+    },
+    "8755": {
+        "cik_str": 753308,
+        "ticker": "NEE-PN",
+        "title": "NEXTERA ENERGY INC"
+    },
+    "8760": {
+        "cik_str": 718940,
+        "ticker": "BCAEF",
+        "title": "BCE INC"
+    },
+    "8765": {
+        "cik_str": 310732,
+        "ticker": "BNPZY",
+        "title": "BNP PARIBAS"
+    },
+    "8778": {
+        "cik_str": 14272,
+        "ticker": "CELG-RI",
+        "title": "BRISTOL MYERS SQUIBB CO"
+    },
+    "8779": {
+        "cik_str": 11544,
+        "ticker": "WRB-PF",
+        "title": "BERKLEY W R CORP"
+    },
+    "8780": {
+        "cik_str": 11544,
+        "ticker": "WRB-PG",
+        "title": "BERKLEY W R CORP"
+    },
+    "8781": {
+        "cik_str": 11544,
+        "ticker": "WRB-PH",
+        "title": "BERKLEY W R CORP"
+    },
+    "8790": {
+        "cik_str": 1022899,
+        "ticker": "PTIXW",
+        "title": "Protagenic Therapeutics, Inc.\\new"
+    },
+    "8793": {
+        "cik_str": 947263,
+        "ticker": "TDOMF",
+        "title": "TORONTO DOMINION BANK"
+    },
+    "8794": {
+        "cik_str": 947263,
+        "ticker": "TDOPF",
+        "title": "TORONTO DOMINION BANK"
+    },
+    "8801": {
+        "cik_str": 1084267,
+        "ticker": "MOBQW",
+        "title": "Mobiquity Technologies, Inc."
+    },
+    "8803": {
+        "cik_str": 1075415,
+        "ticker": "DHCNL",
+        "title": "DIVERSIFIED HEALTHCARE TRUST"
+    },
+    "8805": {
+        "cik_str": 1070423,
+        "ticker": "PAAPU",
+        "title": "PLAINS ALL AMERICAN PIPELINE LP"
+    },
+    "8806": {
+        "cik_str": 1058307,
+        "ticker": "NXPLW",
+        "title": "NextPlat Corp"
+    },
+    "8809": {
+        "cik_str": 1097362,
+        "ticker": "SNLIF",
+        "title": "SUN LIFE FINANCIAL INC"
+    },
+    "8810": {
+        "cik_str": 1097362,
+        "ticker": "SLFQF",
+        "title": "SUN LIFE FINANCIAL INC"
+    },
+    "8813": {
+        "cik_str": 1131312,
+        "ticker": "ZNOGW",
+        "title": "ZION OIL & GAS INC"
+    },
+    "8827": {
+        "cik_str": 895728,
+        "ticker": "ENBSF",
+        "title": "ENBRIDGE INC"
+    },
+    "8838": {
+        "cik_str": 895421,
+        "ticker": "MSTLW",
+        "title": "MORGAN STANLEY"
+    },
+    "8840": {
+        "cik_str": 1014763,
+        "ticker": "AIMDW",
+        "title": "Ainos, Inc."
+    },
+    "8842": {
+        "cik_str": 1000275,
+        "ticker": "RBMCF",
+        "title": "ROYAL BANK OF CANADA"
+    },
+    "8859": {
+        "cik_str": 1127248,
+        "ticker": "EMRPF",
+        "title": "EMERA INC"
+    },
+    "8860": {
+        "cik_str": 1127248,
+        "ticker": "EMRJF",
+        "title": "EMERA INC"
+    },
+    "8861": {
+        "cik_str": 1127248,
+        "ticker": "EMICF",
+        "title": "EMERA INC"
+    },
+    "8869": {
+        "cik_str": 1001085,
+        "ticker": "BKFPF",
+        "title": "BROOKFIELD Corp /ON/"
+    },
+    "8871": {
+        "cik_str": 1001085,
+        "ticker": "BRCFF",
+        "title": "BROOKFIELD Corp /ON/"
+    },
+    "8872": {
+        "cik_str": 1001085,
+        "ticker": "BKFDF",
+        "title": "BROOKFIELD Corp /ON/"
+    },
+    "8873": {
+        "cik_str": 1001085,
+        "ticker": "BKFOF",
+        "title": "BROOKFIELD Corp /ON/"
+    },
+    "8874": {
+        "cik_str": 946486,
+        "ticker": "WINTW",
+        "title": "WINDTREE THERAPEUTICS INC /DE/"
+    },
+    "8893": {
+        "cik_str": 933267,
+        "ticker": "IRS-WT",
+        "title": "IRSA INVESTMENTS & REPRESENTATIONS INC"
+    },
+    "8900": {
+        "cik_str": 1034957,
+        "ticker": "CRESW",
+        "title": "CRESUD INC"
+    },
+    "8919": {
+        "cik_str": 1675033,
+        "ticker": "GECCZ",
+        "title": "Great Elm Capital Corp."
+    },
+    "8922": {
+        "cik_str": 1621221,
+        "ticker": "ATLEW",
+        "title": "ARTELO BIOSCIENCES, INC."
+    },
+    "8923": {
+        "cik_str": 1624326,
+        "ticker": "PAVMZ",
+        "title": "PAVmed Inc."
+    },
+    "8925": {
+        "cik_str": 1716947,
+        "ticker": "ENSCW",
+        "title": "Ensysce Biosciences, Inc."
+    },
+    "8934": {
+        "cik_str": 1690536,
+        "ticker": "FSREI",
+        "title": "FS Credit Real Estate Income Trust, Inc."
+    },
+    "8935": {
+        "cik_str": 1690536,
+        "ticker": "FSREM",
+        "title": "FS Credit Real Estate Income Trust, Inc."
+    },
+    "8936": {
+        "cik_str": 1708176,
+        "ticker": "HOFVW",
+        "title": "Hall of Fame Resort & Entertainment Co"
+    },
+    "8940": {
+        "cik_str": 1101026,
+        "ticker": "ZIVOW",
+        "title": "Zivo Bioscience, Inc."
+    },
+    "8941": {
+        "cik_str": 1104038,
+        "ticker": "VRMEW",
+        "title": "VerifyMe, Inc."
+    },
+    "8943": {
+        "cik_str": 1080657,
+        "ticker": "SQFTW",
+        "title": "Presidio Property Trust, Inc."
+    },
+    "8945": {
+        "cik_str": 1061219,
+        "ticker": "EPDU",
+        "title": "ENTERPRISE PRODUCTS PARTNERS L.P."
+    },
+    "8949": {
+        "cik_str": 1015650,
+        "ticker": "SKMTF",
+        "title": "SK TELECOM CO LTD"
+    },
+    "8978": {
+        "cik_str": 1281895,
+        "ticker": "RCKTW",
+        "title": "ROCKET PHARMACEUTICALS, INC."
+    },
+    "8986": {
+        "cik_str": 1406234,
+        "ticker": "BRIPF",
+        "title": "Brookfield Infrastructure Partners L.P."
+    },
+    "8992": {
+        "cik_str": 1414767,
+        "ticker": "NCPLW",
+        "title": "Netcapital Inc."
+    },
+    "9023": {
+        "cik_str": 1372612,
+        "ticker": "BXNCP",
+        "title": "BOX INC"
+    },
+    "9033": {
+        "cik_str": 1282957,
+        "ticker": "GLU-PA",
+        "title": "GABELLI GLOBAL UTILITY & INCOME TRUST"
+    },
+    "9035": {
+        "cik_str": 1318885,
+        "ticker": "DSX-WT",
+        "title": "DIANA SHIPPING INC."
+    },
+    "9036": {
+        "cik_str": 1357878,
+        "ticker": "RGPX",
+        "title": "REGENEREX PHARMA, INC."
+    },
+    "9041": {
+        "cik_str": 1419951,
+        "ticker": "DTSTW",
+        "title": "Data Storage Corp"
+    },
+    "9042": {
+        "cik_str": 1840317,
+        "ticker": "VEEAW",
+        "title": "VEEA INC."
+    },
+    "9043": {
+        "cik_str": 1840425,
+        "ticker": "BLACR",
+        "title": "Bellevue Life Sciences Acquisition Corp."
+    },
+    "9045": {
+        "cik_str": 1840425,
+        "ticker": "BLACW",
+        "title": "Bellevue Life Sciences Acquisition Corp."
+    },
+    "9046": {
+        "cik_str": 1431852,
+        "ticker": "ODVWZ",
+        "title": "Osisko Development Corp."
+    },
+    "9047": {
+        "cik_str": 1468929,
+        "ticker": "NXGLW",
+        "title": "NEXGEL, INC."
+    },
+    "9049": {
+        "cik_str": 1822928,
+        "ticker": "HLLY-WT",
+        "title": "Holley Inc."
+    },
+    "9050": {
+        "cik_str": 1823466,
+        "ticker": "NOTE-WT",
+        "title": "FiscalNote Holdings, Inc."
+    },
+    "9052": {
+        "cik_str": 1831868,
+        "ticker": "ICUCW",
+        "title": "SeaStar Medical Holding Corp"
+    },
+    "9054": {
+        "cik_str": 1831874,
+        "ticker": "IRAAW",
+        "title": "Iris Acquisition Corp"
+    },
+    "9055": {
+        "cik_str": 1834974,
+        "ticker": "LEVWQ",
+        "title": "Lion Electric Co"
+    },
+    "9056": {
+        "cik_str": 1834974,
+        "ticker": "LEGWQ",
+        "title": "Lion Electric Co"
+    },
+    "9057": {
+        "cik_str": 1835654,
+        "ticker": "INVZW",
+        "title": "Innoviz Technologies Ltd."
+    },
+    "9058": {
+        "cik_str": 1816581,
+        "ticker": "OUSTZ",
+        "title": "Ouster, Inc."
+    },
+    "9059": {
+        "cik_str": 1816581,
+        "ticker": "OUSTW",
+        "title": "Ouster, Inc."
+    },
+    "9060": {
+        "cik_str": 1816581,
+        "ticker": "OUST-WT",
+        "title": "Ouster, Inc."
+    },
+    "9061": {
+        "cik_str": 1816581,
+        "ticker": "OUST-WTA",
+        "title": "Ouster, Inc."
+    },
+    "9062": {
+        "cik_str": 1821424,
+        "ticker": "UKOMW",
+        "title": "Ucommune International Ltd"
+    },
+    "9063": {
+        "cik_str": 1819438,
+        "ticker": "GWH-WT",
+        "title": "ESS Tech, Inc."
+    },
+    "9064": {
+        "cik_str": 1817232,
+        "ticker": "HGASW",
+        "title": "Global Gas Corp"
+    },
+    "9065": {
+        "cik_str": 1807765,
+        "ticker": "PMVCW",
+        "title": "PMV Consumer Acquisition Corp."
+    },
+    "9067": {
+        "cik_str": 1806524,
+        "ticker": "LGHLW",
+        "title": "Lion Group Holding Ltd"
+    },
+    "9068": {
+        "cik_str": 1814215,
+        "ticker": "BURUW",
+        "title": "Nuburu, Inc."
+    },
+    "9069": {
+        "cik_str": 1809196,
+        "ticker": "IMTXW",
+        "title": "Immatics N.V."
+    },
+    "9073": {
+        "cik_str": 1348362,
+        "ticker": "LEXXW",
+        "title": "Lexaria Bioscience Corp."
+    },
+    "9083": {
+        "cik_str": 1769624,
+        "ticker": "ILLRW",
+        "title": "Triller Group Inc."
+    },
+    "9084": {
+        "cik_str": 1759186,
+        "ticker": "COEPW",
+        "title": "Coeptis Therapeutics Holdings, Inc."
+    },
+    "9086": {
+        "cik_str": 1788028,
+        "ticker": "JSPRW",
+        "title": "Jasper Therapeutics, Inc."
+    },
+    "9087": {
+        "cik_str": 1785424,
+        "ticker": "KPLTW",
+        "title": "Katapult Holdings, Inc."
+    },
+    "9088": {
+        "cik_str": 1779128,
+        "ticker": "BLDEW",
+        "title": "Blade Air Mobility, Inc."
+    },
+    "9090": {
+        "cik_str": 1775734,
+        "ticker": "BENFW",
+        "title": "Beneficient"
+    },
+    "9091": {
+        "cik_str": 1776661,
+        "ticker": "ADVWW",
+        "title": "Advantage Solutions Inc."
+    },
+    "9092": {
+        "cik_str": 1804176,
+        "ticker": "BFLY-WT",
+        "title": "Butterfly Network, Inc."
+    },
+    "9093": {
+        "cik_str": 1799983,
+        "ticker": "GB-WT",
+        "title": "Global Blue Group Holding AG"
+    },
+    "9110": {
+        "cik_str": 1583771,
+        "ticker": "CTRVP",
+        "title": "Hepion Pharmaceuticals, Inc."
+    },
+    "9111": {
+        "cik_str": 1555812,
+        "ticker": "CPXTF",
+        "title": "Siam Makro Public Co Limited/ADR"
+    },
+    "9112": {
+        "cik_str": 1554818,
+        "ticker": "AUUDW",
+        "title": "AUDDIA INC."
+    },
+    "9114": {
+        "cik_str": 1546066,
+        "ticker": "PPLOF",
+        "title": "PEMBINA PIPELINE CORP"
+    },
+    "9123": {
+        "cik_str": 1512228,
+        "ticker": "NIOBW",
+        "title": "NIOCORP DEVELOPMENTS LTD"
+    },
+    "9133": {
+        "cik_str": 1397183,
+        "ticker": "IVDAW",
+        "title": "Iveda Solutions, Inc."
+    },
+    "9134": {
+        "cik_str": 1402328,
+        "ticker": "SBFMW",
+        "title": "Sunshine Biopharma Inc."
+    },
+    "9153": {
+        "cik_str": 1468492,
+        "ticker": "HSCSW",
+        "title": "HeartSciences Inc."
+    },
+    "9170": {
+        "cik_str": 1550453,
+        "ticker": "TRIC",
+        "title": "TriLinc Global Impact Fund LLC"
+    },
+    "9178": {
+        "cik_str": 1527541,
+        "ticker": "WHLRL",
+        "title": "Wheeler Real Estate Investment Trust, Inc."
+    },
+    "9179": {
+        "cik_str": 1526125,
+        "ticker": "GDHLF",
+        "title": "GDS Holdings Ltd"
+    },
+    "9184": {
+        "cik_str": 1467845,
+        "ticker": "KUSA",
+        "title": "Kashin, Inc."
+    },
+    "9185": {
+        "cik_str": 1472033,
+        "ticker": "JTGLF",
+        "title": "Citibank,N.A./ADR"
+    },
+    "9227": {
+        "cik_str": 1841125,
+        "ticker": "BSLKW",
+        "title": "Bolt Projects Holdings, Inc."
+    },
+    "9228": {
+        "cik_str": 1588272,
+        "ticker": "NXPT",
+        "title": "NexPoint Capital, Inc."
+    },
+    "9232": {
+        "cik_str": 1532619,
+        "ticker": "PW-PA",
+        "title": "Power REIT"
+    },
+    "9241": {
+        "cik_str": 1865631,
+        "ticker": "NXNVW",
+        "title": "NEXTNAV INC."
+    },
+    "9242": {
+        "cik_str": 1863362,
+        "ticker": "PROCW",
+        "title": "Procaps Group, S.A."
+    },
+    "9243": {
+        "cik_str": 1859035,
+        "ticker": "MCAGR",
+        "title": "Mountain Crest Acquisition Corp. V"
+    },
+    "9245": {
+        "cik_str": 1857855,
+        "ticker": "FNVWF",
+        "title": "Finnovate Acquisition Corp."
+    },
+    "9247": {
+        "cik_str": 1855474,
+        "ticker": "AIRJW",
+        "title": "AirJoule Technologies Corp."
+    },
+    "9248": {
+        "cik_str": 1879248,
+        "ticker": "ADSEW",
+        "title": "Ads-Tec Energy Public Ltd Co"
+    },
+    "9249": {
+        "cik_str": 1879270,
+        "ticker": "TCRG",
+        "title": "Cannaisseur Group Inc."
+    },
+    "9251": {
+        "cik_str": 1866501,
+        "ticker": "WBX-WT",
+        "title": "Wallbox N.V."
+    },
+    "9252": {
+        "cik_str": 1868640,
+        "ticker": "RDZNW",
+        "title": "Roadzen Inc."
+    },
+    "9253": {
+        "cik_str": 1865631,
+        "ticker": "NNAVW",
+        "title": "NEXTNAV INC."
+    },
+    "9256": {
+        "cik_str": 1852016,
+        "ticker": "AEAEW",
+        "title": "AltEnergy Acquisition Corp"
+    },
+    "9258": {
+        "cik_str": 1852019,
+        "ticker": "IXQWF",
+        "title": "IX Acquisition Corp."
+    },
+    "9260": {
+        "cik_str": 1850262,
+        "ticker": "INTEW",
+        "title": "Integral Acquisition Corp 1"
+    },
+    "9263": {
+        "cik_str": 1855467,
+        "ticker": "MOBXW",
+        "title": "MOBIX LABS, INC"
+    },
+    "9265": {
+        "cik_str": 1854149,
+        "ticker": "ANSCW",
+        "title": "Agriculture & Natural Solutions Acquisition Corp"
+    },
+    "9266": {
+        "cik_str": 1854183,
+        "ticker": "ORIB",
+        "title": "Orion Bliss Corp."
+    },
+    "9267": {
+        "cik_str": 1855457,
+        "ticker": "KORGW",
+        "title": "KORE Group Holdings, Inc."
+    },
+    "9270": {
+        "cik_str": 1853070,
+        "ticker": "SOARW",
+        "title": "Volato Group, Inc."
+    },
+    "9271": {
+        "cik_str": 1853044,
+        "ticker": "AERTW",
+        "title": "Aeries Technology, Inc."
+    },
+    "9272": {
+        "cik_str": 1851961,
+        "ticker": "GCTS-WT",
+        "title": "GCT Semiconductor Holding, Inc."
+    },
+    "9275": {
+        "cik_str": 1705012,
+        "ticker": "FATBW",
+        "title": "Fat Brands, Inc"
+    },
+    "9280": {
+        "cik_str": 1690080,
+        "ticker": "ATNFW",
+        "title": "180 Life Sciences Corp."
+    },
+    "9281": {
+        "cik_str": 1640043,
+        "ticker": "PXSAW",
+        "title": "Pyxis Tankers Inc."
+    },
+    "9282": {
+        "cik_str": 1921158,
+        "ticker": "FUFUW",
+        "title": "Bitfufu Inc."
+    },
+    "9283": {
+        "cik_str": 1922858,
+        "ticker": "ECDAW",
+        "title": "ECD Automotive Design, Inc."
+    },
+    "9284": {
+        "cik_str": 1918661,
+        "ticker": "ESHAR",
+        "title": "ESH Acquisition Corp."
+    },
+    "9286": {
+        "cik_str": 1907730,
+        "ticker": "YOTAR",
+        "title": "Yotta Acquisition Corp"
+    },
+    "9288": {
+        "cik_str": 1907730,
+        "ticker": "YOTAW",
+        "title": "Yotta Acquisition Corp"
+    },
+    "9291": {
+        "cik_str": 1895262,
+        "ticker": "NE-WT",
+        "title": "Noble Corp plc"
+    },
+    "9292": {
+        "cik_str": 1895262,
+        "ticker": "NE-WTA",
+        "title": "Noble Corp plc"
+    },
+    "9293": {
+        "cik_str": 1895262,
+        "ticker": "NBLWF",
+        "title": "Noble Corp plc"
+    },
+    "9294": {
+        "cik_str": 1889823,
+        "ticker": "KWESW",
+        "title": "KWESST Micro Systems Inc."
+    },
+    "9295": {
+        "cik_str": 1876431,
+        "ticker": "PRENW",
+        "title": "Prenetics Global Ltd"
+    },
+    "9296": {
+        "cik_str": 1854816,
+        "ticker": "MINR",
+        "title": "Minerva Gold Inc."
+    },
+    "9298": {
+        "cik_str": 1852633,
+        "ticker": "PNSTW",
+        "title": "Pinstripes Holdings, Inc."
+    },
+    "9299": {
+        "cik_str": 1853816,
+        "ticker": "DRMAW",
+        "title": "Dermata Therapeutics, Inc."
+    },
+    "9301": {
+        "cik_str": 1851612,
+        "ticker": "BHACW",
+        "title": "Focus Impact BH3 Acquisition Co"
+    },
+    "9305": {
+        "cik_str": 1903870,
+        "ticker": "AFRIW",
+        "title": "Forafric Global PLC"
+    },
+    "9306": {
+        "cik_str": 1892747,
+        "ticker": "VMCAW",
+        "title": "Valuence Merger Corp. I"
+    },
+    "9307": {
+        "cik_str": 1889123,
+        "ticker": "FLDDW",
+        "title": "FTAC Emerald Acquisition Corp."
+    },
+    "9309": {
+        "cik_str": 1892922,
+        "ticker": "MARXR",
+        "title": "Mars Acquisition Corp."
+    },
+    "9313": {
+        "cik_str": 1900402,
+        "ticker": "EVGRW",
+        "title": "Evergreen Corp"
+    },
+    "9314": {
+        "cik_str": 1894693,
+        "ticker": "SVREW",
+        "title": "SaverOne 2014 Ltd."
+    },
+    "9315": {
+        "cik_str": 1885408,
+        "ticker": "JFBRW",
+        "title": "Jeffs' Brands Ltd"
+    },
+    "9317": {
+        "cik_str": 1885461,
+        "ticker": "SUACW",
+        "title": "ShoulderUP Technology Acquisition Corp."
+    },
+    "9318": {
+        "cik_str": 1882198,
+        "ticker": "ATEKW",
+        "title": "Athena Technology Acquisition Corp. II"
+    },
+    "9319": {
+        "cik_str": 1883788,
+        "ticker": "DHAIW",
+        "title": "DIH HOLDING US, INC."
+    },
+    "9321": {
+        "cik_str": 1860514,
+        "ticker": "USTWF",
+        "title": "Roth CH Acquisition Co."
+    },
+    "9322": {
+        "cik_str": 1864943,
+        "ticker": "FGIWW",
+        "title": "FGI Industries Ltd."
+    },
+    "9324": {
+        "cik_str": 1865861,
+        "ticker": "CTSWF",
+        "title": "Cactus Acquisition Corp. 1 Ltd"
+    },
+    "9325": {
+        "cik_str": 1866001,
+        "ticker": "JVSAR",
+        "title": "JVSPAC Acquisition Corp."
+    },
+    "9328": {
+        "cik_str": 1874074,
+        "ticker": "MMVWW",
+        "title": "MultiMetaVerse Holdings Ltd"
+    },
+    "9329": {
+        "cik_str": 1872525,
+        "ticker": "SWAGW",
+        "title": "Stran & Company, Inc."
+    },
+    "9330": {
+        "cik_str": 1869974,
+        "ticker": "OCEAW",
+        "title": "Ocean Biomedical, Inc."
+    },
+    "9331": {
+        "cik_str": 1897463,
+        "ticker": "GRAF-WT",
+        "title": "Graf Global Corp."
+    },
+    "9332": {
+        "cik_str": 1898795,
+        "ticker": "LVWR-WT",
+        "title": "LiveWire Group, Inc."
+    },
+    "9333": {
+        "cik_str": 1901203,
+        "ticker": "IROHR",
+        "title": "Iron Horse Acquisitions Corp."
+    },
+    "9334": {
+        "cik_str": 1901203,
+        "ticker": "IROHW",
+        "title": "Iron Horse Acquisitions Corp."
+    },
+    "9337": {
+        "cik_str": 1888734,
+        "ticker": "GLLIR",
+        "title": "GLOBALINK INVESTMENT INC."
+    },
+    "9339": {
+        "cik_str": 1888734,
+        "ticker": "GLLIW",
+        "title": "GLOBALINK INVESTMENT INC."
+    },
+    "9340": {
+        "cik_str": 1879814,
+        "ticker": "TLGWF",
+        "title": "TLGY ACQUISITION CORP"
+    },
+    "9342": {
+        "cik_str": 1883984,
+        "ticker": "ACLEW",
+        "title": "Alternus Clean Energy, Inc."
+    },
+    "9344": {
+        "cik_str": 1884046,
+        "ticker": "SPKLW",
+        "title": "Spark I Acquisition Corp"
+    },
+    "9345": {
+        "cik_str": 1888654,
+        "ticker": "FEAV",
+        "title": "5E Advanced Materials, Inc."
+    },
+    "9346": {
+        "cik_str": 1825452,
+        "ticker": "ONFOP",
+        "title": "Onfolio Holdings, Inc"
+    },
+    "9347": {
+        "cik_str": 1825452,
+        "ticker": "ONFOW",
+        "title": "Onfolio Holdings, Inc"
+    },
+    "9348": {
+        "cik_str": 1840292,
+        "ticker": "HLGNW",
+        "title": "Heliogen, Inc."
+    },
+    "9350": {
+        "cik_str": 1834032,
+        "ticker": "CSTWF",
+        "title": "Constellation Acquisition Corp I"
+    },
+    "9351": {
+        "cik_str": 1834026,
+        "ticker": "GROY-WT",
+        "title": "Gold Royalty Corp."
+    },
+    "9352": {
+        "cik_str": 1924064,
+        "ticker": "RLNDF",
+        "title": "RoyaLand Co Ltd."
+    },
+    "9353": {
+        "cik_str": 1936255,
+        "ticker": "FORLW",
+        "title": "Four Leaf Acquisition Corp"
+    },
+    "9356": {
+        "cik_str": 1823587,
+        "ticker": "SKYH-WT",
+        "title": "Sky Harbour Group Corp"
+    },
+    "9360": {
+        "cik_str": 1847345,
+        "ticker": "PWUPW",
+        "title": "PowerUp Acquisition Corp."
+    },
+    "9361": {
+        "cik_str": 1849820,
+        "ticker": "KITTW",
+        "title": "Nauticus Robotics, Inc."
+    },
+    "9362": {
+        "cik_str": 1850502,
+        "ticker": "NFSWF",
+        "title": "Enphys Acquisition Corp."
+    },
+    "9363": {
+        "cik_str": 1847355,
+        "ticker": "TGAWF",
+        "title": "Target Global Acquisition I Corp."
+    },
+    "9364": {
+        "cik_str": 1841408,
+        "ticker": "DAVEW",
+        "title": "Dave Inc./DE"
+    },
+    "9366": {
+        "cik_str": 1844981,
+        "ticker": "FAASW",
+        "title": "DIGIASIA CORP."
+    },
+    "9367": {
+        "cik_str": 1843724,
+        "ticker": "LNZAW",
+        "title": "LanzaTech Global, Inc."
+    },
+    "9369": {
+        "cik_str": 1842937,
+        "ticker": "HCVIW",
+        "title": "Hennessy Capital Investment Corp. VI"
+    },
+    "9370": {
+        "cik_str": 1842939,
+        "ticker": "CTCXW",
+        "title": "Carmell Corp"
+    },
+    "9371": {
+        "cik_str": 1847986,
+        "ticker": "DFLIW",
+        "title": "Dragonfly Energy Holdings Corp."
+    },
+    "9372": {
+        "cik_str": 1852207,
+        "ticker": "BEAGR",
+        "title": "Bold Eagle Acquisition Corp."
+    },
+    "9374": {
+        "cik_str": 1855756,
+        "ticker": "LILWF",
+        "title": "Lilium N.V."
+    },
+    "9376": {
+        "cik_str": 1858685,
+        "ticker": "BFRIW",
+        "title": "Biofrontera Inc."
+    },
+    "9377": {
+        "cik_str": 1857410,
+        "ticker": "IVCBW",
+        "title": "Investcorp Europe Acquisition Corp I"
+    },
+    "9379": {
+        "cik_str": 1860805,
+        "ticker": "ASTLW",
+        "title": "Algoma Steel Group Inc."
+    },
+    "9380": {
+        "cik_str": 1851909,
+        "ticker": "CDAWF",
+        "title": "Compass Digital Acquisition Corp."
+    },
+    "9384": {
+        "cik_str": 1852973,
+        "ticker": "BRLSW",
+        "title": "Borealis Foods Inc."
+    },
+    "9386": {
+        "cik_str": 1850059,
+        "ticker": "FSHPR",
+        "title": "Flag Ship Acquisition Corp"
+    },
+    "9387": {
+        "cik_str": 1847607,
+        "ticker": "RFACW",
+        "title": "RF Acquisition Corp."
+    },
+    "9388": {
+        "cik_str": 1847607,
+        "ticker": "RFACR",
+        "title": "RF Acquisition Corp."
+    },
+    "9392": {
+        "cik_str": 1848739,
+        "ticker": "GDEVW",
+        "title": "GDEV Inc."
+    },
+    "9394": {
+        "cik_str": 1848756,
+        "ticker": "PHYWF",
+        "title": "Pyrophyte Acquisition Corp."
+    },
+    "9395": {
+        "cik_str": 1866782,
+        "ticker": "CDROW",
+        "title": "Codere Online Luxembourg, S.A."
+    },
+    "9396": {
+        "cik_str": 1866816,
+        "ticker": "OPTXW",
+        "title": "SYNTEC OPTICS HOLDINGS, INC."
+    },
+    "9397": {
+        "cik_str": 1866838,
+        "ticker": "IGTAR",
+        "title": "Inception Growth Acquisition Ltd"
+    },
+    "9399": {
+        "cik_str": 1866838,
+        "ticker": "IGTAW",
+        "title": "Inception Growth Acquisition Ltd"
+    },
+    "9400": {
+        "cik_str": 1868269,
+        "ticker": "LATGF",
+        "title": "Chenghe Acquisition I Co."
+    },
+    "9402": {
+        "cik_str": 1866226,
+        "ticker": "WTMAR",
+        "title": "Welsbach Technology Metals Acquisition Corp."
+    },
+    "9404": {
+        "cik_str": 1865200,
+        "ticker": "PORTW",
+        "title": "Southport Acquisition Corp"
+    },
+    "9406": {
+        "cik_str": 1875547,
+        "ticker": "LCFYW",
+        "title": "Locafy Ltd"
+    },
+    "9407": {
+        "cik_str": 1875493,
+        "ticker": "CSLMR",
+        "title": "CSLM ACQUISITION CORP."
+    },
+    "9409": {
+        "cik_str": 1875493,
+        "ticker": "CSLMW",
+        "title": "CSLM ACQUISITION CORP."
+    },
+    "9410": {
+        "cik_str": 1872964,
+        "ticker": "MTEKW",
+        "title": "Maris Tech Ltd."
+    },
+    "9411": {
+        "cik_str": 1871983,
+        "ticker": "ANGHW",
+        "title": "Anghami Inc"
+    },
+    "9413": {
+        "cik_str": 1871745,
+        "ticker": "DSAQW",
+        "title": "Direct Selling Acquisition Corp."
+    },
+    "9414": {
+        "cik_str": 1871890,
+        "ticker": "GLEI",
+        "title": "Galaxy Enterprises Inc. /WY/"
+    },
+    "9415": {
+        "cik_str": 1865506,
+        "ticker": "ZEOWW",
+        "title": "Zeo Energy Corp."
+    },
+    "9416": {
+        "cik_str": 1865468,
+        "ticker": "KACLR",
+        "title": "Kairous Acquisition Corp. Ltd"
+    },
+    "9417": {
+        "cik_str": 1865468,
+        "ticker": "KACLW",
+        "title": "Kairous Acquisition Corp. Ltd"
+    },
+    "9420": {
+        "cik_str": 1868419,
+        "ticker": "WAVSW",
+        "title": "Western Acquisition Ventures Corp."
+    },
+    "9421": {
+        "cik_str": 1862068,
+        "ticker": "RBTCW",
+        "title": "Rubicon Technologies, Inc."
+    },
+    "9422": {
+        "cik_str": 1864531,
+        "ticker": "VSEEW",
+        "title": "VSEE HEALTH, INC."
+    },
+    "9423": {
+        "cik_str": 1861974,
+        "ticker": "ECXWW",
+        "title": "ECARX Holdings Inc."
+    },
+    "9424": {
+        "cik_str": 1859807,
+        "ticker": "NVACR",
+        "title": "NorthView Acquisition Corp"
+    },
+    "9425": {
+        "cik_str": 1859807,
+        "ticker": "NVACW",
+        "title": "NorthView Acquisition Corp"
+    },
+    "9426": {
+        "cik_str": 1860871,
+        "ticker": "TVGNW",
+        "title": "Tevogen Bio Holdings Inc."
+    },
+    "9429": {
+        "cik_str": 1872066,
+        "ticker": "MIBE",
+        "title": "MIAMI BREEZE CAR CARE INC"
+    },
+    "9430": {
+        "cik_str": 1877557,
+        "ticker": "WELWF",
+        "title": "Integrated Wellness Acquisition Corp"
+    },
+    "9431": {
+        "cik_str": 1877557,
+        "ticker": "WELUF",
+        "title": "Integrated Wellness Acquisition Corp"
+    },
+    "9433": {
+        "cik_str": 1880441,
+        "ticker": "BFQWF",
+        "title": "Battery Future Acquisition Corp."
+    },
+    "9434": {
+        "cik_str": 1880431,
+        "ticker": "VHAIW",
+        "title": "Vocodia Holdings Corp"
+    },
+    "9435": {
+        "cik_str": 1880431,
+        "ticker": "VHABW",
+        "title": "Vocodia Holdings Corp"
+    },
+    "9437": {
+        "cik_str": 1896212,
+        "ticker": "CDTTW",
+        "title": "CONDUIT PHARMACEUTICALS INC."
+    },
+    "9438": {
+        "cik_str": 1894951,
+        "ticker": "GBBKR",
+        "title": "Global Blockchain Acquisition Corp."
+    },
+    "9439": {
+        "cik_str": 1894951,
+        "ticker": "GBBKW",
+        "title": "Global Blockchain Acquisition Corp."
+    },
+    "9440": {
+        "cik_str": 1901799,
+        "ticker": "BTMWW",
+        "title": "Bitcoin Depot Inc."
+    },
+    "9441": {
+        "cik_str": 1898416,
+        "ticker": "ALVOW",
+        "title": "Alvotech"
+    },
+    "9442": {
+        "cik_str": 1893219,
+        "ticker": "ABPWW",
+        "title": "Abpro Holdings, Inc."
+    },
+    "9443": {
+        "cik_str": 1886190,
+        "ticker": "GGROW",
+        "title": "Gogoro Inc."
+    },
+    "9445": {
+        "cik_str": 1990145,
+        "ticker": "NUVWQ",
+        "title": "Holdco Nuvo Group D.G Ltd."
+    },
+    "9449": {
+        "cik_str": 2016221,
+        "ticker": "MACIW",
+        "title": "Melar Acquisition Corp. I/Cayman"
+    },
+    "9453": {
+        "cik_str": 2042187,
+        "ticker": "KYFGF",
+        "title": "Kyoto Financial Group Inc/ADR"
+    },
+    "9454": {
+        "cik_str": 1907982,
+        "ticker": "QBTS-WT",
+        "title": "D-Wave Quantum Inc."
+    },
+    "9456": {
+        "cik_str": 1913847,
+        "ticker": "CNCKW",
+        "title": "Coincheck Group N.V."
+    },
+    "9458": {
+        "cik_str": 1946563,
+        "ticker": "SXTPW",
+        "title": "60 DEGREES PHARMACEUTICALS, INC."
+    },
+    "9460": {
+        "cik_str": 1937891,
+        "ticker": "ATMVR",
+        "title": "AlphaVest Acquisition Corp."
+    },
+    "9462": {
+        "cik_str": 1937987,
+        "ticker": "FBYDW",
+        "title": "Falcon's Beyond Global, Inc."
+    },
+    "9463": {
+        "cik_str": 1949864,
+        "ticker": "MGNC",
+        "title": "Mag Magna Corp"
+    },
+    "9464": {
+        "cik_str": 1947861,
+        "ticker": "NMHIW",
+        "title": "Nature's Miracle Holding Inc."
+    },
+    "9465": {
+        "cik_str": 1958217,
+        "ticker": "LZM-WT",
+        "title": "Lifezone Metals Ltd"
+    },
+    "9467": {
+        "cik_str": 1978528,
+        "ticker": "QETAR",
+        "title": "Quetta Acquisition Corp"
+    },
+    "9468": {
+        "cik_str": 1981462,
+        "ticker": "LDTCW",
+        "title": "LeddarTech Holdings Inc."
+    },
+    "9469": {
+        "cik_str": 1965143,
+        "ticker": "NVNIW",
+        "title": "Nvni Group Ltd"
+    },
+    "9470": {
+        "cik_str": 1960208,
+        "ticker": "CREVW",
+        "title": "Carbon Revolution Public Ltd Co"
+    },
+    "9472": {
+        "cik_str": 1907223,
+        "ticker": "KLTOW",
+        "title": "Klotho Neurosciences, Inc."
+    },
+    "9475": {
+        "cik_str": 1915328,
+        "ticker": "ISRLW",
+        "title": "Israel Acquisitions Corp"
+    },
+    "9476": {
+        "cik_str": 1903392,
+        "ticker": "CLRCR",
+        "title": "ClimateRock"
+    },
+    "9478": {
+        "cik_str": 1903392,
+        "ticker": "CLRCW",
+        "title": "ClimateRock"
+    },
+    "9480": {
+        "cik_str": 1903464,
+        "ticker": "AIMAW",
+        "title": "Aimfinity Investment Corp. I"
+    },
+    "9482": {
+        "cik_str": 1941536,
+        "ticker": "BAERW",
+        "title": "Bridger Aerospace Group Holdings, Inc."
+    },
+    "9483": {
+        "cik_str": 1946021,
+        "ticker": "HSPOR",
+        "title": "Horizon Space Acquisition I Corp."
+    },
+    "9485": {
+        "cik_str": 1946021,
+        "ticker": "HSPOW",
+        "title": "Horizon Space Acquisition I Corp."
+    },
+    "9486": {
+        "cik_str": 1937441,
+        "ticker": "AMBI-WT",
+        "title": "Ambipar Emergency Response"
+    },
+    "9488": {
+        "cik_str": 1935418,
+        "ticker": "FMSTW",
+        "title": "Foremost Clean Energy Ltd."
+    },
+    "9489": {
+        "cik_str": 1737995,
+        "ticker": "STSSW",
+        "title": "Sharps Technology Inc."
+    },
+    "9491": {
+        "cik_str": 1742927,
+        "ticker": "RVPHW",
+        "title": "REVIVA PHARMACEUTICALS HOLDINGS, INC."
+    },
+    "9492": {
+        "cik_str": 1725872,
+        "ticker": "BMTX-WT",
+        "title": "BM Technologies, Inc."
+    },
+    "9495": {
+        "cik_str": 1750153,
+        "ticker": "GOEVW",
+        "title": "Canoo Inc."
+    },
+    "9496": {
+        "cik_str": 1752828,
+        "ticker": "CELUW",
+        "title": "Celularity Inc"
+    },
+    "9498": {
+        "cik_str": 1776909,
+        "ticker": "CURIW",
+        "title": "CuriosityStream Inc."
+    },
+    "9500": {
+        "cik_str": 1838987,
+        "ticker": "CSLRW",
+        "title": "Complete Solaria, Inc."
+    },
+    "9501": {
+        "cik_str": 1838359,
+        "ticker": "RGTIW",
+        "title": "Rigetti Computing, Inc."
+    },
+    "9502": {
+        "cik_str": 1842566,
+        "ticker": "AISPW",
+        "title": "Airship AI Holdings, Inc."
+    },
+    "9503": {
+        "cik_str": 1843477,
+        "ticker": "SVIIW",
+        "title": "Spring Valley Acquisition Corp. II"
+    },
+    "9504": {
+        "cik_str": 1841761,
+        "ticker": "GROVW",
+        "title": "Grove Collaborative Holdings, Inc."
+    },
+    "9505": {
+        "cik_str": 1842556,
+        "ticker": "EONR-WT",
+        "title": "EON Resources Inc."
+    },
+    "9506": {
+        "cik_str": 1843477,
+        "ticker": "SVIIR",
+        "title": "Spring Valley Acquisition Corp. II"
+    },
+    "9508": {
+        "cik_str": 1844862,
+        "ticker": "SLDPW",
+        "title": "Solid Power, Inc."
+    },
+    "9509": {
+        "cik_str": 1845550,
+        "ticker": "PLMJW",
+        "title": "Plum Acquisition Corp. III"
+    },
+    "9511": {
+        "cik_str": 1718224,
+        "ticker": "BTBDW",
+        "title": "BT Brands, Inc."
+    },
+    "9513": {
+        "cik_str": 1831006,
+        "ticker": "BLUAW",
+        "title": "BlueRiver Acquisition Corp."
+    },
+    "9515": {
+        "cik_str": 1830081,
+        "ticker": "RUMBW",
+        "title": "Rumble Inc."
+    },
+    "9517": {
+        "cik_str": 1834526,
+        "ticker": "GPATW",
+        "title": "GP-Act III Acquisition Corp."
+    },
+    "9519": {
+        "cik_str": 1833214,
+        "ticker": "SABSW",
+        "title": "SAB Biotherapeutics, Inc."
+    },
+    "9523": {
+        "cik_str": 1801417,
+        "ticker": "BYNOW",
+        "title": "byNordic Acquisition Corp"
+    },
+    "9526": {
+        "cik_str": 1802450,
+        "ticker": "MSPRZ",
+        "title": "MSP Recovery, Inc."
+    },
+    "9527": {
+        "cik_str": 1805521,
+        "ticker": "FFIEW",
+        "title": "FARADAY FUTURE INTELLIGENT ELECTRIC INC."
+    },
+    "9528": {
+        "cik_str": 1803901,
+        "ticker": "TALKW",
+        "title": "Talkspace, Inc."
+    },
+    "9529": {
+        "cik_str": 1818502,
+        "ticker": "OPFI-WT",
+        "title": "OppFi Inc."
+    },
+    "9530": {
+        "cik_str": 1819142,
+        "ticker": "SES-WT",
+        "title": "SES AI Corp"
+    },
+    "9531": {
+        "cik_str": 1812360,
+        "ticker": "FOXOW",
+        "title": "FOXO TECHNOLOGIES INC."
+    },
+    "9532": {
+        "cik_str": 1800347,
+        "ticker": "ETWO-WT",
+        "title": "E2open Parent Holdings, Inc."
+    },
+    "9533": {
+        "cik_str": 1795589,
+        "ticker": "KCLHF",
+        "title": "Kingsoft Cloud Holdings Ltd"
+    },
+    "9538": {
+        "cik_str": 1793229,
+        "ticker": "MPLNW",
+        "title": "MultiPlan Corp"
+    },
+    "9540": {
+        "cik_str": 1819989,
+        "ticker": "CIFRW",
+        "title": "Cipher Mining Inc."
+    },
+    "9541": {
+        "cik_str": 1779020,
+        "ticker": "DNMRW",
+        "title": "Danimer Scientific, Inc."
+    },
+    "9544": {
+        "cik_str": 1871638,
+        "ticker": "BRKHW",
+        "title": "BurTech Acquisition Corp."
+    },
+    "9545": {
+        "cik_str": 1872812,
+        "ticker": "TCBPW",
+        "title": "TC BioPharm (Holdings) plc"
+    },
+    "9546": {
+        "cik_str": 1875609,
+        "ticker": "SWVLW",
+        "title": "Swvl Holdings Corp"
+    },
+    "9549": {
+        "cik_str": 1883814,
+        "ticker": "SLND-WT",
+        "title": "Southland Holdings, Inc."
+    },
+    "9551": {
+        "cik_str": 1870404,
+        "ticker": "CEROW",
+        "title": "CERO THERAPEUTICS HOLDINGS, INC."
+    },
+    "9552": {
+        "cik_str": 1865120,
+        "ticker": "BRACR",
+        "title": "Broad Capital Acquisition Corp"
+    },
+    "9554": {
+        "cik_str": 1865111,
+        "ticker": "ALSAR",
+        "title": "Alpha Star Acquisition Corp"
+    },
+    "9556": {
+        "cik_str": 1865111,
+        "ticker": "ALSAW",
+        "title": "Alpha Star Acquisition Corp"
+    },
+    "9557": {
+        "cik_str": 1854963,
+        "ticker": "SHFSW",
+        "title": "SHF Holdings, Inc."
+    },
+    "9558": {
+        "cik_str": 1863990,
+        "ticker": "MSAIW",
+        "title": "MultiSensor AI Holdings, Inc."
+    },
+    "9560": {
+        "cik_str": 1839998,
+        "ticker": "AONCW",
+        "title": "American Oncology Network, Inc."
+    },
+    "9561": {
+        "cik_str": 1841425,
+        "ticker": "VGASW",
+        "title": "Verde Clean Fuels, Inc."
+    },
+    "9563": {
+        "cik_str": 1835856,
+        "ticker": "BETRW",
+        "title": "Better Home & Finance Holding Co"
+    },
+    "9564": {
+        "cik_str": 1844149,
+        "ticker": "SPECW",
+        "title": "Spectaire Holdings Inc."
+    },
+    "9565": {
+        "cik_str": 1845942,
+        "ticker": "BNIXR",
+        "title": "Bannix Acquisition Corp."
+    },
+    "9566": {
+        "cik_str": 1845942,
+        "ticker": "BNIXW",
+        "title": "Bannix Acquisition Corp."
+    },
+    "9567": {
+        "cik_str": 1847075,
+        "ticker": "SAIHW",
+        "title": "SAIHEAT Ltd"
+    },
+    "9568": {
+        "cik_str": 1847064,
+        "ticker": "PSQH-WT",
+        "title": "PSQ Holdings, Inc."
+    },
+    "9570": {
+        "cik_str": 1852889,
+        "ticker": "IVCAW",
+        "title": "Investcorp AI Acquisition Corp."
+    },
+    "9571": {
+        "cik_str": 1816708,
+        "ticker": "OWLTW",
+        "title": "Owlet, Inc."
+    },
+    "9572": {
+        "cik_str": 1819395,
+        "ticker": "SONDW",
+        "title": "Sonder Holdings Inc."
+    },
+    "9574": {
+        "cik_str": 1820190,
+        "ticker": "SCLXW",
+        "title": "Scilex Holding Co"
+    },
+    "9575": {
+        "cik_str": 1819796,
+        "ticker": "GCMGW",
+        "title": "GCM Grosvenor Inc."
+    },
+    "9578": {
+        "cik_str": 1824893,
+        "ticker": "SRZNW",
+        "title": "Surrozen, Inc./DE"
+    },
+    "9579": {
+        "cik_str": 1824920,
+        "ticker": "IONQ-WT",
+        "title": "IonQ, Inc."
+    },
+    "9581": {
+        "cik_str": 1922097,
+        "ticker": "LANV-WT",
+        "title": "Lanvin Group Holdings Ltd"
+    },
+    "9582": {
+        "cik_str": 1922331,
+        "ticker": "GLSTR",
+        "title": "Global Star Acquisition Inc."
+    },
+    "9584": {
+        "cik_str": 1922331,
+        "ticker": "GLSTW",
+        "title": "Global Star Acquisition Inc."
+    },
+    "9585": {
+        "cik_str": 1940674,
+        "ticker": "SMXWW",
+        "title": "SMX (Security Matters) Public Ltd Co"
+    },
+    "9587": {
+        "cik_str": 1930021,
+        "ticker": "HOVRW",
+        "title": "New Horizon Aircraft Ltd."
+    },
+    "9589": {
+        "cik_str": 1920294,
+        "ticker": "RZLVW",
+        "title": "REZOLVE AI Ltd"
+    },
+    "9591": {
+        "cik_str": 1913577,
+        "ticker": "DECAW",
+        "title": "Denali Capital Acquisition Corp."
+    },
+    "9592": {
+        "cik_str": 1905660,
+        "ticker": "HUBCW",
+        "title": "Hub Cyber Security Ltd."
+    },
+    "9593": {
+        "cik_str": 1905660,
+        "ticker": "HUBCZ",
+        "title": "Hub Cyber Security Ltd."
+    },
+    "9594": {
+        "cik_str": 1899830,
+        "ticker": "PERF-WT",
+        "title": "Perfect Corp."
+    },
+    "9595": {
+        "cik_str": 1897971,
+        "ticker": "GLACR",
+        "title": "Global Lights Acquisition Corp"
+    },
+    "9596": {
+        "cik_str": 1833498,
+        "ticker": "MDAIW",
+        "title": "Spectral AI, Inc."
+    },
+    "9598": {
+        "cik_str": 1956055,
+        "ticker": "BUJAR",
+        "title": "Bukit Jalil Global Acquisition 1 Ltd."
+    },
+    "9599": {
+        "cik_str": 1956055,
+        "ticker": "BUJAW",
+        "title": "Bukit Jalil Global Acquisition 1 Ltd."
+    },
+    "9600": {
+        "cik_str": 1836833,
+        "ticker": "PL-WT",
+        "title": "Planet Labs PBC"
+    },
+    "9601": {
+        "cik_str": 1842356,
+        "ticker": "PETWW",
+        "title": "Wag! Group Co."
+    },
+    "9602": {
+        "cik_str": 1840856,
+        "ticker": "SOUNW",
+        "title": "SOUNDHOUND AI, INC."
+    },
+    "9603": {
+        "cik_str": 1840877,
+        "ticker": "COCHW",
+        "title": "Envoy Medical, Inc."
+    },
+    "9604": {
+        "cik_str": 1836875,
+        "ticker": "NVVEW",
+        "title": "Nuvve Holding Corp."
+    },
+    "9609": {
+        "cik_str": 1870143,
+        "ticker": "RCFWF",
+        "title": "Perception Capital Corp. IV"
+    },
+    "9611": {
+        "cik_str": 1870144,
+        "ticker": "CDIOW",
+        "title": "Cardio Diagnostics Holdings, Inc."
+    },
+    "9612": {
+        "cik_str": 1862463,
+        "ticker": "AMODW",
+        "title": "ALPHA MODUS HOLDINGS, INC."
+    },
+    "9615": {
+        "cik_str": 1862490,
+        "ticker": "DCFWQ",
+        "title": "Tritium DCFC Ltd"
+    },
+    "9616": {
+        "cik_str": 1865697,
+        "ticker": "GGAWF",
+        "title": "NeuroMind AI Corp."
+    },
+    "9618": {
+        "cik_str": 1854275,
+        "ticker": "ZCARW",
+        "title": "Zoomcar Holdings, Inc."
+    },
+    "9620": {
+        "cik_str": 1848861,
+        "ticker": "HAIWF",
+        "title": "Healthcare AI Acquisition Corp."
+    },
+    "9621": {
+        "cik_str": 1853138,
+        "ticker": "AACT-WT",
+        "title": "Ares Acquisition Corp II"
+    },
+    "9624": {
+        "cik_str": 1845149,
+        "ticker": "CBRGF",
+        "title": "Chain Bridge I"
+    },
+    "9625": {
+        "cik_str": 1845123,
+        "ticker": "ANNAW",
+        "title": "AleAnna, Inc."
+    },
+    "9626": {
+        "cik_str": 1847846,
+        "ticker": "EUDAW",
+        "title": "EUDA Health Holdings Ltd"
+    },
+    "9627": {
+        "cik_str": 1844452,
+        "ticker": "LUNRW",
+        "title": "Intuitive Machines, Inc."
+    },
+    "9628": {
+        "cik_str": 1843973,
+        "ticker": "FLYX-WT",
+        "title": "FLYEXCLUSIVE INC."
+    },
+    "9629": {
+        "cik_str": 1844505,
+        "ticker": "QTIWW",
+        "title": "QT IMAGING HOLDINGS, INC."
+    },
+    "9630": {
+        "cik_str": 1845097,
+        "ticker": "AMBP-WT",
+        "title": "Ardagh Metal Packaging S.A."
+    },
+    "9631": {
+        "cik_str": 1805833,
+        "ticker": "SST-WT",
+        "title": "System1, Inc."
+    },
+    "9636": {
+        "cik_str": 1799191,
+        "ticker": "TOIIW",
+        "title": "Oncology Institute, Inc."
+    },
+    "9638": {
+        "cik_str": 1779474,
+        "ticker": "MAPSW",
+        "title": "WM TECHNOLOGY, INC."
+    },
+    "9640": {
+        "cik_str": 1849380,
+        "ticker": "ONMDW",
+        "title": "OneMedNet Corp"
+    },
+    "9641": {
+        "cik_str": 1743905,
+        "ticker": "RVSNW",
+        "title": "Rail Vision Ltd."
+    },
+    "9643": {
+        "cik_str": 1843714,
+        "ticker": "ZPTAW",
+        "title": "Zapata Computing Holdings Inc."
+    },
+    "9644": {
+        "cik_str": 1843656,
+        "ticker": "RMCOW",
+        "title": "Royalty Management Holding Corp"
+    },
+    "9645": {
+        "cik_str": 1844417,
+        "ticker": "ESLAW",
+        "title": "Estrella Immunopharma, Inc."
+    },
+    "9647": {
+        "cik_str": 1844419,
+        "ticker": "MAQCW",
+        "title": "Maquia Capital Acquisition Corp"
+    },
+    "9649": {
+        "cik_str": 1847440,
+        "ticker": "MITAW",
+        "title": "Coliseum Acquisition Corp."
+    },
+    "9650": {
+        "cik_str": 1839519,
+        "ticker": "CFFSW",
+        "title": "CF Acquisition Corp. VII"
+    },
+    "9651": {
+        "cik_str": 1839530,
+        "ticker": "XBPEW",
+        "title": "XBP Europe Holdings, Inc."
+    },
+    "9653": {
+        "cik_str": 1839608,
+        "ticker": "GETRW",
+        "title": "Getaround, Inc"
+    },
+    "9654": {
+        "cik_str": 1840502,
+        "ticker": "TBLAW",
+        "title": "Taboola.com Ltd."
+    },
+    "9655": {
+        "cik_str": 1841209,
+        "ticker": "HOLOW",
+        "title": "MicroCloud Hologram Inc."
+    },
+    "9656": {
+        "cik_str": 1783398,
+        "ticker": "UWMC-WT",
+        "title": "UWM Holdings Corp"
+    },
+    "9659": {
+        "cik_str": 1785592,
+        "ticker": "LFLYW",
+        "title": "Leafly Holdings, Inc. /DE"
+    },
+    "9660": {
+        "cik_str": 1832511,
+        "ticker": "PIIIW",
+        "title": "P3 Health Partners Inc."
+    },
+    "9661": {
+        "cik_str": 1828937,
+        "ticker": "FOACW",
+        "title": "Finance of America Companies Inc."
+    },
+    "9662": {
+        "cik_str": 1830214,
+        "ticker": "DNABW",
+        "title": "Ginkgo Bioworks Holdings, Inc."
+    },
+    "9666": {
+        "cik_str": 1823584,
+        "ticker": "AENTW",
+        "title": "ALLIANCE ENTERTAINMENT HOLDING CORP"
+    },
+    "9667": {
+        "cik_str": 1820302,
+        "ticker": "BKKT-WT",
+        "title": "Bakkt Holdings, Inc."
+    },
+    "9668": {
+        "cik_str": 1819848,
+        "ticker": "JOBY-WT",
+        "title": "Joby Aviation, Inc."
+    },
+    "9669": {
+        "cik_str": 1819493,
+        "ticker": "XOSWW",
+        "title": "Xos, Inc."
+    },
+    "9670": {
+        "cik_str": 1819810,
+        "ticker": "RDW-WT",
+        "title": "Redwire Corp"
+    },
+    "9672": {
+        "cik_str": 1814287,
+        "ticker": "ABLLW",
+        "title": "Abacus Life, Inc."
+    },
+    "9673": {
+        "cik_str": 1816613,
+        "ticker": "MKFGW",
+        "title": "Markforged Holding Corp"
+    },
+    "9674": {
+        "cik_str": 1804469,
+        "ticker": "GFAIW",
+        "title": "Guardforce AI Co., Ltd."
+    },
+    "9675": {
+        "cik_str": 1809750,
+        "ticker": "EDBLW",
+        "title": "Edible Garden AG Inc"
+    },
+    "9676": {
+        "cik_str": 1810560,
+        "ticker": "REVBW",
+        "title": "REVELATION BIOSCIENCES, INC."
+    },
+    "9677": {
+        "cik_str": 1800392,
+        "ticker": "VENAF",
+        "title": "MicroAlgo Inc."
+    },
+    "9678": {
+        "cik_str": 1788841,
+        "ticker": "MCOMW",
+        "title": "micromobility.com Inc."
+    },
+    "9679": {
+        "cik_str": 1813914,
+        "ticker": "CMXWQ",
+        "title": "CareMax, Inc."
+    },
+    "9682": {
+        "cik_str": 1820175,
+        "ticker": "OCAXW",
+        "title": "OCA Acquisition Corp."
+    },
+    "9683": {
+        "cik_str": 1820144,
+        "ticker": "GRND-WT",
+        "title": "Grindr Inc."
+    },
+    "9685": {
+        "cik_str": 1824502,
+        "ticker": "ACHR-WT",
+        "title": "Archer Aviation Inc."
+    },
+    "9687": {
+        "cik_str": 1820875,
+        "ticker": "CXAIW",
+        "title": "CXApp Inc."
+    },
+    "9689": {
+        "cik_str": 1822966,
+        "ticker": "SMR-WT",
+        "title": "NUSCALE POWER Corp"
+    },
+    "9690": {
+        "cik_str": 1937737,
+        "ticker": "MLECW",
+        "title": "Moolec Science SA"
+    },
+    "9691": {
+        "cik_str": 1753539,
+        "ticker": "BKSY-WT",
+        "title": "BlackSky Technology Inc."
+    },
+    "9693": {
+        "cik_str": 1744494,
+        "ticker": "ADNWW",
+        "title": "ADVENT TECHNOLOGIES HOLDINGS, INC."
+    },
+    "9694": {
+        "cik_str": 1975218,
+        "ticker": "NETDW",
+        "title": "Nabors Energy Transition Corp. II"
+    },
+    "9697": {
+        "cik_str": 1966734,
+        "ticker": "AITRR",
+        "title": "AI Transportation Acquisition Corp"
+    },
+    "9698": {
+        "cik_str": 1962746,
+        "ticker": "LOTWW",
+        "title": "Lotus Technology Inc."
+    },
+    "9699": {
+        "cik_str": 1964979,
+        "ticker": "ALUR-WT",
+        "title": "ALLURION TECHNOLOGIES, INC."
+    },
+    "9700": {
+        "cik_str": 1955104,
+        "ticker": "ZAPPW",
+        "title": "Zapp Electric Vehicles Group Ltd"
+    },
+    "9701": {
+        "cik_str": 1957489,
+        "ticker": "ABLVW",
+        "title": "Able View Global Inc."
+    },
+    "9702": {
+        "cik_str": 1957538,
+        "ticker": "ESGLW",
+        "title": "ESGL Holdings Ltd"
+    },
+    "9705": {
+        "cik_str": 1944212,
+        "ticker": "DYCQR",
+        "title": "DT Cloud Acquisition Corp"
+    },
+    "9706": {
+        "cik_str": 1946399,
+        "ticker": "LSBPW",
+        "title": "LakeShore Biopharma Co., Ltd."
+    },
+    "9707": {
+        "cik_str": 1651721,
+        "ticker": "GIPRW",
+        "title": "GENERATION INCOME PROPERTIES, INC."
+    },
+    "9711": {
+        "cik_str": 1673481,
+        "ticker": "LTRYW",
+        "title": "Lottery.com Inc."
+    },
+    "9712": {
+        "cik_str": 1677250,
+        "ticker": "ZTOEF",
+        "title": "ZTO Express (Cayman) Inc."
+    },
+    "9717": {
+        "cik_str": 1721386,
+        "ticker": "LSEAW",
+        "title": "Landsea Homes Corp"
+    },
+    "9718": {
+        "cik_str": 1719406,
+        "ticker": "NRXPW",
+        "title": "NRX Pharmaceuticals, Inc."
+    },
+    "9719": {
+        "cik_str": 1828105,
+        "ticker": "HIPOW",
+        "title": "Hippo Holdings Inc."
+    },
+    "9720": {
+        "cik_str": 1823144,
+        "ticker": "CMPOW",
+        "title": "CompoSecure, Inc."
+    },
+    "9721": {
+        "cik_str": 1823652,
+        "ticker": "EVEX-WT",
+        "title": "Eve Holding, Inc."
+    },
+    "9723": {
+        "cik_str": 1822791,
+        "ticker": "CLNNW",
+        "title": "Clene Inc."
+    },
+    "9725": {
+        "cik_str": 1819574,
+        "ticker": "BARK-WT",
+        "title": "Bark, Inc."
+    },
+    "9726": {
+        "cik_str": 1831979,
+        "ticker": "SDSTW",
+        "title": "Stardust Power Inc."
+    },
+    "9728": {
+        "cik_str": 1838162,
+        "ticker": "SLMWF",
+        "title": "Slam Corp."
+    },
+    "9729": {
+        "cik_str": 1838163,
+        "ticker": "BNAIW",
+        "title": "Brand Engagement Network Inc."
+    },
+    "9732": {
+        "cik_str": 1828972,
+        "ticker": "BZFDW",
+        "title": "BuzzFeed, Inc."
+    },
+    "9733": {
+        "cik_str": 1828108,
+        "ticker": "AUROW",
+        "title": "Aurora Innovation, Inc."
+    },
+    "9734": {
+        "cik_str": 1811063,
+        "ticker": "NUVB-WT",
+        "title": "Nuvation Bio Inc."
+    },
+    "9735": {
+        "cik_str": 1818331,
+        "ticker": "WGSWW",
+        "title": "GeneDx Holdings Corp."
+    },
+    "9736": {
+        "cik_str": 1819516,
+        "ticker": "WSUPW",
+        "title": "Wheels Up Experience Inc."
+    },
+    "9738": {
+        "cik_str": 1796514,
+        "ticker": "BTCTW",
+        "title": "BTC Digital Ltd."
+    },
+    "9739": {
+        "cik_str": 1807846,
+        "ticker": "ML-WT",
+        "title": "MONEYLION INC."
+    },
+    "9740": {
+        "cik_str": 1802457,
+        "ticker": "ORGNW",
+        "title": "Origin Materials, Inc."
+    },
+    "9741": {
+        "cik_str": 1779372,
+        "ticker": "BEATW",
+        "title": "HeartBeam, Inc."
+    },
+    "9742": {
+        "cik_str": 2022416,
+        "ticker": "SLXNW",
+        "title": "Silexion Therapeutics Corp"
+    },
+    "9743": {
+        "cik_str": 2018145,
+        "ticker": "RDACR",
+        "title": "Rising Dragon Acquisition Corp."
+    },
+    "9744": {
+        "cik_str": 1774675,
+        "ticker": "SKILW",
+        "title": "Skillsoft Corp."
+    },
+    "9747": {
+        "cik_str": 2017950,
+        "ticker": "DTSQR",
+        "title": "DT Cloud Star Acquisition Corp"
+    },
+    "9748": {
+        "cik_str": 2000410,
+        "ticker": "EURKR",
+        "title": "Eureka Acquisition Corp"
+    },
+    "9752": {
+        "cik_str": 2006291,
+        "ticker": "CCIXW",
+        "title": "Churchill Capital Corp IX/Cayman"
+    },
+    "9753": {
+        "cik_str": 1987240,
+        "ticker": "SHMDW",
+        "title": "SCHMID Group N.V."
+    },
+    "9754": {
+        "cik_str": 1980845,
+        "ticker": "ENGNW",
+        "title": "enGene Holdings Inc."
+    },
+    "9755": {
+        "cik_str": 1989788,
+        "ticker": "GAFC",
+        "title": "Guru App Factory Corp"
+    },
+    "9756": {
+        "cik_str": 1992818,
+        "ticker": "ZOOZW",
+        "title": "ZOOZ Power Ltd."
+    },
+    "9758": {
+        "cik_str": 1735041,
+        "ticker": "GTECW",
+        "title": "Greenland Technologies Holding Corp."
+    },
+    "9762": {
+        "cik_str": 1657853,
+        "ticker": "HTZWW",
+        "title": "HERTZ GLOBAL HOLDINGS, INC"
+    },
+    "9767": {
+        "cik_str": 1666175,
+        "ticker": "FRTSF",
+        "title": "Fortis Inc."
+    },
+    "9768": {
+        "cik_str": 1666175,
+        "ticker": "FTPSF",
+        "title": "Fortis Inc."
+    },
+    "9773": {
+        "cik_str": 1691936,
+        "ticker": "SNAXW",
+        "title": "STRYVE FOODS, INC."
+    },
+    "9774": {
+        "cik_str": 1712762,
+        "ticker": "BIAFW",
+        "title": "bioAffinity Technologies, Inc."
+    },
+    "9777": {
+        "cik_str": 1610820,
+        "ticker": "BCTXW",
+        "title": "BriaCell Therapeutics Corp."
+    },
+    "9778": {
+        "cik_str": 1605888,
+        "ticker": "SQLLW",
+        "title": "ATLANTIC INTERNATIONAL CORP."
+    },
+    "9781": {
+        "cik_str": 1649009,
+        "ticker": "SYTAW",
+        "title": "Siyata Mobile Inc."
+    },
+    "9784": {
+        "cik_str": 1635077,
+        "ticker": "ACONW",
+        "title": "Aclarion, Inc."
+    },
+    "9795": {
+        "cik_str": 1625414,
+        "ticker": "BAZNF",
+        "title": "Baozun Inc."
+    },
+    "9798": {
+        "cik_str": 1668010,
+        "ticker": "DBGIW",
+        "title": "Digital Brands Group, Inc."
+    },
+    "9801": {
+        "cik_str": 1691421,
+        "ticker": "LMND-WT",
+        "title": "Lemonade, Inc."
+    },
+    "9806": {
+        "cik_str": 1628171,
+        "ticker": "RVMDW",
+        "title": "Revolution Medicines, Inc."
+    },
+    "9812": {
+        "cik_str": 1774983,
+        "ticker": "BROGW",
+        "title": "Brooge Energy Ltd"
+    },
+    "9814": {
+        "cik_str": 1698514,
+        "ticker": "NESRW",
+        "title": "National Energy Services Reunited Corp."
+    },
+    "9817": {
+        "cik_str": 1760903,
+        "ticker": "SHOTW",
+        "title": "Safety Shot, Inc."
+    },
+    "9818": {
+        "cik_str": 1738758,
+        "ticker": "GSMGW",
+        "title": "Cheer Holding, Inc."
+    },
+    "9821": {
+        "cik_str": 1451448,
+        "ticker": "GMBLW",
+        "title": "ESPORTS ENTERTAINMENT GROUP, INC."
+    },
+    "9822": {
+        "cik_str": 1451448,
+        "ticker": "GMBLZ",
+        "title": "ESPORTS ENTERTAINMENT GROUP, INC."
+    },
+    "9830": {
+        "cik_str": 1144800,
+        "ticker": "TRNTF",
+        "title": "TRANSALTA CORP"
+    },
+    "9832": {
+        "cik_str": 1144800,
+        "ticker": "TACPF",
+        "title": "TRANSALTA CORP"
+    },
+    "9833": {
+        "cik_str": 1224608,
+        "ticker": "CNO-PA",
+        "title": "CNO Financial Group, Inc."
+    },
+    "9841": {
+        "cik_str": 1527352,
+        "ticker": "NXLIW",
+        "title": "Nexalin Technology, Inc."
+    },
+    "9856": {
+        "cik_str": 1576018,
+        "ticker": "SSPFF",
+        "title": "SiriusPoint Ltd"
+    },
+    "9857": {
+        "cik_str": 1553788,
+        "ticker": "SBEV-WT",
+        "title": "SPLASH BEVERAGE GROUP, INC."
+    },
+    "9864": {
+        "cik_str": 1546538,
+        "ticker": "BTLWF",
+        "title": "BTS Group Holdings Public Co Limited/ADR"
+    },
+    "9866": {
+        "cik_str": 1512922,
+        "ticker": "PETVW",
+        "title": "PetVivo Holdings, Inc."
+    },
+    "9867": {
+        "cik_str": 1506492,
+        "ticker": "NUWEW",
+        "title": "Nuwellis, Inc."
+    },
+    "9869": {
+        "cik_str": 1498233,
+        "ticker": "CPTNW",
+        "title": "Cepton, Inc."
+    },
+    "9870": {
+        "cik_str": 1482541,
+        "ticker": "CEADW",
+        "title": "CEA Industries Inc."
+    },
+    "9871": {
+        "cik_str": 1483994,
+        "ticker": "HWLDF",
+        "title": "H World Group Ltd"
+    },
+    "9873": {
+        "cik_str": 2031561,
+        "ticker": "ALDFW",
+        "title": "Aldel Financial II Inc."
+    },
+    "9875": {
+        "cik_str": 2013186,
+        "ticker": "TNMWF",
+        "title": "TNL Mediagene"
+    },
+    "9878": {
+        "cik_str": 2019804,
+        "ticker": "HONDW",
+        "title": "HCM II Acquisition Corp."
+    },
+    "9881": {
+        "cik_str": 2016072,
+        "ticker": "MBAVW",
+        "title": "M3-Brigade Acquisition V Corp."
+    },
+    "9884": {
+        "cik_str": 2028027,
+        "ticker": "NTWOW",
+        "title": "Newbury Street II Acquisition Corp"
+    },
+    "9890": {
+        "cik_str": 2032966,
+        "ticker": "ADMWF",
+        "title": "ACUREN CORP"
+    },
+    "9892": {
+        "cik_str": 2010930,
+        "ticker": "ALFUW",
+        "title": "Centurion Acquisition Corp."
+    },
+    "9895": {
+        "cik_str": 2024203,
+        "ticker": "CAPNR",
+        "title": "Cayson Acquisition Corp"
+    },
+    "9896": {
+        "cik_str": 2028336,
+        "ticker": "NEHCW",
+        "title": "NEW ERA HELIUM INC."
+    },
+    "9898": {
+        "cik_str": 2023730,
+        "ticker": "GIGGW",
+        "title": "GigCapital7 Corp."
+    },
+    "9899": {
+        "cik_str": 2015955,
+        "ticker": "CUBWW",
+        "title": "Lionheart Holdings"
+    },
+    "9902": {
+        "cik_str": 2015947,
+        "ticker": "SBXD-WT",
+        "title": "SilverBox Corp IV"
+    },
+    "9903": {
+        "cik_str": 1967478,
+        "ticker": "CAPTW",
+        "title": "Captivision Inc."
+    },
+    "9904": {
+        "cik_str": 1979005,
+        "ticker": "AFJKR",
+        "title": "Aimei Health Technology Co., Ltd."
+    },
+    "9907": {
+        "cik_str": 1969475,
+        "ticker": "BAYAR",
+        "title": "Bayview Acquisition Corp"
+    },
+    "9909": {
+        "cik_str": 2013807,
+        "ticker": "FOXXW",
+        "title": "Foxx Development Holdings Inc."
+    },
+    "9910": {
+        "cik_str": 2020385,
+        "ticker": "TAVIR",
+        "title": "Tavia Acquisition Corp."
+    },
+    "9912": {
+        "cik_str": 2012807,
+        "ticker": "RFAIR",
+        "title": "RF Acquisition Corp II"
+    },
+    "9913": {
+        "cik_str": 2012964,
+        "ticker": "AAM-WT",
+        "title": "AA Mission Acquisition Corp."
+    },
+    "9915": {
+        "cik_str": 1999297,
+        "ticker": "DSYWW",
+        "title": "Big Tree Cloud Holdings Ltd"
+    },
+    "9917": {
+        "cik_str": 2006815,
+        "ticker": "VACHW",
+        "title": "Voyager Acquisition Corp./Cayman Islands"
+    },
+    "9918": {
+        "cik_str": 1983324,
+        "ticker": "RMSGW",
+        "title": "Real Messenger Corp"
+    },
+    "9919": {
+        "cik_str": 1946573,
+        "ticker": "KDLYW",
+        "title": "Kindly MD, Inc."
+    },
+    "9920": {
+        "cik_str": 1951089,
+        "ticker": "CRMLW",
+        "title": "Critical Metals Corp."
+    },
+    "9921": {
+        "cik_str": 1956237,
+        "ticker": "ALMP",
+        "title": "Almco Plumbing Inc"
+    },
+    "9922": {
+        "cik_str": 1976663,
+        "ticker": "NXNT",
+        "title": "Nexscient, Inc."
+    },
+    "9923": {
+        "cik_str": 1981662,
+        "ticker": "NIVFW",
+        "title": "NewGenIvf Group Ltd"
+    },
+    "9924": {
+        "cik_str": 1971260,
+        "ticker": "CLDVD",
+        "title": "Web3 Ventures Inc."
+    },
+    "9925": {
+        "cik_str": 1966287,
+        "ticker": "GFRWF",
+        "title": "Greenfire Resources Ltd."
+    },
+    "9927": {
+        "cik_str": 2002038,
+        "ticker": "LEGT-WT",
+        "title": "Legato Merger Corp. III"
+    },
+    "9928": {
+        "cik_str": 1998781,
+        "ticker": "IBACR",
+        "title": "IB Acquisition Corp."
+    },
+    "9930": {
+        "cik_str": 1991946,
+        "ticker": "CGBSW",
+        "title": "Crown LNG Holdings Ltd"
+    },
+    "9931": {
+        "cik_str": 1995194,
+        "ticker": "PITAW",
+        "title": "Heramba Electric plc"
+    },
+    "9932": {
+        "cik_str": 1985062,
+        "ticker": "PBMWW",
+        "title": "PSYENCE BIOMEDICAL LTD."
+    },
+    "9933": {
+        "cik_str": 1988776,
+        "ticker": "MRNOW",
+        "title": "Murano Global Investments Plc"
+    },
+    "9934": {
+        "cik_str": 1994373,
+        "ticker": "ACZT",
+        "title": "Aceztech Corp"
+    },
+    "9936": {
+        "cik_str": 1991332,
+        "ticker": "MKDWW",
+        "title": "MKDWELL Tech Inc."
+    },
+    "9937": {
+        "cik_str": 1982444,
+        "ticker": "BDMDW",
+        "title": "Baird Medical Investment Holdings Ltd"
+    },
+    "9938": {
+        "cik_str": 1992243,
+        "ticker": "FREY-WT",
+        "title": "FREYR Battery, Inc. /DE/"
+    },
+    "9939": {
+        "cik_str": 1964630,
+        "ticker": "VSTEW",
+        "title": "Vast Renewables Ltd"
+    },
+    "9941": {
+        "cik_str": 1995413,
+        "ticker": "CLBR-WT",
+        "title": "COLOMBIER ACQUISITION CORP. II"
+    },
+    "9942": {
+        "cik_str": 1973056,
+        "ticker": "BOWNR",
+        "title": "Bowen Acquisition Corp"
+    },
+    "9944": {
+        "cik_str": 1970129,
+        "ticker": "LGSP",
+        "title": "LEGEND SPICES, INC."
+    },
+    "9945": {
+        "cik_str": 1973047,
+        "ticker": "MRKY",
+        "title": "MARKY CORP."
+    },
+    "9947": {
+        "cik_str": 1953984,
+        "ticker": "BCGWW",
+        "title": "Binah Capital Group, Inc."
+    },
+    "9948": {
+        "cik_str": 1947244,
+        "ticker": "USGOW",
+        "title": "U.S. GoldMining Inc."
+    },
+    "9949": {
+        "cik_str": 1945711,
+        "ticker": "LVROW",
+        "title": "Lavoro Ltd"
+    },
+    "9951": {
+        "cik_str": 1973368,
+        "ticker": "SVMHW",
+        "title": "SRIVARU Holding Ltd"
+    },
+    "9952": {
+        "cik_str": 1970743,
+        "ticker": "RMXI",
+        "title": "Reticulate Micro, Inc."
+    },
+    "9954": {
+        "cik_str": 1900679,
+        "ticker": "TETEW",
+        "title": "Technology & Telecommunication Acquisition Corp"
+    },
+    "9955": {
+        "cik_str": 1936804,
+        "ticker": "SDAWW",
+        "title": "SunCar Technology Group Inc."
+    },
+    "9956": {
+        "cik_str": 1927719,
+        "ticker": "CRGOW",
+        "title": "Freightos Ltd"
+    },
+    "9958": {
+        "cik_str": 1932737,
+        "ticker": "NWTNW",
+        "title": "NWTN, Inc."
+    },
+    "9962": {
+        "cik_str": 2025341,
+        "ticker": "POLEW",
+        "title": "Andretti Acquisition Corp. II"
+    },
+    "9963": {
+        "cik_str": 2025065,
+        "ticker": "BSIIW",
+        "title": "Black Spade Acquisition II Co"
+    },
+    "9967": {
+        "cik_str": 2025396,
+        "ticker": "VCICW",
+        "title": "Vine Hill Capital Investment Corp."
+    },
+    "9970": {
+        "cik_str": 2029769,
+        "ticker": "OACCW",
+        "title": "Oaktree Acquisition Corp. III Life Sciences"
+    },
+    "9972": {
+        "cik_str": 1895144,
+        "ticker": "GODNR",
+        "title": "Golden Star Acquisition Corp"
+    },
+    "9973": {
+        "cik_str": 1882464,
+        "ticker": "MSSAR",
+        "title": "Metal Sky Star Acquisition Corp"
+    },
+    "9975": {
+        "cik_str": 1882464,
+        "ticker": "MSSAW",
+        "title": "Metal Sky Star Acquisition Corp"
+    },
+    "9977": {
+        "cik_str": 1889983,
+        "ticker": "KVACW",
+        "title": "Keen Vision Acquisition Corp."
+    }
+}
