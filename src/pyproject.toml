@@ -1,6 +1,6 @@
 [project]
 name = "gentrade"
-version = "0.0.20"
+version = "0.0.21"
 authors = [
   { name="Lu Ken", email="bluewish.ken.lu@live.cn" },
 ]
@@ -27,8 +27,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/TrustWiseAgent/GenTrade"
-Issues = "https://github.com/TrustWiseAgent/GenTrade/issues"
+Homepage = "https://github.com/TrustAgentPlatform/GenTrade"
+Issues = "https://github.com/TrustAgentPlatform/GenTrade/issues"
 
 [build-system]
 requires = ["hatchling"]
