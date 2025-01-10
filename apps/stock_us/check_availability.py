@@ -1,11 +1,11 @@
 
 import argparse
 
-import requests
 import json
-import yfinance as yf
-from datetime import datetime, timedelta
 import time
+from datetime import datetime, timedelta
+
+import yfinance as yf
 
 #SEC_LIST="https://www.sec.gov/files/company_tickers.json"
 
@@ -13,11 +13,11 @@ final = {}
 issue = {}
 
 def save_file(value, filename):
-    with open(filename, 'w') as fp:
+    with open(filename, 'w', encoding="utf-8") as fp:
         json.dump(value, fp, indent=4)
 
 def check_file(origin_fname):
-    with open(origin_fname) as f:
+    with open(origin_fname, encoding="utf-8") as f:
         origin = json.loads(f.read())
         index = 0
         for item in origin:
@@ -73,4 +73,3 @@ def start():
 
 if __name__ == "__main__":
     start()
-
