@@ -14,6 +14,8 @@ ASSET_TYPE_INDEX = '2'
 
 class ChinaMarket:
 
+    _inst = None
+
     def __init__(self):
         self._bsapi = external.BaoStockApi()
         self._df = None
@@ -49,23 +51,43 @@ class ChinaMarket:
                 count += 1
         df_stocks.to_csv(fpath, encoding='utf8')
 
-    def get_name(self, code: str, asset_type: str = ASSET_TYPE_STOCK):
-        self._df = self._df.loc[(self._df['code'] == code) & (
+    def get_name(self, code:str, asset_type:str=ASSET_TYPE_STOCK):
+        df = self._df.loc[(self._df['code'] == code) & (
             self._df['type'] == asset_type)]
-        if len(self._df) == 0:
+        if len(df) == 0:
             LOG.error("Could not find the specific code %s" % code)
             return None
-        return self._df.iloc[0]['code_name']
+        return df.iloc[0]['code_name']
+
+    @staticmethod
+    def inst():
+        if ChinaMarket._inst is None:
+            ChinaMarket._inst = ChinaMarket()
+            ChinaMarket._inst.load()
+        return ChinaMarket._inst
 
 class ChinaAsset:
 
-    def __init__(self, code: str, name: str):
+    def __init__(self, code: str, asset_type=ASSET_TYPE_STOCK):
         self._adata_api = external.ADataApi()
         self._code = code
-        self._name = name
+        self._type = asset_type
+        self._name = ChinaMarket.inst().get_name(code, asset_type)
+
+    @property
+    def code(self):
+        return self._code
+
+    @property
+    def asset_type(self):
+        return self._type
+
+    @property
+    def name(self):
+        return self._name
 
     def get_ohlcv(self, ktype=1, start:datetime=None, end:datetime=None):
-        """_summary_
+        """Get OHLCV
 
         Args:
             ktype (int, optional):  1:day 2:week 3:month 4:quart 5:5min
@@ -108,11 +130,14 @@ class ChinaAsset:
             start = end - timedelta(days=14)
         return start
 
+    def get_min(self):
+        if self._type == ASSET_TYPE_INDEX:
+            return self._adata_api.get_index_min(self.code)
+        return None
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    cm = ChinaMarket()
-    cm.load()
-    name = cm.get_name('000001', asset_type=ASSET_TYPE_STOCK)
-    ca = ChinaAsset('000001', name)
+
+    ca = ChinaAsset('000001')
     df = ca.get_ohlcv()
     print(df)

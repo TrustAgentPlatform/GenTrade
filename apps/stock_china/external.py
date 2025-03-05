@@ -97,12 +97,19 @@ class BaoStockApi:
 
 class ADataApi:
 
+    def _process_date(self, df) -> pd.DataFrame:
+        df['date'] = pd.to_datetime(df['trade_time'])
+        df.set_index('date', inplace=True)
+        df.drop(columns=['trade_time',
+                'trade_date'], inplace=True)
+        return df
+
     def get_ohlcv(self, code, ktype, start:datetime, end:datetime):
         df = adata.stock.market.get_market(
             code, start.strftime(FORMAT_TIME),
             end.strftime(FORMAT_TIME), ktype)
-        df['date'] = pd.to_datetime(df['trade_time'])
-        df.set_index('date', inplace=True)
-        df.drop(columns=['stock_code', 'trade_time',
-                'trade_date'], inplace=True)
-        return df
+        return self._process_date(df).drop(columns=['stock_code'])
+
+    def get_index_min(self, code='000001'):
+        df = adata.stock.market.get_market_index_min(code)
+        return self._process_date(df).drop(columns=['index_code'])

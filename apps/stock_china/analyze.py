@@ -30,8 +30,7 @@ def parse_args():
         start = datetime.strptime(start, FORMAT_DAY)
     return opts.code, opts.ktype, start, opts.end
 
-
-def show(code, name, ktype, df):
+def show(asset, ktype, df):
     panels = []
     panel_index = 2  # panel 0 is OHLCV, panel 1 is volume
 
@@ -55,26 +54,42 @@ def show(code, name, ktype, df):
     style = mpf.make_mpf_style(
         base_mpf_style='starsandstripes', rc={
             'font.family': 'SimHei', 'axes.unicode_minus': 'False'})
-    mpf.plot(df, title="%s - %s [%d]" % (code, name, ktype), type='candle',
+    mpf.plot(df, title="%s - %s [%s]" % (asset.code, asset.name, utility.get_ktype_name(int(ktype))), type='candle',
              style=style, xrotation=90, datetime_format='%Y-%m-%d %H:%M',
              mav=(7, 14, 30, 60), volume=True,
              ylabel='价格', ylabel_lower='量',
              figratio=(10, 7), figscale=1,
              show_nontrading=False,
              addplot=panels, returnfig=True)
+
+    # also show sh.000001 上证
+    sh000001 = zhbase.ChinaAsset('000001', zhbase.ASSET_TYPE_INDEX)
+    df_000001 = sh000001.get_min()
+    print(df_000001)
+    #df_000001 = df_000001.groupby(df_000001.index.floor('5min').time).mean()
+    df_000001 = df_000001.groupby(pd.Grouper(level='date', axis=0,
+                      freq='5Min')).mean()
+    df_000001['Open'] = df_000001['avg_price']
+    df_000001['Close'] = df_000001['avg_price']
+    df_000001['High'] = df_000001['avg_price']
+    df_000001['Low'] = df_000001['avg_price']
+    df_000001['Volume'] = df_000001['volume']
+    print(df_000001)
+    mpf.plot(df_000001, title=sh000001.name + " 5分钟", type='line',
+             style=style, xrotation=90, datetime_format='%Y-%m-%d %H:%M',
+             volume=True,
+             ylabel='价格', ylabel_lower='量',
+             figratio=(10, 7), figscale=1,
+             show_nontrading=False,
+             returnfig=True)
     mpf.show()
 
 def start():
     code, ktype, start, end = parse_args()
 
-    market = zhbase.ChinaMarket()
-    market.load()
-    name = market.get_name(code)
-    if name is None:
-        return
-    asset = zhbase.ChinaAsset(code, name)
+    asset = zhbase.ChinaAsset(code, zhbase.ASSET_TYPE_STOCK)
     df = asset.get_ohlcv(ktype, start, end)
-    show(code, name, ktype, df)
+    show(asset, ktype, df)
 
 
 if __name__ == '__main__':
