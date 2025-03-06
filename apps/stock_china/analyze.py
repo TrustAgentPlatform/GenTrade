@@ -1,16 +1,14 @@
 import os
 import optparse
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pandas as pd
 import mplfinance as mpf
-import matplotlib.pyplot as plt
-from talib import abstract
 
 import zhbase
-import external
 import utility
+from matplotlib import ticker
 
 FORMAT_DAY = '%Y-%m-%d'
 FORMAT_TIME = '%Y-%m-%d %H:%M:%S'
@@ -21,14 +19,15 @@ LOG = logging.getLogger(__name__)
 def parse_args():
     parser = optparse.OptionParser()
     parser.add_option('-c', '--code', type=str, default='000001')
-    parser.add_option('-k', '--ktype', type=int, default=1)
+    parser.add_option('-k', '--ktype', type=int, default=5)
     parser.add_option('-s', '--start')
     parser.add_option('-e', '--end')
     opts, _ = parser.parse_args()
-    start = opts.start
-    if start is not None:
-        start = datetime.strptime(start, FORMAT_DAY)
-    return opts.code, opts.ktype, start, opts.end
+    start_ = opts.start
+    if start_ is not None:
+        start_ = datetime.strptime(start_, FORMAT_DAY)
+    return opts.code, opts.ktype, start_, opts.end
+
 
 def show(asset, ktype, df):
     panels = []
@@ -54,43 +53,45 @@ def show(asset, ktype, df):
     style = mpf.make_mpf_style(
         base_mpf_style='starsandstripes', rc={
             'font.family': 'SimHei', 'axes.unicode_minus': 'False'})
-    mpf.plot(df, title="%s - %s [%s]" % (asset.code, asset.name, utility.get_ktype_name(int(ktype))), type='candle',
-             style=style, xrotation=90, datetime_format='%Y-%m-%d %H:%M',
-             mav=(7, 14, 30, 60), volume=True,
-             ylabel='价格', ylabel_lower='量',
-             figratio=(10, 7), figscale=1,
-             show_nontrading=False,
-             addplot=panels, returnfig=True)
+    _, axlist = mpf.plot(df, title="%s - %s [%s]" % (
+                            asset.code, asset.name,
+                            utility.get_ktype_name(int(ktype))),
+                         type='candle',
+                         style=style, xrotation=90, datetime_format='%Y-%m-%d %H:%M',
+                         mav=(7, 14, 30, 60), volume=True,
+                         ylabel='价格', ylabel_lower='量',
+                         figratio=(10, 7), figscale=1,
+                         show_nontrading=False,
+                         addplot=panels, returnfig=True)
+    axlist[0].xaxis.set_major_locator(ticker.MultipleLocator(5))
 
     # also show sh.000001 上证
     sh000001 = zhbase.ChinaAsset('000001', zhbase.ASSET_TYPE_INDEX)
     df_000001 = sh000001.get_min()
-    print(df_000001)
-    #df_000001 = df_000001.groupby(df_000001.index.floor('5min').time).mean()
     df_000001 = df_000001.groupby(pd.Grouper(level='date', axis=0,
-                      freq='5Min')).mean()
+                                             freq='5Min')).mean()
     df_000001['Open'] = df_000001['avg_price']
     df_000001['Close'] = df_000001['avg_price']
     df_000001['High'] = df_000001['avg_price']
     df_000001['Low'] = df_000001['avg_price']
     df_000001['Volume'] = df_000001['volume']
-    print(df_000001)
-    mpf.plot(df_000001, title=sh000001.name + " 5分钟", type='line',
-             style=style, xrotation=90, datetime_format='%Y-%m-%d %H:%M',
-             volume=True,
-             ylabel='价格', ylabel_lower='量',
-             figratio=(10, 7), figscale=1,
-             show_nontrading=False,
-             returnfig=True)
+    _, axlist = mpf.plot(df_000001, title=sh000001.name + " 5分钟", type='line',
+                           style=style, xrotation=90, datetime_format='%Y-%m-%d %H:%M',
+                           volume=True,
+                           ylabel='价格', ylabel_lower='量',
+                           figratio=(10, 7), figscale=1,
+                           show_nontrading=False,
+                           returnfig=True)
+    axlist[0].xaxis.set_major_locator(ticker.MultipleLocator(5))
     mpf.show()
 
-def start():
+
+def run():
     code, ktype, start, end = parse_args()
 
     asset = zhbase.ChinaAsset(code, zhbase.ASSET_TYPE_STOCK)
     df = asset.get_ohlcv(ktype, start, end)
     show(asset, ktype, df)
 
-
 if __name__ == '__main__':
-    start()
+    run()

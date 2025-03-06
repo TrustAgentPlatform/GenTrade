@@ -1,7 +1,9 @@
 import os
 import logging
-import pandas as pd
 from datetime import datetime, timedelta
+
+import pandas as pd
+
 import external
 
 FORMAT_DAY = '%Y-%m-%d'
@@ -12,25 +14,30 @@ LOG = logging.getLogger(__name__)
 ASSET_TYPE_STOCK = '1'
 ASSET_TYPE_INDEX = '2'
 
+
 class ChinaMarket:
 
     _inst = None
 
     def __init__(self):
         self._bsapi = external.BaoStockApi()
+        self._adata_api = external.ADataApi()
         self._df = None
 
     def load(self, market_file=None):
         if market_file is None:
             market_file = os.path.join(CURR_DIR, 'china_market.csv')
         if not os.path.exists(market_file):
-            self.download(market_file)
+            self._df = self.download_base()
+            self.save(market_file)
         else:
-            df = pd.read_csv(market_file, dtype=str, index_col=0)
-        self._df = df
+            self._df = pd.read_csv(market_file, dtype=str, index_col=0)
         return self._df
 
-    def download(self, fpath):
+    def save(self, market_file=None):
+        self._df.to_csv(market_file, encoding='utf8')
+
+    def download_base(self):
         """Download the asset list including stock and index
 
         Args:
@@ -49,15 +56,52 @@ class ChinaMarket:
                          df_stocks.loc[item, 'type'],
                          df_stocks.loc[item, 'code_name'])
                 count += 1
-        df_stocks.to_csv(fpath, encoding='utf8')
+        return df_stocks
 
-    def get_name(self, code:str, asset_type:str=ASSET_TYPE_STOCK):
+    def get_name(self, code: str, asset_type: str = ASSET_TYPE_STOCK):
         df = self._df.loc[(self._df['code'] == code) & (
             self._df['type'] == asset_type)]
         if len(df) == 0:
-            LOG.error("Could not find the specific code %s" % code)
+            LOG.error("Could not find the specific code %s", code)
             return None
         return df.iloc[0]['code_name']
+
+    def get_id(self, code: str, asset_type: str = ASSET_TYPE_STOCK):
+        df = self._df.loc[(self._df['code'] == code) & (
+            self._df['type'] == asset_type)]
+        if len(df) == 0:
+            LOG.error("Could not find the specific code %s", code)
+            return None
+        return df.index[0]
+
+    def get_trade_days(self, start, end=None) -> pd.DataFrame:
+        return self._bsapi.get_trade_days(start, end)
+
+    def download_industry_info(self):
+        count = 0
+        if "industry1_code" not in self._df.columns:
+            self._df["industry1_code"] = ""
+        if "industry1_name" not in self._df.columns:
+            self._df["industry1_name"] = ""
+        if "industry2_code" not in self._df.columns:
+            self._df["industry2_code"] = ""
+        if "industry2_name" not in self._df.columns:
+            self._df["industry2_name"] = ""
+        for index in self._df.index:
+            if self._df.at[index, 'type'] == ASSET_TYPE_INDEX:
+                continue
+            ret = self._adata_api.get_stock_industry(
+                self._df.at[index, 'code'])
+            if ret is not None and len(ret) == 2:
+                self._df.at[index, 'industry1_code'] = ret.at[0, 'sw_code']
+                self._df.at[index, 'industry1_name'] = ret.at[0,
+                                                              'industry_name']
+                self._df.at[index, 'industry2_code'] = ret.at[1, 'sw_code']
+                self._df.at[index, 'industry2_name'] = ret.at[1,
+                                                              'industry_name']
+            LOG.info("[%04d] %s", count, self._df.loc[[index]])
+            count += 1
+            self.save('china_market_2.csv')
 
     @staticmethod
     def inst():
@@ -66,6 +110,7 @@ class ChinaMarket:
             ChinaMarket._inst.load()
         return ChinaMarket._inst
 
+
 class ChinaAsset:
 
     def __init__(self, code: str, asset_type=ASSET_TYPE_STOCK):
@@ -73,6 +118,7 @@ class ChinaAsset:
         self._code = code
         self._type = asset_type
         self._name = ChinaMarket.inst().get_name(code, asset_type)
+        self._id = ChinaMarket.inst().get_id(code, asset_type)
 
     @property
     def code(self):
@@ -83,10 +129,17 @@ class ChinaAsset:
         return self._type
 
     @property
+    def id(self):
+        return self._id
+
+    @property
     def name(self):
         return self._name
 
-    def get_ohlcv(self, ktype=1, start:datetime=None, end:datetime=None):
+    def __str__(self):
+        return '[%s] %s' % (self._id, self._name)
+
+    def get_ohlcv(self, ktype=1, start: datetime = None, end: datetime = None):
         """Get OHLCV
 
         Args:
@@ -106,7 +159,7 @@ class ChinaAsset:
         df = self._adata_api.get_ohlcv(self._code, ktype, start, end)
         return df
 
-    def _calculate_start(self, ktype:int, end:datetime) -> datetime:
+    def _calculate_start(self, ktype: int, end: datetime) -> datetime:
         """Calculate the start date according to end date and ktype
 
         Args:
@@ -120,7 +173,7 @@ class ChinaAsset:
             start = end - timedelta(days=200)
         elif ktype == 2:
             start = end - timedelta(weeks=100)
-        elif ktype == 3 or ktype == 4:
+        elif ktype in (3, 4):
             start = end - timedelta(weeks=240)
         elif ktype == 5:
             start = end - timedelta(days=3)
@@ -128,6 +181,9 @@ class ChinaAsset:
             start = end - timedelta(days=7)
         elif ktype in [30, 60]:
             start = end - timedelta(days=14)
+        else:
+            LOG.error("invalid ktype: %d", ktype)
+            return None
         return start
 
     def get_min(self):
@@ -135,9 +191,21 @@ class ChinaAsset:
             return self._adata_api.get_index_min(self.code)
         return None
 
+    @staticmethod
+    def all(asset_type=ASSET_TYPE_STOCK):
+        ret_dict = {}
+        df = ChinaMarket.inst().load()
+        print(df)
+        for index in df.index:
+            if df.loc[index]['type'] == ASSET_TYPE_STOCK:
+                asset = ChinaAsset(df.loc[index]['code'], asset_type)
+                ret_dict[asset.id] = asset
+        return ret_dict
+
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
 
-    ca = ChinaAsset('000001')
-    df = ca.get_ohlcv()
-    print(df)
+    cm = ChinaMarket()
+    cm.load()
+    cm.download_industry_info()

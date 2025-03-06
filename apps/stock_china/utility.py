@@ -46,20 +46,15 @@ def macd_plots(df: pd.DataFrame, panel: int, fast=12, slow=26, period=9):
     return plots
 
 def get_ktype_name(ktype:int=1):
-    if ktype == 1:
-        return '1天'
-    elif ktype == 2:
-        return '1周'
-    elif ktype == 3:
-        return '1月'
-    elif ktype == 4:
-        return '1季度'
-    elif ktype == 5:
-        return '5分钟'
-    elif ktype == 15:
-        return '15分钟'
-    elif ktype == 30:
-        return '30分钟'
-    elif ktype == 60:
-        return '60分钟'
-    return None
+    ktype_mapping = {
+        1: '1天',
+        2: '1周',
+        3: '1月',
+        4: '1季度',
+        5: '5分钟',
+        15: '15分钟',
+        30: '30分钟',
+        60: '60分钟'
+    }
+    assert ktype in ktype_mapping
+    return ktype_mapping[ktype]
