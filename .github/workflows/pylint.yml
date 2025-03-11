@@ -5,12 +5,14 @@ on:
     paths:
     - 'src/**/*.py'
     - 'tests/**/*.py'
+    - 'apps/**/*.py'
   push:
     branches:
     - main
     paths:
     - 'src/**/*.py'
     - 'tests/**/*.py'
+    - 'apps/**/*.py'
   workflow_dispatch:
 
 jobs:
