@@ -21,7 +21,7 @@ dependencies = [
     "ccxt",
     "pytest",
     "backtrader",
-    "pyautogen",
+    "ag2",
     "mplfinance",
     "ntplib",
 ]
