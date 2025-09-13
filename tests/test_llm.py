@@ -5,11 +5,29 @@ pip install -r langchain_openai langchain_core
 
 """
 import os
+import time
 import pytest
 
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langchain_core.messages import ToolMessage
+
+
+class CustomChatOpenAI(ChatOpenAI):
+
+    def invoke(self, messages, config=None, **kwargs):
+        start_time = time.perf_counter()
+
+        response = super().invoke(messages, config=config, **kwargs)
+
+        duration = time.perf_counter() - start_time
+        print(f"Duration: {duration:.2f} seconds")
+
+        token_usage = response.response_metadata["token_usage"]
+        print(f"Prompt Tokens: {token_usage.get('prompt_tokens')}")
+        print(f"Completion Tokens: {token_usage.get('completion_tokens')}")
+        print(f"Total Tokens: {token_usage.get('total_tokens')}")
+        return response
 
 @pytest.fixture(params=[
     # 参数1：OpenAI 的 GPT-3.5 模型
@@ -57,7 +75,7 @@ def llm_instance(request):
     else:
         assert False, "Unsupported provider"
 
-    return ChatOpenAI(
+    return CustomChatOpenAI(
         model=config["model"],
         temperature=config["temperature"],
         max_tokens=200,
@@ -65,7 +83,7 @@ def llm_instance(request):
         base_url=base_url
     )
 
-def test_llm_tools(llm_instance):
+def test_llm_tools_token_usage(llm_instance):
     llminst = llm_instance
 
     # Define the tools using the @tool decorator
@@ -96,6 +114,11 @@ def test_llm_tools(llm_instance):
     query = "What is 15 * 3? Also, add 10 to 45."
     response = llm_with_tools.invoke(query)
     print(response)
+
+    token_usage = response.response_metadata["token_usage"]
+    print(f"Prompt Tokens: {token_usage.get('prompt_tokens')}")
+    print(f"Completion Tokens: {token_usage.get('completion_tokens')}")
+    print(f"Total Tokens: {token_usage.get('total_tokens')}")
 
     assert response is not None
     assert response.content is not None
