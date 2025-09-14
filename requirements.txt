@@ -8,3 +8,9 @@ backtrader
 pyautogen
 mplfinance
 ntplib
+
+langchain_openai
+langchain_core
+langchain_tavily
+langchain
+langgraph
