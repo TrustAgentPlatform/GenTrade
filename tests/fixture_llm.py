@@ -7,10 +7,11 @@ from langchain_openai import ChatOpenAI
 
 class CustomChatOpenAI(ChatOpenAI):
 
-    def invoke(self, messages, config=None, **kwargs):
+    # pylint: disable=redefined-builtin
+    def invoke(self, input, config=None, **kwargs):
         start_time = time.perf_counter()
 
-        response = super().invoke(messages, config=config, **kwargs)
+        response = super().invoke(input, config=config, **kwargs)
 
         duration = time.perf_counter() - start_time
         token_usage = response.response_metadata["token_usage"]
@@ -58,8 +59,15 @@ class CustomChatOpenAI(ChatOpenAI):
         "model": "THUDM/glm-4-9b-chat",
         "temperature": 0.1
     },
+    {
+        "type": "qwen2.5",
+        "provider": "ollama",
+        "model": "qwen2.5",
+        "temperature": 0.1
+    },
 ], ids=["qwen-turbo", "deepseek-r1", "claude-3.5-sonnet", \
-        "llama-4-scout", "gemini-2.0-flash", "glm-4-9b-chat"],
+        "llama-4-scout", "gemini-2.0-flash", "glm-4-9b-chat", \
+        "qwen2.5-local"],
     scope="module")
 def llm_instance(request):
     config = request.param  # 获取当前参数
@@ -74,6 +82,9 @@ def llm_instance(request):
     elif config["provider"] == "siliconflow":
         api_key = os.getenv("SILICONFLOW_API_KEY")
         base_url = os.getenv("SILICONFLOW_BASE_URL", "https://api.siliconflow.cn/v1")
+    elif config["provider"] == "ollama":
+        api_key = "empty"
+        base_url = os.getenv("SILICONFLOW_BASE_URL", "http://localhost:11434/v1")
     else:
         assert False, "Unsupported provider"
 
