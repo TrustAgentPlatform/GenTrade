@@ -17,7 +17,10 @@ Test LLM compatible call on ChatOpenAI and tools usage.
 """
 import os
 import time
+from typing import Optional
+
 import pytest
+from pydantic import BaseModel, Field
 
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
@@ -200,3 +203,47 @@ def test_tool_tavily_search(llm_instance):
 
     final_response = llm_with_tools.invoke([query, response] + tool_messages)
     print(final_response.content)
+
+
+class WeatherInfo(BaseModel):
+    """Weather information to tell user."""
+
+    weather: str = Field(description="weather condition, e.g., sunny, rainy")
+    temperature: str = Field(description="temperature in Fahrenheit or Celsius")
+    humidity: str = Field(description="humidity percentage")
+
+class Joke(BaseModel):
+    """Joke to tell user."""
+
+    setup: str = Field(description="The setup of the joke")
+    punchline: str = Field(description="The punchline to the joke")
+    rating: Optional[float] = Field(  # 改为float类型，支持小数评分
+        default=None, description="How funny the joke is, from 1 to 10 (can be a decimal)"
+    )
+
+def test_tool_structured_output(llm_instance):
+    """
+    This may not work for deepseek model, since there a json prefix in its' output like:
+
+    data = 'Here\'s a JSON object with a cat joke for you:\n\n```json\n{\n
+    "setup": "Why did the cat sit on the computer?",\n
+    "punchline": "To keep an eye on the mouse!",\n    "rating": 4.5\n}\n```'
+    """
+    structured_llm = llm_instance.with_structured_output(
+        Joke, method="json_schema")
+
+    prompt = """
+    Tell me a joke about cats. Return the result as a JSON object
+    with setup, punchline, and optional rating fields.
+    Following is an example of json output
+    {
+        "setup": "setup of joke",
+        "punchline": "punchline of joke",
+        "rating": 1.0
+    }
+    """
+    response = structured_llm.invoke(prompt)
+    print("Joke Setup:", response.setup)
+    print("Joke Punchline:", response.punchline)
+    if response.rating is not None:
+        print("Joke Rating:", response.rating)
