@@ -1,7 +1,17 @@
 """
 Test LLM compatible call on ChatOpenAI and tools usage.
 
-pip install -r langchain_openai langchain_core
+- Prerequisites:
+    pip install -r langchain_openai langchain_core langchain_tavily langchain langgraph
+    expose DASHSCOPE_API_KEY=your_api_key
+    expose OPENROUTER_API_KEY=your_api_key
+    expose TAVILY_API_KEY=your_api_key
+
+- Run:
+    pytest --log-cli-level=INFO -s test_llm.py
+
+- Output:
+
 
 """
 import os
@@ -12,6 +22,10 @@ from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langchain_core.messages import ToolMessage
 
+from langchain.chat_models import init_chat_model
+from langchain_tavily import TavilySearch
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.prebuilt import create_react_agent
 
 class CustomChatOpenAI(ChatOpenAI):
 
@@ -21,12 +35,12 @@ class CustomChatOpenAI(ChatOpenAI):
         response = super().invoke(messages, config=config, **kwargs)
 
         duration = time.perf_counter() - start_time
-        print(f"Duration: {duration:.2f} seconds")
-
         token_usage = response.response_metadata["token_usage"]
-        print(f"Prompt Tokens: {token_usage.get('prompt_tokens')}")
-        print(f"Completion Tokens: {token_usage.get('completion_tokens')}")
-        print(f"Total Tokens: {token_usage.get('total_tokens')}")
+        print(f"[Token] Prompt: {token_usage.get('prompt_tokens')}, "\
+              f"Completion: {token_usage.get('completion_tokens')}, "\
+              f"Total: {token_usage.get('total_tokens')} "\
+              f"[Duration] {duration:.2f} seconds")
+
         return response
 
 @pytest.fixture(params=[
@@ -75,6 +89,8 @@ def llm_instance(request):
     else:
         assert False, "Unsupported provider"
 
+    assert api_key is not None, "API key is not set"
+
     return CustomChatOpenAI(
         model=config["model"],
         temperature=config["temperature"],
@@ -83,7 +99,7 @@ def llm_instance(request):
         base_url=base_url
     )
 
-def test_llm_tools_token_usage(llm_instance):
+def test_tool_basic(llm_instance):
     llminst = llm_instance
 
     # Define the tools using the @tool decorator
@@ -126,6 +142,52 @@ def test_llm_tools_token_usage(llm_instance):
     tool_messages = []
 
     assert len(response.tool_calls) != 0
+
+    for tool_call in response.tool_calls:
+        print(tool_call)
+        tool_output = tool_map[tool_call['name']].invoke(tool_call['args'])
+        tool_messages.append(ToolMessage(tool_output, tool_call_id=tool_call['id']))
+
+    final_response = llm_with_tools.invoke([query, response] + tool_messages)
+    print(final_response.content)
+
+
+def test_agent(llm_instance):
+    llminst = llm_instance
+
+    # Create the agent
+    memory = MemorySaver()
+    search = TavilySearch(max_results=2)
+    tools = [search]
+    agent_executor = create_react_agent(llminst, tools, checkpointer=memory)
+
+    config = {"configurable": {"thread_id": "abc123"}}
+
+    input_message = {
+        "role": "user",
+        "content": "Search for the weather in SF",
+    }
+
+    for step in agent_executor.stream({"messages": [input_message]}, config, stream_mode="values"):
+        step["messages"][-1].pretty_print()
+
+
+def test_tool_tavily_search(llm_instance):
+    llminst = llm_instance
+
+    search = TavilySearch(max_results=2)
+    response = search.invoke("What's the weather where I live?")
+    print(response)
+
+    tools = [search]
+    tool_map = {"tavily_search": search}
+    llm_with_tools = llminst.bind_tools(tools)
+
+    query = "Search for the weather in SF"
+    response = llm_with_tools.invoke([{"role": "user", "content": query}])
+    print(response)
+
+    tool_messages = []
 
     for tool_call in response.tool_calls:
         print(tool_call)
