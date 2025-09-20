@@ -1,3 +1,19 @@
+"""
+LLM Provider and Factory Module
+
+This module provides classes for managing Large Language Model (LLM) providers,
+their models, and creating instances of custom chat models with tracking capabilities.
+
+Key components:
+- ModelInfo: Dataclass storing detailed information about LLM models
+- CustomLLMChat: Extended ChatOpenAI class with token tracking and request logging
+- LLMProvider: Manages a single LLM service provider and its available models
+- LLMFactory: Central factory for managing multiple providers and creating LLM instances
+
+The module supports loading provider configurations from JSON files, tracking token
+usage and request metrics, calculating costs, and discovering models across providers.
+"""
+
 import os
 import time
 import logging
@@ -16,6 +32,7 @@ from langchain.schema.runnable import RunnableConfig
 
 
 LOG = logging.getLogger(__name__)
+CURR_DIR = os.path.dirname(__file__)
 
 @dataclass
 class ModelInfo:
@@ -285,7 +302,7 @@ class LLMProvider:
         """
         return sorted([info.model_name for info in self.models.values()])
 
-    def get_model_info(self, provider_name: str, model_name: str) -> Optional[ModelInfo]:
+    def get_model_info(self, provider_name: str, model_name_or_path: str) -> Optional[ModelInfo]:
         """
         Get detailed information about a specific model.
 
@@ -296,8 +313,13 @@ class LLMProvider:
         Returns:
             ModelInfo object if found, None otherwise
         """
-        key = f"{provider_name}:{model_name}"
+        key = f"{provider_name}:{model_name_or_path}"
         info = self.models.get(key)
+        if info is None:
+            for key in self.models:
+                if self.models[key].model_path == model_name_or_path:
+                    info = self.models[key]
+
         if info:
             LOG.debug(f"Retrieved info for model '{key}' from {provider_name} provider")
         else:
@@ -424,7 +446,7 @@ class LLMFactory:
         # Dictionary to store providers by name for quick lookup
         self.providers: Dict[str, LLMProvider] = {}
         LOG.debug("Initialized empty LLMFactory")
-        self.load_provider_from_file("llm_config.json")
+        self.load_provider_from_file(os.path.join(CURR_DIR, "llm_config.json"))
 
     def load_provider_from_file(
         self, file_path: str, api_keys: Optional[Dict[str, str]] = None) -> None:
