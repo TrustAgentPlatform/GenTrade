@@ -14,11 +14,10 @@ Test coverage includes validation of:
 - Reasonable date ranges based on interval
 - Non-empty price data
 """
-
+from datetime import datetime, timedelta
 import pytest
 import yfinance as yf
 import pandas as pd
-from datetime import datetime, timedelta
 
 
 @pytest.fixture(scope="module")
