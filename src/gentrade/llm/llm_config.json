@@ -1,0 +1,108 @@
+{
+    "providers": [
+      {
+        "provider_name": "dashscope",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "api_key_env": "DASHSCOPE_API_KEY",
+        "models": [
+          {
+            "model_name": "qwen-turbo",
+            "model_type": "chat",
+            "model_path": "qwen-turbo",
+            "input_price": 0.05,
+            "output_price": 0.10,
+            "max_input_tokens": 8192,
+            "max_output_tokens": 4096,
+            "context_window": 12288,
+            "description": "Alibaba's fast chat model, optimized for real-time conversations and general tasks"
+          },
+          {
+            "model_name": "deepseek-r1",
+            "model_type": "chat",
+            "model_path": "deepseek-r1",
+            "input_price": 0.08,
+            "output_price": 0.16,
+            "max_input_tokens": 16384,
+            "max_output_tokens": 8192,
+            "context_window": 24576,
+            "description": "DeepSeek's reasoning-focused model, strong at logic and complex task solving"
+          }
+        ]
+      },
+      {
+        "provider_name": "openrouter",
+        "base_url": "https://openrouter.ai/api/v1",
+        "api_key_env": "OPENROUTER_API_KEY",
+        "models": [
+          {
+            "model_name": "claude-3.5-sonnet",
+            "model_type": "chat",
+            "model_path": "anthropic/claude-3.5-sonnet",
+            "input_price": 1.50,
+            "output_price": 3.00,
+            "max_input_tokens": 180000,
+            "max_output_tokens": 8192,
+            "context_window": 200000,
+            "description": "Anthropic's balanced model—fast, cost-effective, and strong at long contexts"
+          },
+          {
+            "model_name": "llama-4-scout",
+            "model_type": "chat",
+            "model_path": "meta-llama/llama-4-scout:free",
+            "input_price": 0.00,
+            "output_price": 0.00,
+            "max_input_tokens": 128000,
+            "max_output_tokens": 4096,
+            "context_window": 131072,
+            "description": "Meta's free Llama 4 variant, ideal for testing and basic chat tasks"
+          },
+          {
+            "model_name": "gemini-2.0-flash",
+            "model_type": "chat",
+            "model_path": "google/gemini-2.0-flash-001",
+            "input_price": 0.15,
+            "output_price": 0.60,
+            "max_input_tokens": 1000000,
+            "max_output_tokens": 8192,
+            "context_window": 1048576,
+            "description": "Google's high-speed model with ultra-large context window for long documents"
+          }
+        ]
+      },
+      {
+        "provider_name": "siliconflow",
+        "base_url": "https://api.siliconflow.cn/v1",
+        "api_key_env": "SILICONFLOW_API_KEY",
+        "models": [
+          {
+            "model_name": "glm-4-9b-chat",
+            "model_type": "chat",
+            "model_path": "THUDM/glm-4-9b-chat",
+            "input_price": 0.03,
+            "output_price": 0.06,
+            "max_input_tokens": 8192,
+            "max_output_tokens": 4096,
+            "context_window": 16384,
+            "description": "Tsinghua's GLM-4 9B model, optimized for Chinese and English chat tasks"
+          }
+        ]
+      },
+      {
+        "provider_name": "ollama",
+        "base_url": "http://localhost:11434/v1",
+        "models": [
+          {
+            "model_name": "qwen-2.5",
+            "model_type": "chat",
+            "model_path": "qwen2.5",
+            "input_price": 0.00,
+            "output_price": 0.00,
+            "max_input_tokens": 4096,
+            "max_output_tokens": 2048,
+            "context_window": 8192,
+            "description": "Local Qwen 2.5 model (runs on Ollama), no API costs and private"
+          }
+        ]
+      }
+    ]
+  }
