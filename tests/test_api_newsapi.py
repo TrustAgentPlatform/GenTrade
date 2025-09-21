@@ -7,12 +7,14 @@ Pytest Suite for NewsAPI US Stock News Retrieval
 """
 
 import os
+from datetime import datetime, timedelta
+from typing import Dict
+
 import pytest
 import requests
-from typing import List, Dict
+
 from dotenv import load_dotenv  # Loads .env file (optional but useful for local testing)
 # Import Python's built-in datetime module (fixes the AttributeError)
-from datetime import datetime, timedelta
 
 # ------------------------------
 # Test Configuration
