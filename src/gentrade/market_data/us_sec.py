@@ -19,6 +19,7 @@ the SEC. For more details on the SEC API, see: https://www.sec.gov/edgar/sec-api
 import time
 from typing import List, Dict, Optional
 import requests
+import pandas as pd
 
 
 class SECStockRetriever:
@@ -474,6 +475,28 @@ class SECStockRetriever:
 
         print(f"No company found with ticker: {ticker}")
         return None
+
+    def get_sp500_tickers_and_ciks(self):
+        url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/120.0.0.0 Safari/537.36"
+        }
+        resp = requests.get(url, headers=headers, timeout=30)
+        resp.raise_for_status()
+
+        # Now feed the HTML text into pandas
+        tables = pd.read_html(resp.text)
+        df = tables[0]  # first table is the current constituents list
+
+        # Extract ticker + CIK (Wikipedia has a CIK column)
+        result = df[['Symbol', 'CIK']].copy()
+        result = result.dropna(subset=['Symbol', 'CIK'])
+        result['CIK'] = result['CIK'].astype(str).str.zfill(10)
+        result['Symbol'] = result['Symbol'].astype(str)
+
+        return result
 
 
 if __name__ == "__main__":
