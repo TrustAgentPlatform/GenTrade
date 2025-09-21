@@ -498,6 +498,7 @@ class SECStockRetriever:
 
         return result
 
+
 if __name__ == "__main__":
     # Replace with your actual contact information
     USER_AGENT = "Your Full Name your.email@example.com"
