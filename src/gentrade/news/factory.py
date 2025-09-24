@@ -1,430 +1,293 @@
-"""Module for fetching and storing financial news from multiple providers.
+"""News aggregation module for fetching, processing, and storing news articles from multiple
+   providers.
 
-This module defines a `NewsInfo` dataclass for news articles, an abstract `NewsAPIProvider`
-for fetching news, specific provider implementations (NewsAPI.org, Finnhub, Google Custom Search),
-a factory for creating providers, an in-memory database, and an aggregator for periodic news
-syncing.
+This module includes a factory for creating news provider instances and an aggregator for
+synchronizing news from these providers to a database, with functionality to extract and clean
+article content.
 """
 
-import abc
-import logging
 import os
+import logging
 import time
-from typing import Dict, List, Any
+from typing import List, Optional
 
-from datetime import datetime
-from dataclasses import dataclass
 import requests
+from newspaper import Article
+from bs4 import BeautifulSoup
+
+from gentrade.news.meta import NewsInfo, NewsProviderBase, NewsDatabase
+from gentrade.news.googlenews import GoogleNewsProvider
+from gentrade.news.newsapi import NewsApiProvider
+from gentrade.news.rss import RssProvider
+from gentrade.news.finnhub import FinnhubNewsProvider
 
 LOG = logging.getLogger(__name__)
 
 
-@dataclass
-class NewsInfo:
-    """Represents a news article with structured fields."""
-    category: str
-    datetime: int
-    headline: str
-    id: int
-    image: str
-    related: str
-    source: str
-    summary: str
-    url: str
-
-    def to_dict(self) -> Dict[str, Any]:
-        """Converts the NewsInfo object to a dictionary.
-
-        Returns:
-            Dict[str, Any]: Dictionary representation of the news article.
-        """
-        return {
-            "category": self.category,
-            "datetime": self.datetime,
-            "headline": self.headline,
-            "id": self.id,
-            "image": self.image,
-            "related": self.related,
-            "source": self.source,
-            "summary": self.summary,
-            "url": self.url
-        }
-
-
-class NewsAPIProvider(metaclass=abc.ABCMeta):
-    """Abstract base class for news provider implementations."""
-
-    @abc.abstractmethod
-    def fetch_latest_market_news(self, category: str = "business") -> List[NewsInfo]:
-        """Fetches latest financial market news.
-
-        Args:
-            category (str): News category (default: "business").
-
-        Returns:
-            List[NewsInfo]: List of news articles.
-        """
-        #pylint: disable=unnecessary-pass
-        pass
-
-    @abc.abstractmethod
-    def fetch_stock_news(self, ticker: str, category: str = "business") -> List[NewsInfo]:
-        """Fetches news for a specific stock by ticker.
-
-        Args:
-            ticker (str): Stock ticker symbol.
-            category (str): News category (default: "business").
-
-        Returns:
-            List[NewsInfo]: List of news articles related to the stock.
-        """
-        #pylint: disable=unnecessary-pass
-        pass
-
-    def _timestamp_to_epoch(self, timestamp: str) -> int:
-        """Converts ISO timestamp to epoch time.
-
-        Args:
-            timestamp (str): ISO format timestamp (e.g., "2023-01-01T12:00:00Z").
-
-        Returns:
-            int: Epoch timestamp in seconds, or current time if conversion fails.
-        """
-        try:
-            dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
-            return int(dt.timestamp())
-        except ValueError:
-            return int(time.time())
-
-
-class NewsApiAdapter(NewsAPIProvider):
-    """NewsAPI.org provider implementation."""
-
-    def __init__(self, api_key: str):
-        """Initializes NewsAPI.org provider.
-
-        Args:
-            api_key (str): API key for NewsAPI.org.
-        """
-        self.api_key = api_key
-        self.base_url = "https://newsapi.org/v2/everything"
-
-    def fetch_latest_market_news(self, category: str = "business") -> List[NewsInfo]:
-        """Fetches latest financial market news from NewsAPI.org."""
-        params = {
-            "q": "financial market OR stock market",
-            "apiKey": self.api_key,
-            "language": "en",
-            "sortBy": "publishedAt"
-        }
-        try:
-            response = requests.get(self.base_url, params=params, timeout=10)
-            response.raise_for_status()
-            articles = response.json().get("articles", [])
-            return [
-                NewsInfo(
-                    category=category,
-                    datetime=self._timestamp_to_epoch(article.get("publishedAt", "")),
-                    headline=article.get("title", ""),
-                    id=hash(article.get("url", "")),
-                    image=article.get("urlToImage", ""),
-                    related="",
-                    source=article.get("source", {}).get("name", ""),
-                    summary=article.get("description", ""),
-                    url=article.get("url", "")
-                ) for article in articles
-            ]
-        except requests.RequestException as e:
-            LOG.debug(f"Error fetching market news from NewsAPI: {e}")
-            return []
-
-    def fetch_stock_news(self, ticker: str, category: str = "business") -> List[NewsInfo]:
-        """Fetches stock-specific news from NewsAPI.org."""
-        params = {
-            "q": ticker,
-            "apiKey": self.api_key,
-            "language": "en",
-            "sortBy": "publishedAt"
-        }
-        try:
-            response = requests.get(self.base_url, params=params, timeout=10)
-            response.raise_for_status()
-            articles = response.json().get("articles", [])
-            return [
-                NewsInfo(
-                    category=category,
-                    datetime=self._timestamp_to_epoch(article.get("publishedAt", "")),
-                    headline=article.get("title", ""),
-                    id=hash(article.get("url", "")),
-                    image=article.get("urlToImage", ""),
-                    related=ticker,
-                    source=article.get("source", {}).get("name", ""),
-                    summary=article.get("description", ""),
-                    url=article.get("url", "")
-                ) for article in articles
-            ]
-        except requests.RequestException as e:
-            LOG.debug(f"Error fetching stock news from NewsAPI: {e}")
-            return []
-
-
-class FinnhubNewsProvider(NewsAPIProvider):
-    """Finnhub.io provider implementation."""
-
-    def __init__(self, api_key: str):
-        """Initializes Finnhub.io provider.
-
-        Args:
-            api_key (str): API key for Finnhub.io.
-        """
-        self.api_key = api_key
-        self.base_url = "https://finnhub.io/api/v1"
-
-    def fetch_latest_market_news(self, category: str = "business") -> List[NewsInfo]:
-        """Fetches latest financial market news from Finnhub.io."""
-        params = {"category": "general", "token": self.api_key}
-        try:
-            response = requests.get(f"{self.base_url}/news", params=params, timeout=10)
-            response.raise_for_status()
-            articles = response.json()
-            return [
-                NewsInfo(
-                    category=category,
-                    datetime=article.get("datetime", int(time.time())),
-                    headline=article.get("headline", ""),
-                    id=article.get("id", hash(article.get("url", ""))),
-                    image=article.get("image", ""),
-                    related=article.get("related", ""),
-                    source=article.get("source", ""),
-                    summary=article.get("summary", ""),
-                    url=article.get("url", "")
-                ) for article in articles
-            ]
-        except requests.RequestException as e:
-            LOG.debug(f"Error fetching market news from Finnhub: {e}")
-            return []
-
-    def fetch_stock_news(self, ticker: str, category: str = "business") -> List[NewsInfo]:
-        """Fetches stock-specific news from Finnhub.io."""
-        params = {"symbol": ticker, "token": self.api_key}
-        try:
-            response = requests.get(f"{self.base_url}/company-news", params=params, timeout=10)
-            response.raise_for_status()
-            articles = response.json()
-            return [
-                NewsInfo(
-                    category=category,
-                    datetime=article.get("datetime", int(time.time())),
-                    headline=article.get("headline", ""),
-                    id=article.get("id", hash(article.get("url", ""))),
-                    image=article.get("image", ""),
-                    related=ticker,
-                    source=article.get("source", ""),
-                    summary=article.get("summary", ""),
-                    url=article.get("url", "")
-                ) for article in articles
-            ]
-        except requests.RequestException as e:
-            LOG.debug(f"Error fetching stock news from Finnhub: {e}")
-            return []
-
-
-class GoogleNewsProvider(NewsAPIProvider):
-    """Google Custom Search provider implementation."""
-
-    def __init__(self, api_key: str, cse_id: str):
-        """Initializes Google Custom Search provider.
-
-        Args:
-            api_key (str): API key for Google Cloud.
-            cse_id (str): Custom Search Engine ID.
-        """
-        self.api_key = api_key
-        self.cse_id = cse_id
-        self.base_url = "https://www.googleapis.com/customsearch/v1"
-
-    def fetch_latest_market_news(self, category: str = "business") -> List[NewsInfo]:
-        """Fetches latest financial market news from Google Custom Search."""
-        params = {"key": self.api_key, "cx": self.cse_id, "q": "financial market news",
-            "sort": "date"}
-        try:
-            response = requests.get(self.base_url, params=params, timeout=10)
-            response.raise_for_status()
-            items = response.json().get("items", [])
-            return [
-                NewsInfo(
-                    category=category,
-                    datetime=int(time.time()),
-                    headline=item.get("title", ""),
-                    id=hash(item.get("link", "")),
-                    image=item.get("pagemap", {}).get("cse_image", [{}])[0].get("src", ""),
-                    related="",
-                    source=item.get("displayLink", ""),
-                    summary=item.get("snippet", ""),
-                    url=item.get("link", "")
-                ) for item in items
-            ]
-        except requests.RequestException as e:
-            LOG.debug(f"Error fetching market news from Google: {e}")
-            return []
-
-    def fetch_stock_news(self, ticker: str, category: str = "business") -> List[NewsInfo]:
-        """Fetches stock-specific news from Google Custom Search."""
-        params = {"key": self.api_key, "cx": self.cse_id, "q": f"{ticker} stock news",
-            "sort": "date"}
-        try:
-            response = requests.get(self.base_url, params=params, timeout=10)
-            response.raise_for_status()
-            items = response.json().get("items", [])
-            return [
-                NewsInfo(
-                    category=category,
-                    datetime=int(time.time()),
-                    headline=item.get("title", ""),
-                    id=hash(item.get("link", "")),
-                    image=item.get("pagemap", {}).get("cse_image", [{}])[0].get("src", ""),
-                    related=ticker,
-                    source=item.get("displayLink", ""),
-                    summary=item.get("snippet", ""),
-                    url=item.get("link", "")
-                ) for item in items
-            ]
-        except requests.RequestException as e:
-            LOG.debug(f"Error fetching stock news from Google: {e}")
-            return []
-
-
 class NewsFactory:
-    """Factory for creating news provider instances."""
+    """Factory class for creating news provider instances based on provider type.
+
+    Provides a static method to instantiate the appropriate news provider (e.g., NewsAPI,
+    Finnhub) using the specified type and required configuration parameters.
+    """
 
     @staticmethod
-    def create_provider(provider_type: str, **kwargs) -> NewsAPIProvider:
-        """Creates a news provider instance based on the provider type.
+    def create_provider(provider_type: str, **kwargs) -> NewsProviderBase:
+        """Create a news provider instance based on the specified provider type.
 
         Args:
-            provider_type (str): Type of provider ("newsapi", "finnhub", or "google").
-            **kwargs: Additional arguments for provider initialization.
+            provider_type: Type of news provider. Supported values: "newsapi", "finnhub",
+                "google", "rss".
+           ** kwargs: Additional keyword arguments for provider initialization (e.g., feed_url
+                for RSS providers).
 
         Returns:
-            NewsAPIProvider: Instance of the specified news provider.
+            Instance of the specified news provider, subclassed from NewsProviderBase.
 
         Raises:
-            ValueError: If provider type is unknown or required environment variables are not set.
+            ValueError: If the provider type is unknown or required environment variables
+                for initialization are missing.
         """
+        provider_type_lower = provider_type.lower()
         providers = {
-            "newsapi": NewsApiAdapter,
+            "newsapi": NewsApiProvider,
             "finnhub": FinnhubNewsProvider,
-            "google": GoogleNewsProvider
+            "google": GoogleNewsProvider,
+            "rss": RssProvider
         }
-        provider_class = providers.get(provider_type.lower())
+
+        provider_class = providers.get(provider_type_lower)
         if not provider_class:
             raise ValueError(f"Unknown provider type: {provider_type}")
 
-        if provider_type.lower() == "newsapi":
+        if provider_type_lower == "newsapi":
             api_key = os.getenv("NEWSAPI_API_KEY")
             if not api_key:
                 raise ValueError("NEWSAPI_API_KEY environment variable not set")
             return provider_class(api_key=api_key)
-        if provider_type.lower() == "finnhub":
+
+        if provider_type_lower == "finnhub":
             api_key = os.getenv("FINNHUB_API_KEY")
             if not api_key:
                 raise ValueError("FINNHUB_API_KEY environment variable not set")
             return provider_class(api_key=api_key)
-        if provider_type.lower() == "google":
+
+        if provider_type_lower == "google":
             api_key = os.getenv("GOOGLE_CLOUD_API_KEY")
             cse_id = os.getenv("GOOGLE_CSE_ID")
             if not api_key or not cse_id:
                 raise ValueError(
-                    "GOOGLE_CLOUD_API_KEY or GOOGLE_CSE_ID environment variable not set")
+                    "GOOGLE_CLOUD_API_KEY or GOOGLE_CSE_ID environment variable not set"
+                )
             return provider_class(api_key=api_key, cse_id=cse_id)
+
+        if provider_type_lower == "rss":
+            feed_url = kwargs.get("feed_url", os.getenv("RSS_FEED_URL"))
+            return provider_class(feed_url=feed_url)
+
         return provider_class(**kwargs)
 
 
-class NewsDatabase:
-    """In-memory database for storing news articles."""
-
-    def __init__(self):
-        """Initializes the news database."""
-        self.news_dict: Dict[str, NewsInfo] = {}  # Key: URL, Value: NewsInfo
-        self.last_sync: float = 0.0
-
-    def add_news(self, news_list: List[NewsInfo]):
-        """Adds news articles to the database if not already present.
-
-        Args:
-            news_list (List[NewsInfo]): List of news articles to add.
-        """
-        for news in news_list:
-            if news.url and news.url not in self.news_dict:
-                self.news_dict[news.url] = news
-
-    def get_all_news(self) -> List[NewsInfo]:
-        """Retrieves all stored news articles.
-
-        Returns:
-            List[NewsInfo]: List of all news articles in the database.
-        """
-        return list(self.news_dict.values())
-
-
 class NewsAggregator:
-    """Aggregates news from multiple providers and syncs to database."""
+    """Aggregates news articles from multiple providers and synchronizes them to a database.
 
-    def __init__(self, providers: List[NewsAPIProvider], db: NewsDatabase):
-        """Initializes the news aggregator.
+    Fetches news from configured providers, processes article content (extracts text from URLs),
+    and stores results in a database. Includes logic to avoid frequent syncs.
+    """
+
+    def __init__(self, providers: List[NewsProviderBase], db: NewsDatabase):
+        """Initialize the NewsAggregator with a list of providers and a database.
 
         Args:
-            providers (List[NewsAPIProvider]): List of news providers.
-            db (NewsDatabase): Database to store news articles.
+            providers: List of news provider instances (subclasses of NewsProviderBase).
+            db: Database instance for storing news articles (subclass of NewsDatabase).
         """
         self.providers = providers
         self.db = db
 
-    def sync_news(self, ticker: str = None, category: str = "business"):
-        """Syncs news from providers if last sync was more than 1 hour ago.
+    def sync_news(
+        self,
+        ticker: Optional[str] = None,
+        category: str = "business",
+        max_hour_interval: int = 24,
+        max_count: int = 10
+    ) -> None:
+        """Synchronize news from providers, skipping if last sync was within 1 hour.
+
+        Fetches either stock-specific news (if ticker is provided) or general market news,
+        processes the articles, and stores them in the database.
 
         Args:
-            ticker (str, optional): Stock ticker for stock-specific news. Defaults to None.
-            category (str): News category (default: "business").
+            ticker: Optional stock ticker symbol for fetching stock-specific news.
+            category: News category to filter by (default: "business").
+            max_hour_interval: Maximum age (in hours) of news articles to fetch (default: 24).
+            max_count: Maximum number of articles to fetch per provider (default: 10).
         """
         current_time = time.time()
         if current_time < self.db.last_sync + 3600:
             LOG.info("Skipping sync: Last sync was less than 1 hour ago.")
             return
 
-        LOG.info("Starting sync...")
+        LOG.info("Starting news sync...")
         for provider in self.providers:
             if ticker:
-                news = provider.fetch_stock_news(ticker, category)
-                LOG.info(f"Fetched {len(news)} stock news articles for {ticker} from \
-                    {provider.__class__.__name__}")
+                news = provider.fetch_stock_news(
+                    ticker, category, max_hour_interval, max_count
+                )
+                LOG.info(
+                    f"Fetched {len(news)} stock news articles for {ticker} from "
+                    f"{provider.__class__.__name__}"
+                )
             else:
-                news = provider.fetch_latest_market_news(category)
-                LOG.info(f"Fetched {len(news)} market news articles from \
-                    {provider.__class__.__name__}")
+                news = provider.fetch_latest_market_news(
+                    category, max_hour_interval, max_count
+                )
+                LOG.info(
+                    f"Fetched {len(news)} market news articles from {provider.__class__.__name__}"
+                )
+
+            self.process_news(news)
             self.db.add_news(news)
 
         self.db.last_sync = current_time
-        LOG.info("Sync completed.")
+        LOG.info("News sync completed.")
+
+    def process_news(self, news: List[NewsInfo]) -> None:
+        """Process a list of NewsInfo objects by extracting content from their URLs.
+
+        Args:
+            news: List of NewsInfo objects to process.
+        """
+        for article in news:
+            LOG.info(f"Processing news: {article.headline}")
+            content = self._extract_news_text(article.url)
+            article.content = content
+            LOG.info(f"Extracted content: {content}")
+            time.sleep(1)  # Throttle requests to avoid rate limits
+
+    def _extract_news_text(self, url: str) -> str:
+        """Extract text content from a news article URL using newspaper3k.
+
+        Falls back to HTML scraping with BeautifulSoup if newspaper3k fails.
+
+        Args:
+            url: URL of the news article to extract text from.
+
+        Returns:
+            Cleaned text content of the article, or empty string if extraction fails.
+        """
+        try:
+            article = Article(url)
+            article.download()
+            article.parse()
+            if article.text:
+                return article.text
+
+            # Fallback to HTML scraping if newspaper3k returns empty text
+            html = self._fetch_original_html(url)
+            return self._clean_html(html)
+
+        except Exception as e:
+            LOG.error(f"Failed to extract text with newspaper3k ({url}): {e}")
+            html = self._fetch_original_html(url)
+            return self._clean_html(html)
+
+    def _fetch_original_html(self, url: str, timeout: int = 10) -> Optional[str]:
+        """Fetch raw HTML content from a URL with retries.
+
+        Args:
+            url: URL to fetch HTML from.
+            timeout: Request timeout in seconds (default: 10).
+
+        Returns:
+            Raw HTML content as a string, or None if fetch fails.
+        """
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                          "(KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+        }
+        retries = 3
+
+        for attempt in range(retries):
+            try:
+                response = requests.get(
+                    url, headers=headers, timeout=timeout, verify=False
+                )
+                response.raise_for_status()
+                return response.text
+            except Exception as e:
+                if attempt < retries - 1:
+                    time.sleep(1)
+                    continue
+                LOG.error(f"Failed to fetch HTML after {retries} retries ({url}): {e}")
+                return None
+
+        return None
+
+    def _clean_html(self, html_content: Optional[str]) -> str:
+        """Clean HTML content to extract readable text.
+
+        Removes scripts, styles, and other non-content elements, then normalizes whitespace.
+
+        Args:
+            html_content: Raw HTML content to clean.
+
+        Returns:
+            Cleaned text string, or empty string if input is None/empty.
+        """
+        if not html_content:
+            return ""
+
+        soup = BeautifulSoup(html_content, "html.parser")
+
+        # Remove non-content elements
+        for element in soup(["script", "style", "iframe", "nav", "aside", "footer"]):
+            element.decompose()
+
+        # Extract and normalize text
+        text = soup.get_text()
+        lines = (line.strip() for line in text.splitlines())
+        chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+        return "\n".join(chunk for chunk in chunks if chunk)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
     db = NewsDatabase()
+
     try:
+        # Initialize providers using the factory
         newsapi_provider = NewsFactory.create_provider("newsapi")
         finnhub_provider = NewsFactory.create_provider("finnhub")
         google_provider = NewsFactory.create_provider("google")
-        aggregator = NewsAggregator(
-            providers=[newsapi_provider, finnhub_provider, google_provider],
-            db=db
+        rss_provider = NewsFactory.create_provider("rss")
+
+        # Create aggregator with selected providers
+        aggregator = NewsAggregator(providers=[newsapi_provider], db=db)
+
+        # Sync market news and stock-specific news
+        aggregator.sync_news(category="business", max_hour_interval=64, max_count=10)
+        aggregator.sync_news(
+            ticker="AAPL",
+            category="business",
+            max_hour_interval=240,
+            max_count=10
         )
-        aggregator.sync_news(category="business")
-        aggregator.sync_news(ticker="AAPL", category="business")
+
+        # Log results
         all_news = db.get_all_news()
         LOG.info(f"Total articles in database: {len(all_news)}")
+
         if all_news:
             LOG.info("Example article:")
             LOG.info(all_news[0].to_dict())
-        aggregator.sync_news(category="business")
+
+            for news_item in all_news:
+                LOG.info("--------------------------------")
+                print(news_item.headline)
+                print(news_item.url)
+                print(news_item.content)
+                LOG.info("--------------------------------")
+
     except ValueError as e:
-        LOG.debug(f"Error: {e}")
+        LOG.error(f"Error during news aggregation: {e}")
