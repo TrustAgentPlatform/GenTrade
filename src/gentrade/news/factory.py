@@ -9,12 +9,13 @@ article content.
 import os
 import logging
 import time
-from typing import List, Optional
+import threading
+from typing import List, Optional, Set
+from urllib.parse import urlparse  # Add this to extract domain from URL
 
 import requests
 from newspaper import Article
 from bs4 import BeautifulSoup
-import threading
 
 from gentrade.news.meta import NewsInfo, NewsProviderBase, NewsDatabase
 from gentrade.news.googlenews import GoogleNewsProvider
@@ -107,6 +108,30 @@ class NewsAggregator:
         self.db = db
         self.db_lock = threading.Lock()
 
+        # 1. Add blocklist (stores blocked domain names, e.g., "example.com")
+        self.blocklist: Set[str] = set()
+
+        # 2. Add dummy content keywords (expand this list based on your needs)
+        self.dummy_keywords = {
+            "we use cookies", "cookie policy", "analyze website traffic",
+            "accept cookies", "reject cookies", "by continuing to use",
+            "this website uses cookies", "improve user experience",
+            "ads by", "sponsored content", "subscribe to access"
+        }
+        #self.blocklist = self._load_blocklist()
+
+    def _load_blocklist(self) -> Set[str]:
+        try:
+            with open("news_blocklist.txt", "r", encoding="utf-8") as f:
+                return set(line.strip() for line in f if line.strip())
+        except FileNotFoundError:
+            return set()
+
+    def _save_blocklist(self) -> None:
+        with open("news_blocklist.txt", "w", encoding="utf-8") as f:
+            for domain in self.blocklist:
+                f.write(f"{domain}\n")
+
     def sync_news(
         self,
         ticker: Optional[str] = None,
@@ -170,17 +195,60 @@ class NewsAggregator:
         LOG.info("News sync completed.")
 
     def process_news(self, news: List[NewsInfo]) -> None:
-        """Process a list of NewsInfo objects by extracting content from their URLs.
+        """Process news: Skip blocked sites → Check for dummy content → Clean content"""
+        # Filter out news from blocked websites FIRST
+        filtered_news = [n for n in news if not self._is_blocked(n.url)]
 
-        Args:
-            news: List of NewsInfo objects to process.
-        """
-        for article in news:
+        for article in filtered_news:
             LOG.info(f"Processing news: {article.headline}")
+
+            # Extract content and check for dummy messages
             content = self._extract_news_text(article.url)
+            if self._contains_dummy_content(content):
+                # Add the website to blocklist if dummy content is found
+                domain = self._extract_domain(article.url)
+                self.blocklist.add(domain)
+                LOG.warning(f"Blocked website {domain} (contains dummy content)")
+                continue  # Skip storing this article
+
+            # Proceed with normal cleaning if no dummy content
             article.summary = self._clean_html(article.summary)
             article.content = content
-            time.sleep(1)  # Throttle requests to avoid rate limits
+            time.sleep(1)
+
+    def _is_blocked(self, url: str) -> bool:
+        """Check if the website of the URL is in the blocklist"""
+        domain = self._extract_domain(url)
+        if domain in self.blocklist:
+            LOG.info(f"Skipping blocked website: {domain} (URL: {url})")
+            return True
+        return False
+
+    def _extract_domain(self, url: str) -> str:
+        """Extract the main domain from a URL
+        (e.g., "https://www.example.com/news" → "example.com")
+        """
+        try:
+            parsed = urlparse(url)
+            # Split subdomains (e.g., "www.example.co.uk" → "example.co.uk" for common TLDs)
+            domain_parts = parsed.netloc.split(".")
+            # Handle cases like "co.uk" (adjust based on your target regions)
+            if len(domain_parts) >= 3 and domain_parts[-2] in ["co", "com", "org", "net"]:
+                return ".".join(domain_parts[-3:])
+            return ".".join(domain_parts[-2:])
+        except Exception as e:
+            LOG.error(f"Failed to extract domain from {url}: {e}")
+            return url  # Fallback to full URL if parsing fails
+
+    def _contains_dummy_content(self, content: str) -> bool:
+        """Check if content contains dummy messages (case-insensitive)"""
+        if not content:
+            return False
+        content_lower = content.lower()
+        # Count how many dummy keywords match
+        dummy_count = sum(1 for keyword in self.dummy_keywords if keyword in content_lower)
+        # Return True if ≥1 keyword matches (adjust threshold if needed)
+        return dummy_count >= 1
 
     def _extract_news_text(self, url: str) -> str:
         """Extract text content from a news article URL using newspaper3k.

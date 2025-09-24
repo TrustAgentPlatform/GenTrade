@@ -11,6 +11,7 @@ Supports fetching market-wide and stock-specific news, with filtering by time an
 import abc
 import logging
 import time
+import hashlib
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 from dataclasses import dataclass
@@ -169,6 +170,9 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
         # Limit to max_count results
         return filtered_news[:max_count]
 
+    def url_to_hash_id(self, url: str) -> int:
+        """Convert URL string to hash int value"""
+        return int(hashlib.sha256(url.encode()).hexdigest(), 16)
 
 class NewsDatabase:
     """In-memory database for storing news articles with sync tracking.

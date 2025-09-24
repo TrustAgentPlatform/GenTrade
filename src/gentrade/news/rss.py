@@ -91,7 +91,7 @@ class RssProvider(NewsProviderBase):
                     category=category,
                     datetime=self._timestamp_to_epoch(entry.get("published", "")),
                     headline=entry.get("title", ""),
-                    id=hash(entry.get("link", "")),  # Unique ID from article URL
+                    id=self.url_to_hash_id(entry.get("link", "")),
                     # Extract image URL (handles missing media_content gracefully)
                     image=entry.get("media_content", [{}])[0].get("url", "")
                     if entry.get("media_content") else "",

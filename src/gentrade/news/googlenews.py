@@ -77,7 +77,7 @@ class GoogleNewsProvider(NewsProviderBase):
                     category=category,
                     datetime=int(time.time()),  # Google CSE lacks article timestamp
                     headline=item.get("title", ""),
-                    id=hash(item.get("link", "")),  # Unique ID from article URL
+                    id=self.url_to_hash_id(item.get("link", "")),
                     image=item.get("pagemap", {}).get("cse_image", [{}])[0].get("src", ""),
                     related="",  # No stock ticker for general market news
                     source=item.get("displayLink", ""),  # Source domain (e.g., "bloomberg.com")

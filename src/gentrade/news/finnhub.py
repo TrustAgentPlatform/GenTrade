@@ -72,7 +72,7 @@ class FinnhubNewsProvider(NewsProviderBase):
                     category=category,
                     datetime=article.get("datetime", int(time.time())),
                     headline=article.get("headline", ""),
-                    id=article.get("id", hash(article.get("url", ""))),
+                    id=self.url_to_hash_id(article.get("url", "")),
                     image=article.get("image", ""),
                     related=article.get("related", ""),
                     source=article.get("source", ""),
