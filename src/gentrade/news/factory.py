@@ -14,6 +14,7 @@ from typing import List, Optional
 import requests
 from newspaper import Article
 from bs4 import BeautifulSoup
+import threading
 
 from gentrade.news.meta import NewsInfo, NewsProviderBase, NewsDatabase
 from gentrade.news.googlenews import GoogleNewsProvider
@@ -104,6 +105,7 @@ class NewsAggregator:
         """
         self.providers = providers
         self.db = db
+        self.db_lock = threading.Lock()
 
     def sync_news(
         self,
@@ -129,7 +131,8 @@ class NewsAggregator:
             return
 
         LOG.info("Starting news sync...")
-        for provider in self.providers:
+
+        def fetch_and_process(provider, aggregator, ticker, category, max_hour_interval, max_count):
             if ticker:
                 news = provider.fetch_stock_news(
                     ticker, category, max_hour_interval, max_count
@@ -143,11 +146,25 @@ class NewsAggregator:
                     category, max_hour_interval, max_count
                 )
                 LOG.info(
-                    f"Fetched {len(news)} market news articles from {provider.__class__.__name__}"
+                    f"Fetched {len(news)} market news articles from "
+                    f"{provider.__class__.__name__}"
                 )
 
-            self.process_news(news)
-            self.db.add_news(news)
+            aggregator.process_news(news)
+            with aggregator.db_lock:
+                aggregator.db.add_news(news)
+
+        threads = []
+        for provider in self.providers:
+            thread = threading.Thread(
+                target=fetch_and_process,
+                args=(provider, self, ticker, category, max_hour_interval, max_count)
+            )
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()
 
         self.db.last_sync = current_time
         LOG.info("News sync completed.")
@@ -161,8 +178,8 @@ class NewsAggregator:
         for article in news:
             LOG.info(f"Processing news: {article.headline}")
             content = self._extract_news_text(article.url)
+            article.summary = self._clean_html(article.summary)
             article.content = content
-            LOG.info(f"Extracted content: {content}")
             time.sleep(1)  # Throttle requests to avoid rate limits
 
     def _extract_news_text(self, url: str) -> str:

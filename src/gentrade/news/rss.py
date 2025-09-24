@@ -26,7 +26,7 @@ class RssProvider(NewsProviderBase):
     or summaries (since most RSS feeds lack ticker-specific endpoints).
     """
 
-    def __init__(self, feed_url: str = None):
+    def __init__(self, feed_url: str = None, market: str = "common"):
         """Initialize the RssProvider with an optional feed URL.
 
         Args:
@@ -39,6 +39,7 @@ class RssProvider(NewsProviderBase):
             or os.getenv("RSS_FEED_URL")
             or "https://plink.anyfeeder.com/chinadaily/caijing"
         )
+        self.market = market
 
     def fetch_latest_market_news(
         self,
@@ -98,7 +99,9 @@ class RssProvider(NewsProviderBase):
                     source=feed.feed.get("title", "Unknown RSS Feed"),  # Feed source name
                     summary=entry.get("summary", ""),  # Short article preview
                     url=entry.get("link", ""),  # Direct article URL
-                    content=""  # Content extracted later by aggregator
+                    content="",  # Content extracted later by aggregator
+                    provider="rss",
+                    market=self.market
                 )
                 for entry in feed.entries[:max_count * 2]
                 if entry.get("link")  # Skip entries without a valid URL

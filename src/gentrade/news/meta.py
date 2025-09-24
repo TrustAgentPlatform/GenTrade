@@ -19,6 +19,9 @@ import requests
 
 LOG = logging.getLogger(__name__)
 
+NEWS_MARKET = [
+    'us', 'zh', 'hk', 'cypto', 'common'
+]
 
 @dataclass
 class NewsInfo:
@@ -28,11 +31,13 @@ class NewsInfo:
     headline: str
     id: int
     image: str
-    related: str  # Related stock ticker(s) or empty string
+    related: str   # Related stock ticker(s) or empty string
     source: str
     summary: str
     url: str
     content: str
+    provider: str  # provder like newsapi, google, finnhub, rss
+    market: str    # market type like us, chn, eur, hk, crypto
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert NewsInfo object to a dictionary.
@@ -50,7 +55,9 @@ class NewsInfo:
             "source": self.source,
             "summary": self.summary,
             "url": self.url,
-            "content": self.content
+            "content": self.content,
+            "provider": self.provider,
+            "market": self.market,
         }
 
     def fetch_article_html(self) -> Optional[str]:
@@ -193,3 +200,19 @@ class NewsDatabase:
             List of all NewsInfo objects in the database.
         """
         return list(self.news_dict.values())
+
+    def get_market_news(self, market='us') -> List[NewsInfo]:
+        """Retrieve stored news articles for given market.
+
+        Args:
+            market: Market name, by default is US.
+
+        Returns:
+            List of all NewsInfo objects in the database.
+        """
+        assert market in NEWS_MARKET
+        market_news = []
+        for item in self.news_dict.values():
+            if item.market == market:
+                market_news.append(item)
+        return market_news

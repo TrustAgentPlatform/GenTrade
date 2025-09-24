@@ -83,7 +83,9 @@ class GoogleNewsProvider(NewsProviderBase):
                     source=item.get("displayLink", ""),  # Source domain (e.g., "bloomberg.com")
                     summary=item.get("snippet", ""),  # Short article preview
                     url=item.get("link", ""),  # Direct article URL
-                    content=""  # Content extracted later by aggregator
+                    content="",  # Content extracted later by aggregator
+                    provider='google',
+                    market='us'
                 )
                 for item in items
             ]
@@ -142,7 +144,9 @@ class GoogleNewsProvider(NewsProviderBase):
                     source=item.get("displayLink", ""),
                     summary=item.get("snippet", ""),
                     url=item.get("link", ""),
-                    content=""  # Content extracted later
+                    content="",  # Content extracted later
+                    provider='google',
+                    market='us'
                 )
                 for item in items
             ]

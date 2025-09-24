@@ -82,7 +82,9 @@ class NewsApiProvider(NewsProviderBase):
                     source=article.get("source", {}).get("name", ""),  # News source name
                     summary=article.get("description", ""),  # Short article preview
                     url=article.get("url", ""),  # Direct article URL
-                    content=""  # Content extracted later by aggregator
+                    content="",  # Content extracted later by aggregator
+                    provider='newsapi',
+                    market='us'
                 )
                 for article in articles
             ]
@@ -147,7 +149,9 @@ class NewsApiProvider(NewsProviderBase):
                     source=article.get("source", {}).get("name", ""),
                     summary=article.get("description", ""),
                     url=article.get("url", ""),
-                    content=""
+                    content="",
+                    provider='newsapi',
+                    market='us'
                 )
                 for article in articles
             ]

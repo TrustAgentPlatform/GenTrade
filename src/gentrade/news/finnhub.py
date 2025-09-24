@@ -78,7 +78,9 @@ class FinnhubNewsProvider(NewsProviderBase):
                     source=article.get("source", ""),
                     summary=article.get("summary", ""),
                     url=article.get("url", ""),
-                    content=""
+                    content="",
+                    provider='finnhub',
+                    market='us'
                 ) for article in articles
             ]
 
@@ -135,7 +137,9 @@ class FinnhubNewsProvider(NewsProviderBase):
                     source=article.get("source", ""),
                     summary=article.get("summary", ""),
                     url=article.get("url", ""),
-                    content=""
+                    content="",
+                    provider='finnhub',
+                    market='us'
                 ) for article in articles
             ]
 
