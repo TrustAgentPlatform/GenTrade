@@ -92,6 +92,9 @@ class NewsApiProvider(NewsProviderBase):
         except requests.RequestException as e:
             LOG.debug(f"Failed to fetch market news from NewsAPI.org: {e}")
             return []
+        except Exception as e:
+            LOG.debug(f"Unexpected error: {e}")
+            return []
 
     def fetch_stock_news(
         self,
