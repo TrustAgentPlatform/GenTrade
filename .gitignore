@@ -6,3 +6,4 @@ cache
 .pytest_cache
 dist
 *.egg-info/
+scraper_data/
