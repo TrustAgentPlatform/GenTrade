@@ -76,13 +76,15 @@ class NewsApiProvider(NewsProviderBase):
                     category=category,
                     datetime=self._timestamp_to_epoch(article.get("publishedAt", "")),
                     headline=article.get("title", ""),
-                    id=hash(article.get("url", "")),  # Unique ID from article URL
+                    id=self.url_to_hash_id(article.get("url", "")),
                     image=article.get("urlToImage", ""),  # Article thumbnail (if available)
                     related="",  # No stock ticker for general market news
                     source=article.get("source", {}).get("name", ""),  # News source name
                     summary=article.get("description", ""),  # Short article preview
                     url=article.get("url", ""),  # Direct article URL
-                    content=""  # Content extracted later by aggregator
+                    content="",  # Content extracted later by aggregator
+                    provider='newsapi',
+                    market='us'
                 )
                 for article in articles
             ]
@@ -147,7 +149,9 @@ class NewsApiProvider(NewsProviderBase):
                     source=article.get("source", {}).get("name", ""),
                     summary=article.get("description", ""),
                     url=article.get("url", ""),
-                    content=""
+                    content="",
+                    provider='newsapi',
+                    market='us'
                 )
                 for article in articles
             ]
