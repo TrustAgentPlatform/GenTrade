@@ -10,6 +10,7 @@ import os
 import logging
 import time
 import threading
+import random
 from typing import List, Optional, Set
 from urllib.parse import urlparse  # Add this to extract domain from URL
 
@@ -261,6 +262,9 @@ class NewsAggregator:
         Returns:
             Cleaned text content of the article, or empty string if extraction fails.
         """
+        # Add random delay before request to avoid rate limiting
+        time.sleep(random.uniform(1, 3))
+
         try:
             article = Article(url)
             article.download()
@@ -287,22 +291,49 @@ class NewsAggregator:
         Returns:
             Raw HTML content as a string, or None if fetch fails.
         """
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                          "(KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-        }
+        # More realistic headers that mimic popular browsers
+        headers_list = [
+            {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                            "(KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
+                        "image/webp,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.5",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Connection": "keep-alive",
+                "Upgrade-Insecure-Requests": "1",
+                "Sec-Fetch-Dest": "document",
+                "Sec-Fetch-Mode": "navigate",
+                "Sec-Fetch-Site": "none",
+                "Sec-Fetch-User": "?1"
+            },
+            {
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                            "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.5",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Connection": "keep-alive",
+                "Upgrade-Insecure-Requests": "1"
+            }
+        ]
         retries = 3
+        # Use a random header from the list for each request
+        headers = random.choice(headers_list)
 
         for attempt in range(retries):
             try:
+                # Add random delay between retries (0.5-2 seconds)
+                if attempt > 0:
+                    time.sleep(random.uniform(0.5, 2.0))
+
                 response = requests.get(
-                    url, headers=headers, timeout=timeout, verify=False
+                    url, headers=headers, timeout=timeout, verify=True
                 )
                 response.raise_for_status()
                 return response.text
             except Exception as e:
                 if attempt < retries - 1:
-                    time.sleep(1)
                     continue
                 LOG.error(f"Failed to fetch HTML after {retries} retries ({url}): {e}")
                 return None
