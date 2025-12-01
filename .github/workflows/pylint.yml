@@ -33,5 +33,5 @@ jobs:
       - name: Analyzing the python code
         run: |
           set -ex
-          export PYTHONPATH=$PWD/src/tia/
+          export PYTHONPATH=$PWD/src/gentrade/
           find . -type f -name "*.py" | xargs pylint
