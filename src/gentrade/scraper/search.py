@@ -266,4 +266,5 @@ if __name__ == "__main__":
         fetch_content=True,
     )
 
+
     print(json.dumps(news, ensure_ascii=False, indent=2))
