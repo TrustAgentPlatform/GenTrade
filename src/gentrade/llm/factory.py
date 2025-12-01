@@ -24,11 +24,11 @@ from dataclasses import dataclass
 from pydantic import Field
 
 from langchain_openai import ChatOpenAI
-from langchain.schema import (
+from langchain_core.messages import (
     AIMessage,
     BaseMessage
 )
-from langchain.schema.runnable import RunnableConfig
+from langchain_core.runnables import RunnableConfig
 
 
 LOG = logging.getLogger(__name__)
