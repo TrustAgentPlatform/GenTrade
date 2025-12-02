@@ -10,7 +10,6 @@ PYLINT_VERSION = 4.0.4
 PYLINT_INSTALLED := $(shell python -c "import pkg_resources; print('pylint' in {pkg.key for pkg in pkg_resources.working_set})" 2>/dev/null || echo "False")
 PYLINT_VERSION_OK := $(shell python -c "import pylint; print(pylint.__version__ == '$(PYLINT_VERSION)')" 2>/dev/null || echo "False")
 
-
 # Default target
 all: lint
 
@@ -25,6 +24,7 @@ ensure-pylint:
 # Lint all Python files
 lint: check-python ensure-pylint
 	@echo "Running Pylint ..."
+	@export PYTHONPATH=$(CURRENT_DIR)/src
 	find . -type f -name "*.py" | xargs pylint $(PYLINT_ARGS)
 
 # Lint specific file(s)

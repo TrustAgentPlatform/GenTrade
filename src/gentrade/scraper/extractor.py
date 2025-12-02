@@ -10,7 +10,6 @@ This module provides tools for:
 import json
 import logging
 import os
-from pickle import NONE
 import random
 import re
 import time

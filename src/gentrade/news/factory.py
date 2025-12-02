@@ -10,16 +10,12 @@ import os
 import logging
 import time
 import threading
-import random
 from typing import List, Optional, Set
 from urllib.parse import urlparse  # Add this to extract domain from URL
 
-import requests
 from gentrade.scraper.extractor import ArticleContentExtractor
-from newspaper import Article
-from bs4 import BeautifulSoup
 
-from gentrade.news.meta import NewsInfo, NewsProviderBase, NewsDatabase
+from gentrade.news.meta import NewsProviderBase, NewsDatabase
 from gentrade.news.googlenews import GoogleNewsProvider
 from gentrade.news.newsapi import NewsApiProvider
 from gentrade.news.rss import RssProvider
