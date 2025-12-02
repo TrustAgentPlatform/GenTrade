@@ -10,11 +10,12 @@ This module provides tools for:
 import json
 import logging
 import os
+from pickle import NONE
 import random
 import re
 import time
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 from urllib.parse import urlparse
 
 import requests
@@ -93,7 +94,9 @@ class ScraperStorage:
 class ArticleContentExtractor:
     """Handles article content extraction with dummy content filtering."""
 
-    def __init__(self, storage: ScraperStorage):
+    _instance = None
+
+    def __init__(self, storage: ScraperStorage=None):
         self.ignored_extensions = (
             ".pdf", ".doc", ".docx", ".xls", ".xlsx",
             ".zip", ".rar", ".jpg", ".png", ".jpeg", ".gif"
@@ -105,7 +108,10 @@ class ArticleContentExtractor:
             "ads by", "sponsored content", "subscribe to access"
         }
 
+        if storage is None:
+            storage = ScraperStorage()
         self.storage = storage
+
         self.blocked_domains = self.storage.load_blocked_domains()
         self.dummy_patterns = self.storage.load_dummy_patterns()
 
@@ -129,7 +135,7 @@ class ArticleContentExtractor:
             "Upgrade-Insecure-Requests": "1",
         }
 
-    def _clean_html(self, html: str) -> str:
+    def clean_html(self, html: str) -> str:
         """Clean raw HTML by removing non-content elements and ads."""
         if not html:
             return ""
@@ -221,31 +227,23 @@ class ArticleContentExtractor:
             return "Unsupported file type (non-HTML)"
 
         try:
-            article = Article(url, language="zh")
+            article = Article(url)
             article.download()
             article.parse()
-            content = article.text.strip()
+            if article.text:
+                content = article.text.strip()
+            else:
+                # Fallback to HTML scrapping if newspaper3k returns empty text
+                html = self._fetch_original_html(url)
+                content = self.clean_html(html)
         except ArticleException as e:
             logger.warning(
                 "newspaper3k extraction failed: %s - falling back to HTML cleaning",
                 str(e)
             )
-            try:
-                headers = self._get_random_headers()
-                response = requests.get(
-                    url, headers=headers, timeout=10, allow_redirects=True
-                )
-                response.encoding = response.apparent_encoding
-
-                if response.status_code != 200:
-                    logger.warning("Failed to retrieve article (status %s): %s",
-                                   response.status_code, url)
-                    return "Failed to retrieve content (HTTP error)"
-
-                content = self._clean_html(response.text)
-            except requests.exceptions.RequestException as e:
-                logger.error("Request error for %s: %s", url, str(e))
-                return "Failed to retrieve content (network error)"
+            # Fallback to HTML scrapping if newspaper3k returns empty text
+            html = self._fetch_original_html(url)
+            content = self.clean_html(html)
 
         if self._is_dummy_content(content):
             logger.warning("Dummy content detected at: %s", url)
@@ -254,3 +252,42 @@ class ArticleContentExtractor:
             return "Content blocked: Contains cookie notices or irrelevant material"
 
         return content
+
+    def _fetch_original_html(self, url: str, timeout: int = 10) -> Optional[str]:
+        """Fetch raw HTML content from a URL with retries.
+
+        Args:
+            url: URL to fetch HTML from.
+            timeout: Request timeout in seconds (default: 10).
+
+        Returns:
+            Raw HTML content as a string, or None if fetch fails.
+        """
+
+        retries = 3
+        headers = self._get_random_headers()
+
+        for attempt in range(retries):
+            try:
+                # Add random delay between retries (0.5-2 seconds)
+                if attempt > 0:
+                    time.sleep(random.uniform(0.5, 2.0))
+
+                response = requests.get(
+                    url, headers=headers, timeout=timeout, verify=True
+                )
+                response.raise_for_status()
+                return response.text
+            except Exception as e:
+                if attempt < retries - 1:
+                    continue
+                logger.error(f"Failed to fetch HTML after {retries} retries ({url}): {e}")
+                return None
+
+        return None
+
+    @staticmethod
+    def inst(storage: ScraperStorage=None):
+        if ArticleContentExtractor._instance is None:
+            ArticleContentExtractor._instance = ArticleContentExtractor(storage)
+        return ArticleContentExtractor._instance
