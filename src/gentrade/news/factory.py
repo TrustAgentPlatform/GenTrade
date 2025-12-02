@@ -7,10 +7,10 @@ article content.
 """
 
 import os
-import logging
 import time
 import threading
 from typing import List, Optional
+from loguru import logger
 
 from gentrade.scraper.extractor import ArticleContentExtractor
 
@@ -18,8 +18,6 @@ from gentrade.news.meta import NewsProviderBase, NewsDatabase
 from gentrade.news.newsapi import NewsApiProvider
 from gentrade.news.rss import RssProvider
 from gentrade.news.finnhub import FinnhubNewsProvider
-
-LOG = logging.getLogger(__name__)
 
 
 class NewsFactory:
@@ -99,7 +97,7 @@ class NewsAggregator:
             news = provider.fetch_stock_news(
                 ticker, category, max_hour_interval, max_count
             )
-            LOG.info(
+            logger.info(
                 f"Fetched {len(news)} stock news articles for {ticker} from "
                 f"{provider.__class__.__name__}"
             )
@@ -107,7 +105,7 @@ class NewsAggregator:
             news = provider.fetch_latest_market_news(
                 category, max_hour_interval, max_count
             )
-            LOG.info(
+            logger.info(
                 f"Fetched {len(news)} market news articles from "
                 f"{provider.__class__.__name__}"
             )
@@ -117,7 +115,7 @@ class NewsAggregator:
             item.summary = ace.clean_html(item.summary)
             if is_process:
                 item.content = ace.extract_content(item.url)
-                LOG.info(item.content)
+                logger.info(item.content)
 
         with aggregator.db_lock:
             aggregator.db.add_news(news)
@@ -142,10 +140,10 @@ class NewsAggregator:
         """
         current_time = time.time()
         if current_time < self.db.last_sync + 3600:
-            LOG.info("Skipping sync: Last sync was less than 1 hour ago.")
+            logger.info("Skipping sync: Last sync was less than 1 hour ago.")
             return
 
-        LOG.info("Starting news sync...")
+        logger.info("Starting news sync...")
 
         threads = []
         for provider in self.providers:
@@ -160,10 +158,9 @@ class NewsAggregator:
             thread.join()
 
         self.db.last_sync = current_time
-        LOG.info("News sync completed.")
+        logger.info("News sync completed.")
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
     db = NewsDatabase()
 
     try:
@@ -186,18 +183,18 @@ if __name__ == "__main__":
 
         # Log results
         all_news = db.get_all_news()
-        LOG.info(f"Total articles in database: {len(all_news)}")
+        logger.info(f"Total articles in database: {len(all_news)}")
 
         if all_news:
-            LOG.info("Example article:")
-            LOG.info(all_news[0].to_dict())
+            logger.info("Example article:")
+            logger.info(all_news[0].to_dict())
 
             for news_item in all_news:
-                LOG.info("--------------------------------")
+                logger.info("--------------------------------")
                 print(news_item.headline)
                 print(news_item.url)
                 print(news_item.content)
-                LOG.info("--------------------------------")
+                logger.info("--------------------------------")
 
     except ValueError as e:
-        LOG.error(f"Error during news aggregation: {e}")
+        logger.error(f"Error during news aggregation: {e}")

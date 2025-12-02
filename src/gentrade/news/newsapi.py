@@ -5,16 +5,12 @@ and stock-specific news via the NewsAPI.org API. It supports filtering by time i
 article count, and language, while formatting results into standardized NewsInfo objects.
 """
 
-import logging
 from typing import List
 from datetime import datetime, timedelta
-
 import requests
+from loguru import logger
 
 from gentrade.news.meta import NewsInfo, NewsProviderBase
-
-LOG = logging.getLogger(__name__)
-
 
 class NewsApiProvider(NewsProviderBase):
     """News provider that uses NewsAPI.org to fetch financial and stock-specific news.
@@ -92,10 +88,10 @@ class NewsApiProvider(NewsProviderBase):
             return self._filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
-            LOG.debug(f"Failed to fetch market news from NewsAPI.org: {e}")
+            logger.debug(f"Failed to fetch market news from NewsAPI.org: {e}")
             return []
         except Exception as e:
-            LOG.debug(f"Unexpected error: {e}")
+            logger.debug(f"Unexpected error: {e}")
             return []
 
     def fetch_stock_news(
@@ -159,5 +155,5 @@ class NewsApiProvider(NewsProviderBase):
             return self._filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
-            LOG.debug(f"Failed to fetch {ticker} stock news from NewsAPI.org: {e}")
+            logger.debug(f"Failed to fetch {ticker} stock news from NewsAPI.org: {e}")
             return []

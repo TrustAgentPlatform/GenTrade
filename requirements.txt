@@ -8,6 +8,7 @@ backtrader
 ag2
 mplfinance
 ntplib
+loguru
 
 langchain_openai
 langchain_core

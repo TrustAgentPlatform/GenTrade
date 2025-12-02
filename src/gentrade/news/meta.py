@@ -9,16 +9,13 @@ Supports fetching market-wide and stock-specific news, with filtering by time an
 """
 
 import abc
-import logging
 import time
 import hashlib
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 from dataclasses import dataclass
-
+from loguru import logger
 import requests
-
-LOG = logging.getLogger(__name__)
 
 NEWS_MARKET = [
     'us', 'zh', 'hk', 'cypto', 'common'
@@ -79,7 +76,7 @@ class NewsInfo:
             response.raise_for_status()
             return response.text
         except requests.RequestException as e:
-            LOG.debug(f"Failed to fetch HTML for {self.url}: {e}")
+            logger.debug(f"Failed to fetch HTML for {self.url}: {e}")
             return None
 
 
