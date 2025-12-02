@@ -16,3 +16,4 @@ langchain
 langgraph
 
 lxml[html_clean]
+newspaper3k
