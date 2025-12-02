@@ -10,13 +10,11 @@ import os
 import logging
 import time
 import threading
-from typing import List, Optional, Set
-from urllib.parse import urlparse  # Add this to extract domain from URL
+from typing import List, Optional
 
 from gentrade.scraper.extractor import ArticleContentExtractor
 
 from gentrade.news.meta import NewsProviderBase, NewsDatabase
-from gentrade.news.googlenews import GoogleNewsProvider
 from gentrade.news.newsapi import NewsApiProvider
 from gentrade.news.rss import RssProvider
 from gentrade.news.finnhub import FinnhubNewsProvider
@@ -36,8 +34,7 @@ class NewsFactory:
         """Create a news provider instance based on the specified provider type.
 
         Args:
-            provider_type: Type of news provider. Supported values: "newsapi", "finnhub",
-                "google", "rss".
+            provider_type: Type of news provider. Supported values: "newsapi", "finnhub", "rss".
            ** kwargs: Additional keyword arguments for provider initialization (e.g., feed_url
                 for RSS providers).
 
@@ -52,7 +49,6 @@ class NewsFactory:
         providers = {
             "newsapi": NewsApiProvider,
             "finnhub": FinnhubNewsProvider,
-            "google": GoogleNewsProvider,
             "rss": RssProvider
         }
 
@@ -71,15 +67,6 @@ class NewsFactory:
             if not api_key:
                 raise ValueError("FINNHUB_API_KEY environment variable not set")
             return provider_class(api_key=api_key)
-
-        if provider_type_lower == "google":
-            api_key = os.getenv("GOOGLE_CLOUD_API_KEY")
-            cse_id = os.getenv("GOOGLE_CSE_ID")
-            if not api_key or not cse_id:
-                raise ValueError(
-                    "GOOGLE_CLOUD_API_KEY or GOOGLE_CSE_ID environment variable not set"
-                )
-            return provider_class(api_key=api_key, cse_id=cse_id)
 
         if provider_type_lower == "rss":
             feed_url = kwargs.get("feed_url", os.getenv("RSS_FEED_URL"))
@@ -106,32 +93,8 @@ class NewsAggregator:
         self.db = db
         self.db_lock = threading.Lock()
 
-        # 1. Add blocklist (stores blocked domain names, e.g., "example.com")
-        self.blocklist: Set[str] = set()
-
-        # 2. Add dummy content keywords (expand this list based on your needs)
-        self.dummy_keywords = {
-            "we use cookies", "cookie policy", "analyze website traffic",
-            "accept cookies", "reject cookies", "by continuing to use",
-            "this website uses cookies", "improve user experience",
-            "ads by", "sponsored content", "subscribe to access"
-        }
-        #self.blocklist = self._load_blocklist()
-
-    def _load_blocklist(self) -> Set[str]:
-        try:
-            with open("news_blocklist.txt", "r", encoding="utf-8") as f:
-                return set(line.strip() for line in f if line.strip())
-        except FileNotFoundError:
-            return set()
-
-    def _save_blocklist(self) -> None:
-        with open("news_blocklist.txt", "w", encoding="utf-8") as f:
-            for domain in self.blocklist:
-                f.write(f"{domain}\n")
-
     def _fetch_thread(self, provider, aggregator, ticker, category,
-        max_hour_interval, max_count, is_process=False):
+        max_hour_interval, max_count, is_process=True):
         if ticker:
             news = provider.fetch_stock_news(
                 ticker, category, max_hour_interval, max_count
@@ -199,31 +162,6 @@ class NewsAggregator:
         self.db.last_sync = current_time
         LOG.info("News sync completed.")
 
-    def _is_blocked(self, url: str) -> bool:
-        """Check if the website of the URL is in the blocklist"""
-        domain = self._extract_domain(url)
-        if domain in self.blocklist:
-            LOG.info(f"Skipping blocked website: {domain} (URL: {url})")
-            return True
-        return False
-
-    def _extract_domain(self, url: str) -> str:
-        """Extract the main domain from a URL
-        (e.g., "https://www.example.com/news" → "example.com")
-        """
-        try:
-            parsed = urlparse(url)
-            # Split subdomains (e.g., "www.example.co.uk" → "example.co.uk" for common TLDs)
-            domain_parts = parsed.netloc.split(".")
-            # Handle cases like "co.uk" (adjust based on your target regions)
-            if len(domain_parts) >= 3 and domain_parts[-2] in ["co", "com", "org", "net"]:
-                return ".".join(domain_parts[-3:])
-            return ".".join(domain_parts[-2:])
-        except Exception as e:
-            LOG.error(f"Failed to extract domain from {url}: {e}")
-            return url  # Fallback to full URL if parsing fails
-
-
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     db = NewsDatabase()
@@ -232,11 +170,10 @@ if __name__ == "__main__":
         # Initialize providers using the factory
         newsapi_provider = NewsFactory.create_provider("newsapi")
         finnhub_provider = NewsFactory.create_provider("finnhub")
-        google_provider = NewsFactory.create_provider("google")
         rss_provider = NewsFactory.create_provider("rss")
 
         # Create aggregator with selected providers
-        aggregator = NewsAggregator(providers=[newsapi_provider], db=db)
+        aggregator = NewsAggregator(providers=[rss_provider], db=db)
 
         # Sync market news and stock-specific news
         aggregator.sync_news(category="business", max_hour_interval=64, max_count=10)
