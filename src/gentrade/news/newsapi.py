@@ -29,6 +29,10 @@ class NewsApiProvider(NewsProviderBase):
         self.api_key = api_key
         self.base_url = "https://newsapi.org/v2/everything"  # Core endpoint for news retrieval
 
+    @property
+    def market(self):
+        return 'us'
+
     def fetch_latest_market_news(
         self,
         category: str = "business",

@@ -34,7 +34,7 @@ class NewsInfo:
     summary: str
     url: str
     content: str
-    provider: str  # provder like newsapi, google, finnhub, rss
+    provider: str  # provder like newsapi, finnhub, rss
     market: str    # market type like us, chn, eur, hk, crypto
 
     def to_dict(self) -> Dict[str, Any]:
@@ -85,6 +85,10 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
 
     All concrete news providers (e.g., NewsAPI, Finnhub) must implement these methods.
     """
+
+    @property
+    def market(self):
+        return 'common'
 
     @abc.abstractmethod
     def fetch_latest_market_news(

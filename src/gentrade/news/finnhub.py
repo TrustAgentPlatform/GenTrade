@@ -30,6 +30,10 @@ class FinnhubNewsProvider(NewsProviderBase):
         self.api_key = api_key
         self.base_url = "https://finnhub.io/api/v1"
 
+    @property
+    def market(self):
+        return 'us'
+
     def fetch_latest_market_news(
         self,
         category: str = "business",
