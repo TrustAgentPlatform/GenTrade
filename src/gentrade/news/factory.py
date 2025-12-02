@@ -15,6 +15,7 @@ from typing import List, Optional, Set
 from urllib.parse import urlparse  # Add this to extract domain from URL
 
 import requests
+from gentrade.scraper.extractor import ArticleContentExtractor
 from newspaper import Article
 from bs4 import BeautifulSoup
 
@@ -133,6 +134,35 @@ class NewsAggregator:
             for domain in self.blocklist:
                 f.write(f"{domain}\n")
 
+    def _fetch_thread(self, provider, aggregator, ticker, category,
+        max_hour_interval, max_count, is_process=False):
+        if ticker:
+            news = provider.fetch_stock_news(
+                ticker, category, max_hour_interval, max_count
+            )
+            LOG.info(
+                f"Fetched {len(news)} stock news articles for {ticker} from "
+                f"{provider.__class__.__name__}"
+            )
+        else:
+            news = provider.fetch_latest_market_news(
+                category, max_hour_interval, max_count
+            )
+            LOG.info(
+                f"Fetched {len(news)} market news articles from "
+                f"{provider.__class__.__name__}"
+            )
+
+        ace = ArticleContentExtractor.inst()
+        for item in news:
+            item.summary = ace.clean_html(item.summary)
+            if is_process:
+                item.content = ace.extract_content(item.url)
+                LOG.info(item.content)
+
+        with aggregator.db_lock:
+            aggregator.db.add_news(news)
+
     def sync_news(
         self,
         ticker: Optional[str] = None,
@@ -158,32 +188,10 @@ class NewsAggregator:
 
         LOG.info("Starting news sync...")
 
-        def fetch_and_process(provider, aggregator, ticker, category, max_hour_interval, max_count):
-            if ticker:
-                news = provider.fetch_stock_news(
-                    ticker, category, max_hour_interval, max_count
-                )
-                LOG.info(
-                    f"Fetched {len(news)} stock news articles for {ticker} from "
-                    f"{provider.__class__.__name__}"
-                )
-            else:
-                news = provider.fetch_latest_market_news(
-                    category, max_hour_interval, max_count
-                )
-                LOG.info(
-                    f"Fetched {len(news)} market news articles from "
-                    f"{provider.__class__.__name__}"
-                )
-
-            aggregator.process_news(news)
-            with aggregator.db_lock:
-                aggregator.db.add_news(news)
-
         threads = []
         for provider in self.providers:
             thread = threading.Thread(
-                target=fetch_and_process,
+                target=self._fetch_thread,
                 args=(provider, self, ticker, category, max_hour_interval, max_count)
             )
             threads.append(thread)
@@ -194,28 +202,6 @@ class NewsAggregator:
 
         self.db.last_sync = current_time
         LOG.info("News sync completed.")
-
-    def process_news(self, news: List[NewsInfo]) -> None:
-        """Process news: Skip blocked sites → Check for dummy content → Clean content"""
-        # Filter out news from blocked websites FIRST
-        filtered_news = [n for n in news if not self._is_blocked(n.url)]
-
-        for article in filtered_news:
-            LOG.info(f"Processing news: {article.headline}")
-
-            # Extract content and check for dummy messages
-            content = self._extract_news_text(article.url)
-            if self._contains_dummy_content(content):
-                # Add the website to blocklist if dummy content is found
-                domain = self._extract_domain(article.url)
-                self.blocklist.add(domain)
-                LOG.warning(f"Blocked website {domain} (contains dummy content)")
-                continue  # Skip storing this article
-
-            # Proceed with normal cleaning if no dummy content
-            article.summary = self._clean_html(article.summary)
-            article.content = content
-            time.sleep(1)
 
     def _is_blocked(self, url: str) -> bool:
         """Check if the website of the URL is in the blocklist"""
@@ -240,131 +226,6 @@ class NewsAggregator:
         except Exception as e:
             LOG.error(f"Failed to extract domain from {url}: {e}")
             return url  # Fallback to full URL if parsing fails
-
-    def _contains_dummy_content(self, content: str) -> bool:
-        """Check if content contains dummy messages (case-insensitive)"""
-        if not content:
-            return False
-        content_lower = content.lower()
-        # Count how many dummy keywords match
-        dummy_count = sum(1 for keyword in self.dummy_keywords if keyword in content_lower)
-        # Return True if ≥1 keyword matches (adjust threshold if needed)
-        return dummy_count >= 1
-
-    def _extract_news_text(self, url: str) -> str:
-        """Extract text content from a news article URL using newspaper3k.
-
-        Falls back to HTML scraping with BeautifulSoup if newspaper3k fails.
-
-        Args:
-            url: URL of the news article to extract text from.
-
-        Returns:
-            Cleaned text content of the article, or empty string if extraction fails.
-        """
-        # Add random delay before request to avoid rate limiting
-        time.sleep(random.uniform(1, 3))
-
-        try:
-            article = Article(url)
-            article.download()
-            article.parse()
-            if article.text:
-                return article.text
-
-            # Fallback to HTML scraping if newspaper3k returns empty text
-            html = self._fetch_original_html(url)
-            return self._clean_html(html)
-
-        except Exception as e:
-            LOG.error(f"Failed to extract text with newspaper3k ({url}): {e}")
-            html = self._fetch_original_html(url)
-            return self._clean_html(html)
-
-    def _fetch_original_html(self, url: str, timeout: int = 10) -> Optional[str]:
-        """Fetch raw HTML content from a URL with retries.
-
-        Args:
-            url: URL to fetch HTML from.
-            timeout: Request timeout in seconds (default: 10).
-
-        Returns:
-            Raw HTML content as a string, or None if fetch fails.
-        """
-        # More realistic headers that mimic popular browsers
-        headers_list = [
-            {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                            "(KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,"
-                        "image/webp,*/*;q=0.8",
-                "Accept-Language": "en-US,en;q=0.5",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Connection": "keep-alive",
-                "Upgrade-Insecure-Requests": "1",
-                "Sec-Fetch-Dest": "document",
-                "Sec-Fetch-Mode": "navigate",
-                "Sec-Fetch-Site": "none",
-                "Sec-Fetch-User": "?1"
-            },
-            {
-                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                            "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-                "Accept-Language": "en-US,en;q=0.5",
-                "Accept-Encoding": "gzip, deflate, br",
-                "Connection": "keep-alive",
-                "Upgrade-Insecure-Requests": "1"
-            }
-        ]
-        retries = 3
-        # Use a random header from the list for each request
-        headers = random.choice(headers_list)
-
-        for attempt in range(retries):
-            try:
-                # Add random delay between retries (0.5-2 seconds)
-                if attempt > 0:
-                    time.sleep(random.uniform(0.5, 2.0))
-
-                response = requests.get(
-                    url, headers=headers, timeout=timeout, verify=True
-                )
-                response.raise_for_status()
-                return response.text
-            except Exception as e:
-                if attempt < retries - 1:
-                    continue
-                LOG.error(f"Failed to fetch HTML after {retries} retries ({url}): {e}")
-                return None
-
-        return None
-
-    def _clean_html(self, html_content: Optional[str]) -> str:
-        """Clean HTML content to extract readable text.
-
-        Removes scripts, styles, and other non-content elements, then normalizes whitespace.
-
-        Args:
-            html_content: Raw HTML content to clean.
-
-        Returns:
-            Cleaned text string, or empty string if input is None/empty.
-        """
-        if not html_content:
-            return ""
-
-        soup = BeautifulSoup(html_content, "html.parser")
-
-        # Remove non-content elements
-        for element in soup(["script", "style", "iframe", "nav", "aside", "footer"]):
-            element.decompose()
-
-        # Extract and normalize text
-        text = soup.get_text()
-        lines = (line.strip() for line in text.splitlines())
-        chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-        return "\n".join(chunk for chunk in chunks if chunk)
 
 
 if __name__ == "__main__":
