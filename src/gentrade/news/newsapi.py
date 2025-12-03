@@ -20,7 +20,7 @@ class NewsApiProvider(NewsProviderBase):
     and stock-specific news (using ticker symbols).
     """
 
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str = None):
         """Initialize the NewsApiProvider with a NewsAPI.org API key.
 
         Args:
@@ -30,8 +30,12 @@ class NewsApiProvider(NewsProviderBase):
         self.base_url = "https://newsapi.org/v2/everything"  # Core endpoint for news retrieval
 
     @property
-    def market(self):
+    def market(self) -> str:
         return 'us'
+
+    @property
+    def is_available(self) -> bool:
+        return self.api_key is not None and len(self.api_key) != 0
 
     def fetch_latest_market_news(
         self,

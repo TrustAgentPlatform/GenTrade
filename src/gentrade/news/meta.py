@@ -87,8 +87,28 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
     """
 
     @property
-    def market(self):
+    def market(self) -> str:
+        """Get the market identifier this provider is associated with.
+
+        Defaults to 'common' for providers that cover general markets.
+        Concrete providers may override this to specify a specific market (e.g., 'us', 'cn').
+
+        Returns:
+            str: Market identifier string.
+        """
         return 'common'
+
+    @property
+    def is_available(self) -> bool:
+        """Check if the news provider is currently available/operational.
+
+        Defaults to True. Concrete providers may override this to implement
+        availability checks (e.g., API status, rate limits, connectivity).
+
+        Returns:
+            bool: True if provider is available, False otherwise.
+        """
+        return True
 
     @abc.abstractmethod
     def fetch_latest_market_news(

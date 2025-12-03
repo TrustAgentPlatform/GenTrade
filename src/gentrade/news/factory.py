@@ -147,6 +147,9 @@ class NewsAggregator:
 
         threads = []
         for provider in self.providers:
+            if not provider.is_available:
+                continue
+
             thread = threading.Thread(
                 target=self._fetch_thread,
                 args=(provider, self, ticker, category, max_hour_interval, max_count)

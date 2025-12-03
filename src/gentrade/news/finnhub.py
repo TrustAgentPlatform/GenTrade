@@ -21,7 +21,7 @@ class FinnhubNewsProvider(NewsProviderBase):
     intervals and maximum article count.
     """
 
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str = None):
         """Initialize the FinnhubNewsProvider with the required API key.
 
         Args:
@@ -31,8 +31,12 @@ class FinnhubNewsProvider(NewsProviderBase):
         self.base_url = "https://finnhub.io/api/v1"
 
     @property
-    def market(self):
+    def market(self) -> str:
         return 'us'
+
+    @property
+    def is_available(self) -> bool:
+        return self.api_key is not None and len(self.api_key) != 0
 
     def fetch_latest_market_news(
         self,

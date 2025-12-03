@@ -39,8 +39,12 @@ class RssProvider(NewsProviderBase):
         self._market = market
 
     @property
-    def market(self):
+    def market(self) -> str:
         return self._market
+
+    @property
+    def is_available(self) -> bool:
+        return self.feed_url is not None
 
     def fetch_latest_market_news(
         self,
