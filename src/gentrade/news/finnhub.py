@@ -75,7 +75,7 @@ class FinnhubNewsProvider(NewsProviderBase):
                     headline=article.get("headline", ""),
                     id=self.url_to_hash_id(article.get("url", "")),
                     image=article.get("image", ""),
-                    related=article.get("related", ""),
+                    related=article.get("related", []),
                     source=article.get("source", ""),
                     summary=article.get("summary", ""),
                     url=article.get("url", ""),
@@ -85,7 +85,7 @@ class FinnhubNewsProvider(NewsProviderBase):
                 ) for article in articles
             ]
 
-            return self._filter_news(news_list, max_hour_interval, max_count)
+            return self.filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
             logger.debug(f"Error fetching market news from Finnhub: {e}")
@@ -134,7 +134,7 @@ class FinnhubNewsProvider(NewsProviderBase):
                     headline=article.get("headline", ""),
                     id=article.get("id", hash(article.get("url", ""))),
                     image=article.get("image", ""),
-                    related=ticker,
+                    related=[ticker,],
                     source=article.get("source", ""),
                     summary=article.get("summary", ""),
                     url=article.get("url", ""),
@@ -144,7 +144,7 @@ class FinnhubNewsProvider(NewsProviderBase):
                 ) for article in articles
             ]
 
-            return self._filter_news(news_list, max_hour_interval, max_count)
+            return self.filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
             logger.debug(f"Error fetching stock news from Finnhub: {e}")

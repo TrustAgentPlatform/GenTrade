@@ -29,7 +29,7 @@ class NewsInfo:
     headline: str
     id: int
     image: str
-    related: str   # Related stock ticker(s) or empty string
+    related: list[str]   # Related stock ticker(s) or empty list
     source: str
     summary: str
     url: str
@@ -109,7 +109,6 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
     def fetch_stock_news(
         self,
         ticker: str,
@@ -128,7 +127,27 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
         Returns:
             List of NewsInfo objects related to the specified ticker.
         """
-        raise NotImplementedError
+        # Fetch 2x max_count general news to allow ticker filtering
+        general_news = self.fetch_latest_market_news(
+            category=category,
+            max_hour_interval=max_hour_interval,
+            max_count=max_count * 2
+        )
+
+        # Filter articles where ticker is in headline or summary (case-insensitive)
+        ticker_lower = ticker.lower()
+        ticker_news = [
+            news for news in general_news
+            if ticker_lower in news.headline.lower()
+            or ticker_lower in news.summary.lower()
+        ]
+
+        # Update "related" field to link articles to the target ticker
+        for news in ticker_news:
+            news.related.append(ticker)
+
+        # Limit to max_count results
+        return ticker_news[:max_count]
 
     def _timestamp_to_epoch(self, timestamp: str) -> int:
         """Convert ISO 8601 timestamp to epoch seconds.
@@ -146,7 +165,7 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
         except ValueError:
             return int(time.time())
 
-    def _filter_news(
+    def filter_news(
         self,
         news_list: List[NewsInfo],
         max_hour_interval: int,

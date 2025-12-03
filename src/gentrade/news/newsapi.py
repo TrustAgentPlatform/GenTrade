@@ -78,7 +78,7 @@ class NewsApiProvider(NewsProviderBase):
                     headline=article.get("title", ""),
                     id=self.url_to_hash_id(article.get("url", "")),
                     image=article.get("urlToImage", ""),  # Article thumbnail (if available)
-                    related="",  # No stock ticker for general market news
+                    related=[],  # No stock ticker for general market news
                     source=article.get("source", {}).get("name", ""),  # News source name
                     summary=article.get("description", ""),  # Short article preview
                     url=article.get("url", ""),  # Direct article URL
@@ -89,7 +89,7 @@ class NewsApiProvider(NewsProviderBase):
                 for article in articles
             ]
 
-            return self._filter_news(news_list, max_hour_interval, max_count)
+            return self.filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
             logger.debug(f"Failed to fetch market news from NewsAPI.org: {e}")
@@ -145,7 +145,7 @@ class NewsApiProvider(NewsProviderBase):
                     headline=article.get("title", ""),
                     id=hash(article.get("url", "")),
                     image=article.get("urlToImage", ""),
-                    related=ticker,  # Associate with target stock ticker
+                    related=[ticker,],  # Associate with target stock ticker
                     source=article.get("source", {}).get("name", ""),
                     summary=article.get("description", ""),
                     url=article.get("url", ""),
@@ -156,7 +156,7 @@ class NewsApiProvider(NewsProviderBase):
                 for article in articles
             ]
 
-            return self._filter_news(news_list, max_hour_interval, max_count)
+            return self.filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
             logger.debug(f"Failed to fetch {ticker} stock news from NewsAPI.org: {e}")
