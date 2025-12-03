@@ -72,7 +72,6 @@ class NewsFactory:
 
         return provider_class(**kwargs)
 
-
 class NewsAggregator:
     """Aggregates news articles from multiple providers and synchronizes them to a database.
 
@@ -92,7 +91,7 @@ class NewsAggregator:
         self.db_lock = threading.Lock()
 
     def _fetch_thread(self, provider, aggregator, ticker, category,
-        max_hour_interval, max_count, is_process=True):
+        max_hour_interval, max_count, is_process=False):
         if ticker:
             news = provider.fetch_stock_news(
                 ticker, category, max_hour_interval, max_count
@@ -115,7 +114,6 @@ class NewsAggregator:
             item.summary = ace.clean_html(item.summary)
             if is_process:
                 item.content = ace.extract_content(item.url)
-                logger.info(item.content)
 
         with aggregator.db_lock:
             aggregator.db.add_news(news)
@@ -189,15 +187,9 @@ if __name__ == "__main__":
         logger.info(f"Total articles in database: {len(all_news)}")
 
         if all_news:
-            logger.info("Example article:")
-            logger.info(all_news[0].to_dict())
 
             for news_item in all_news:
-                logger.info("--------------------------------")
-                print(news_item.headline)
-                print(news_item.url)
-                print(news_item.content)
-                logger.info("--------------------------------")
+                logger.info("[%s...]: %s..." % (str(news_item.id)[:10], news_item.headline[:15]))
 
     except ValueError as e:
         logger.error(f"Error during news aggregation: {e}")

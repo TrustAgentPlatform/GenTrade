@@ -4,7 +4,7 @@ This module provides a concrete implementation of the NewsProviderBase abstract 
 utilizing the Finnhub.io API to retrieve news articles. It supports both general market news
 and news specific to individual stock tickers, with filtering by time interval and article count.
 """
-
+import os
 import time
 from typing import List
 from datetime import datetime, timedelta
@@ -27,7 +27,7 @@ class FinnhubNewsProvider(NewsProviderBase):
         Args:
             api_key: API key for authenticating requests to Finnhub.io.
         """
-        self.api_key = api_key
+        self.api_key = ( api_key or os.getenv("FINNHUB_API_KEY") )
         self.base_url = "https://finnhub.io/api/v1"
 
     @property

@@ -4,7 +4,7 @@ This module implements the NewsProviderBase abstract class to retrieve general m
 and stock-specific news via the NewsAPI.org API. It supports filtering by time interval,
 article count, and language, while formatting results into standardized NewsInfo objects.
 """
-
+import os
 from typing import List
 from datetime import datetime, timedelta
 import requests
@@ -26,7 +26,7 @@ class NewsApiProvider(NewsProviderBase):
         Args:
             api_key: API key for authenticating requests to NewsAPI.org.
         """
-        self.api_key = api_key
+        self.api_key = ( api_key or os.getenv("NEWSAPI_API_KEY") )
         self.base_url = "https://newsapi.org/v2/everything"  # Core endpoint for news retrieval
 
     @property
@@ -142,8 +142,10 @@ class NewsApiProvider(NewsProviderBase):
             articles = response.json().get("articles", [])
 
             # Convert API response to standardized NewsInfo objects
-            news_list = [
-                NewsInfo(
+            news_list = []
+            for article in articles:
+                assert article.get("url", "") != ""
+                ni = NewsInfo(
                     category=category,
                     datetime=self._timestamp_to_epoch(article.get("publishedAt", "")),
                     headline=article.get("title", ""),
@@ -157,9 +159,7 @@ class NewsApiProvider(NewsProviderBase):
                     provider='newsapi',
                     market='us'
                 )
-                for article in articles
-            ]
-
+                news_list.append(ni)
             return self.filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
