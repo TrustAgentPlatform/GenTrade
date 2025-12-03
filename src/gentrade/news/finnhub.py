@@ -5,16 +5,13 @@ utilizing the Finnhub.io API to retrieve news articles. It supports both general
 and news specific to individual stock tickers, with filtering by time interval and article count.
 """
 
-import logging
 import time
 from typing import List
 from datetime import datetime, timedelta
 import requests
+from loguru import logger
 
 from gentrade.news.meta import NewsInfo, NewsProviderBase
-
-LOG = logging.getLogger(__name__)
-
 
 class FinnhubNewsProvider(NewsProviderBase):
     """News provider implementation for fetching news via the Finnhub.io API.
@@ -32,6 +29,10 @@ class FinnhubNewsProvider(NewsProviderBase):
         """
         self.api_key = api_key
         self.base_url = "https://finnhub.io/api/v1"
+
+    @property
+    def market(self):
+        return 'us'
 
     def fetch_latest_market_news(
         self,
@@ -87,7 +88,7 @@ class FinnhubNewsProvider(NewsProviderBase):
             return self._filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
-            LOG.debug(f"Error fetching market news from Finnhub: {e}")
+            logger.debug(f"Error fetching market news from Finnhub: {e}")
             return []
 
     def fetch_stock_news(
@@ -146,5 +147,5 @@ class FinnhubNewsProvider(NewsProviderBase):
             return self._filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
-            LOG.debug(f"Error fetching stock news from Finnhub: {e}")
+            logger.debug(f"Error fetching stock news from Finnhub: {e}")
             return []

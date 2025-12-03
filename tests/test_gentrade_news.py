@@ -7,7 +7,6 @@ from gentrade.news.factory import NewsFactory
 from gentrade.news.meta import NewsProviderBase
 from gentrade.news.newsapi import NewsApiProvider
 from gentrade.news.finnhub import FinnhubNewsProvider
-from gentrade.news.googlenews import GoogleNewsProvider
 from gentrade.news.rss import RssProvider
 
 
@@ -43,24 +42,6 @@ class TestNewsFactory:
                 NewsFactory.create_provider("finnhub")
             assert "FINNHUB_API_KEY" in str(excinfo.value)
 
-    @patch.dict(os.environ, {
-        "GOOGLE_CLOUD_API_KEY": "test_google_key",
-        "GOOGLE_CSE_ID": "test_cse_id"
-    })
-    def test_create_google_provider(self):
-        """Test Google News provider creation with valid env vars"""
-        provider = NewsFactory.create_provider("google")
-        assert isinstance(provider, GoogleNewsProvider)
-        assert provider.api_key == "test_google_key"
-        assert provider.cse_id == "test_cse_id"
-
-    def test_create_google_missing_credentials(self):
-        """Test Google creation fails with missing credentials"""
-        with patch.dict(os.environ, {}, clear=True):
-            with pytest.raises(ValueError) as excinfo:
-                NewsFactory.create_provider("google")
-            assert "GOOGLE_CSE_ID" in str(excinfo.value)
-
     def test_create_rss_provider_with_feed_url(self):
         """Test RSS provider creation with explicit feed URL"""
         feed_url = "https://test-feed.com/rss"
@@ -94,10 +75,6 @@ class TestNewsProvidersCommon:
     @pytest.fixture(params=[
         ("newsapi", NewsApiProvider, {"NEWSAPI_API_KEY": "test_key"}),
         ("finnhub", FinnhubNewsProvider, {"FINNHUB_API_KEY": "test_key"}),
-        ("google", GoogleNewsProvider, {
-            "GOOGLE_CLOUD_API_KEY": "test_key",
-            "GOOGLE_CSE_ID": "test_id"
-        }),
         ("rss", RssProvider, {})
     ])
     def provider_setup(self, request):
@@ -128,8 +105,6 @@ class TestNewsProvidersCommon:
                 mock_response.json.return_value = {"articles": []}
             elif provider_setup[0] == "finnhub":
                 mock_response.json.return_value = []
-            elif provider_setup[0] == "google":
-                mock_response.json.return_value = {"items": []}
             elif provider_setup[0] == "rss":
                 pass  # Handled in RSS specific tests
 
@@ -152,9 +127,6 @@ class TestNewsProvidersCommon:
             elif provider_type == "finnhub":
                 # Finnhub returns list directly
                 mock_response.json.return_value = []
-            elif provider_type == "google":
-                # Google returns {"items": [...]}
-                mock_response.json.return_value = {"items": []}
             elif provider_type == "rss":
                 # RSS uses feedparser, handled separately
                 pass
@@ -188,29 +160,6 @@ class TestNewsApiProvider:
         assert params["q"] == "financial market OR stock market"
         assert params["language"] == "en"
         assert "from" in params
-
-
-class TestGoogleNewsProvider:
-    """Google News-specific test cases"""
-
-    @pytest.fixture
-    def google_provider(self):
-        with patch.dict(os.environ, {
-            "GOOGLE_CLOUD_API_KEY": "test_key",
-            "GOOGLE_CSE_ID": "test_id"
-        }):
-            return NewsFactory.create_provider("google")
-
-    @patch("gentrade.news.googlenews.requests.get")
-    def test_fetch_stock_news_query(self, mock_get, google_provider):
-        """Test Google News uses correct stock query"""
-        mock_get.return_value = Mock(status_code=200, json=lambda: {"items": []})
-        google_provider.fetch_stock_news(ticker="MSFT", max_count=3)
-
-        _, kwargs = mock_get.call_args
-        params = kwargs["params"]
-        assert params["q"] == "MSFT stock news"
-        assert params["num"] == 3
 
 
 class TestRssProvider:
@@ -268,17 +217,13 @@ class TestFinnhubProviderAdditional:
 class TestProviderErrorHandling:
     """Tests for provider error handling"""
 
-    @pytest.fixture(params=["newsapi", "finnhub", "google"])
+    @pytest.fixture(params=["newsapi", "finnhub"])
     def api_provider(self, request):
         """Fixture for API-based providers (non-RSS)"""
         provider_type = request.param
         env_vars = {
             "newsapi": {"NEWSAPI_API_KEY": "test"},
-            "finnhub": {"FINNHUB_API_KEY": "test"},
-            "google": {
-                "GOOGLE_CLOUD_API_KEY": "test",
-                "GOOGLE_CSE_ID": "test"
-            }
+            "finnhub": {"FINNHUB_API_KEY": "test"}
         }[provider_type]
 
         with patch.dict(os.environ, env_vars):

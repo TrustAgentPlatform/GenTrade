@@ -7,15 +7,13 @@ for feed fetching/parsing.
 """
 
 import os
-import logging
 from typing import List
 
 import requests
 import feedparser
+from loguru import logger
 
 from gentrade.news.meta import NewsInfo, NewsProviderBase
-
-LOG = logging.getLogger(__name__)
 
 
 class RssProvider(NewsProviderBase):
@@ -63,7 +61,7 @@ class RssProvider(NewsProviderBase):
             parsing fails, or no valid articles exist.
         """
         if not self.feed_url:
-            LOG.error("RSS feed URL is missing (no explicit URL, env var, or default).")
+            logger.error("RSS feed URL is missing (no explicit URL, env var, or default).")
             return []
 
         # Headers to mimic browser (avoid feed server blocking) and accept RSS/XML
@@ -81,7 +79,7 @@ class RssProvider(NewsProviderBase):
             # Parse feed with feedparser
             feed = feedparser.parse(response.text)
             if not feed.entries:
-                LOG.warning(f"No articles found in RSS feed: {self.feed_url}")
+                logger.warning(f"No articles found in RSS feed: {self.feed_url}")
                 return []
 
             # Convert feed entries to standardized NewsInfo objects
@@ -111,16 +109,16 @@ class RssProvider(NewsProviderBase):
             return self._filter_news(news_list, max_hour_interval, max_count)
 
         except requests.HTTPError as e:
-            LOG.error(
+            logger.error(
                 f"HTTP error fetching RSS feed {self.feed_url}: "
                 f"Status {e.response.status_code} - {str(e)}"
             )
             return []
         except requests.RequestException as e:
-            LOG.error(f"Network error fetching RSS feed {self.feed_url}: {str(e)}")
+            logger.error(f"Network error fetching RSS feed {self.feed_url}: {str(e)}")
             return []
         except Exception as e:
-            LOG.error(f"Unexpected error parsing RSS feed {self.feed_url}: {str(e)}")
+            logger.error(f"Unexpected error parsing RSS feed {self.feed_url}: {str(e)}")
             return []
 
     def fetch_stock_news(

@@ -9,16 +9,13 @@ Supports fetching market-wide and stock-specific news, with filtering by time an
 """
 
 import abc
-import logging
 import time
 import hashlib
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 from dataclasses import dataclass
-
+from loguru import logger
 import requests
-
-LOG = logging.getLogger(__name__)
 
 NEWS_MARKET = [
     'us', 'zh', 'hk', 'cypto', 'common'
@@ -37,7 +34,7 @@ class NewsInfo:
     summary: str
     url: str
     content: str
-    provider: str  # provder like newsapi, google, finnhub, rss
+    provider: str  # provder like newsapi, finnhub, rss
     market: str    # market type like us, chn, eur, hk, crypto
 
     def to_dict(self) -> Dict[str, Any]:
@@ -79,7 +76,7 @@ class NewsInfo:
             response.raise_for_status()
             return response.text
         except requests.RequestException as e:
-            LOG.debug(f"Failed to fetch HTML for {self.url}: {e}")
+            logger.debug(f"Failed to fetch HTML for {self.url}: {e}")
             return None
 
 
@@ -88,6 +85,10 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
 
     All concrete news providers (e.g., NewsAPI, Finnhub) must implement these methods.
     """
+
+    @property
+    def market(self):
+        return 'common'
 
     @abc.abstractmethod
     def fetch_latest_market_news(
