@@ -14,7 +14,7 @@ from loguru import logger
 
 from gentrade.scraper.extractor import ArticleContentExtractor
 
-from gentrade.news.meta import NewsProviderBase, NewsDatabase
+from gentrade.news.meta import NewsProviderBase, NewsDatabase, NewsFileDatabase
 from gentrade.news.newsapi import NewsApiProvider
 from gentrade.news.rss import RssProvider
 from gentrade.news.finnhub import FinnhubNewsProvider
@@ -159,10 +159,11 @@ class NewsAggregator:
             thread.join()
 
         self.db.last_sync = current_time
+        self.db.save()
         logger.info("News sync completed.")
 
 if __name__ == "__main__":
-    db = NewsDatabase()
+    db = NewsFileDatabase("news_db.txt")
 
     try:
         # Initialize providers using the factory
@@ -171,7 +172,8 @@ if __name__ == "__main__":
         rss_provider = NewsFactory.create_provider("rss")
 
         # Create aggregator with selected providers
-        aggregator = NewsAggregator(providers=[rss_provider], db=db)
+        aggregator = NewsAggregator(
+            providers=[rss_provider, newsapi_provider, finnhub_provider], db=db)
 
         # Sync market news and stock-specific news
         aggregator.sync_news(category="business", max_hour_interval=64, max_count=10)
@@ -186,10 +188,7 @@ if __name__ == "__main__":
         all_news = db.get_all_news()
         logger.info(f"Total articles in database: {len(all_news)}")
 
-        if all_news:
-
-            for news_item in all_news:
-                logger.info("[%s...]: %s..." % (str(news_item.id)[:10], news_item.headline[:15]))
-
+        for news_item in all_news:
+            logger.info("[%s...]: %s..." % (str(news_item.id)[:10], news_item.headline[:15]))
     except ValueError as e:
         logger.error(f"Error during news aggregation: {e}")
