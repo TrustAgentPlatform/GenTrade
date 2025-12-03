@@ -7,7 +7,8 @@ Defines core components for news handling:
 
 Supports fetching market-wide and stock-specific news, with filtering by time and count.
 """
-
+import os
+import json
 import abc
 import time
 import hashlib
@@ -29,7 +30,7 @@ class NewsInfo:
     headline: str
     id: int
     image: str
-    related: str   # Related stock ticker(s) or empty string
+    related: list[str]   # Related stock ticker(s) or empty list
     source: str
     summary: str
     url: str
@@ -79,7 +80,6 @@ class NewsInfo:
             logger.debug(f"Failed to fetch HTML for {self.url}: {e}")
             return None
 
-
 class NewsProviderBase(metaclass=abc.ABCMeta):
     """Abstract base class defining the interface for news providers.
 
@@ -87,8 +87,28 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
     """
 
     @property
-    def market(self):
+    def market(self) -> str:
+        """Get the market identifier this provider is associated with.
+
+        Defaults to 'common' for providers that cover general markets.
+        Concrete providers may override this to specify a specific market (e.g., 'us', 'cn').
+
+        Returns:
+            str: Market identifier string.
+        """
         return 'common'
+
+    @property
+    def is_available(self) -> bool:
+        """Check if the news provider is currently available/operational.
+
+        Defaults to True. Concrete providers may override this to implement
+        availability checks (e.g., API status, rate limits, connectivity).
+
+        Returns:
+            bool: True if provider is available, False otherwise.
+        """
+        return True
 
     @abc.abstractmethod
     def fetch_latest_market_news(
@@ -109,7 +129,6 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
         """
         raise NotImplementedError
 
-    @abc.abstractmethod
     def fetch_stock_news(
         self,
         ticker: str,
@@ -128,7 +147,27 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
         Returns:
             List of NewsInfo objects related to the specified ticker.
         """
-        raise NotImplementedError
+        # Fetch 2x max_count general news to allow ticker filtering
+        general_news = self.fetch_latest_market_news(
+            category=category,
+            max_hour_interval=max_hour_interval,
+            max_count=max_count * 2
+        )
+
+        # Filter articles where ticker is in headline or summary (case-insensitive)
+        ticker_lower = ticker.lower()
+        ticker_news = [
+            news for news in general_news
+            if ticker_lower in news.headline.lower()
+            or ticker_lower in news.summary.lower()
+        ]
+
+        # Update "related" field to link articles to the target ticker
+        for news in ticker_news:
+            news.related.append(ticker)
+
+        # Limit to max_count results
+        return ticker_news[:max_count]
 
     def _timestamp_to_epoch(self, timestamp: str) -> int:
         """Convert ISO 8601 timestamp to epoch seconds.
@@ -146,7 +185,7 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
         except ValueError:
             return int(time.time())
 
-    def _filter_news(
+    def filter_news(
         self,
         news_list: List[NewsInfo],
         max_hour_interval: int,
@@ -184,8 +223,8 @@ class NewsDatabase:
 
     def __init__(self):
         """Initialize an empty database with last sync time set to 0."""
-        self.news_dict: Dict[str, NewsInfo] = {}  # Key: article URL
-        self.last_sync: float = 0.0  # Epoch time of last successful sync
+        self.news_list: List[NewsInfo] = []
+        self.last_sync = 0
 
     def add_news(self, news_list: List[NewsInfo]) -> None:
         """Add news articles to the database, skipping duplicates.
@@ -193,10 +232,12 @@ class NewsDatabase:
         Args:
             news_list: List of NewsInfo objects to store.
         """
+        news_hash_cache_list = [item.id for item in self.news_list]
         for news in news_list:
-            # Use URL as unique identifier to avoid duplicates
-            if news.url and news.url not in self.news_dict:
-                self.news_dict[news.url] = news
+            if news.id in news_hash_cache_list:
+                logger.error("news %s already in the cache list" % news.id)
+                continue
+            self.news_list.append(news)
 
     def get_all_news(self) -> List[NewsInfo]:
         """Retrieve all stored news articles.
@@ -204,7 +245,7 @@ class NewsDatabase:
         Returns:
             List of all NewsInfo objects in the database.
         """
-        return list(self.news_dict.values())
+        return self.news_list
 
     def get_market_news(self, market='us') -> List[NewsInfo]:
         """Retrieve stored news articles for given market.
@@ -217,7 +258,32 @@ class NewsDatabase:
         """
         assert market in NEWS_MARKET
         market_news = []
-        for item in self.news_dict.values():
+        for item in self.news_list:
             if item.market == market:
                 market_news.append(item)
         return market_news
+
+
+class NewsFileDatabase(NewsDatabase):
+
+    def __init__(self, filepath):
+        super().__init__()
+        self._filepath = filepath
+        if os.path.exists(self._filepath):
+            self.load()
+
+    def save(self):
+        news_dicts = [news.to_dict() for news in self.news_list]
+        content = {
+            "last_sync": self.last_sync,
+            "news_list": news_dicts
+        }
+        with open(self._filepath, 'w', encoding='utf-8') as f:
+            json.dump(content, f, indent=4)  # indent for readability
+
+    def load(self):
+        with open(self._filepath, 'r', encoding='utf-8') as f:
+            content = json.load(f)  # Directly loads JSON content into a Python list/dict
+        self.last_sync = content['last_sync']
+        self.news_list = [NewsInfo(**item_dict) for item_dict in content['news_list']]
+        logger.info(self.news_list)

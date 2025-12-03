@@ -4,7 +4,7 @@ This module provides a concrete implementation of the NewsProviderBase abstract 
 utilizing the Finnhub.io API to retrieve news articles. It supports both general market news
 and news specific to individual stock tickers, with filtering by time interval and article count.
 """
-
+import os
 import time
 from typing import List
 from datetime import datetime, timedelta
@@ -21,18 +21,22 @@ class FinnhubNewsProvider(NewsProviderBase):
     intervals and maximum article count.
     """
 
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str = None):
         """Initialize the FinnhubNewsProvider with the required API key.
 
         Args:
             api_key: API key for authenticating requests to Finnhub.io.
         """
-        self.api_key = api_key
+        self.api_key = ( api_key or os.getenv("FINNHUB_API_KEY") )
         self.base_url = "https://finnhub.io/api/v1"
 
     @property
-    def market(self):
+    def market(self) -> str:
         return 'us'
+
+    @property
+    def is_available(self) -> bool:
+        return self.api_key is not None and len(self.api_key) != 0
 
     def fetch_latest_market_news(
         self,
@@ -75,7 +79,7 @@ class FinnhubNewsProvider(NewsProviderBase):
                     headline=article.get("headline", ""),
                     id=self.url_to_hash_id(article.get("url", "")),
                     image=article.get("image", ""),
-                    related=article.get("related", ""),
+                    related=article.get("related", []),
                     source=article.get("source", ""),
                     summary=article.get("summary", ""),
                     url=article.get("url", ""),
@@ -85,7 +89,7 @@ class FinnhubNewsProvider(NewsProviderBase):
                 ) for article in articles
             ]
 
-            return self._filter_news(news_list, max_hour_interval, max_count)
+            return self.filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
             logger.debug(f"Error fetching market news from Finnhub: {e}")
@@ -134,7 +138,7 @@ class FinnhubNewsProvider(NewsProviderBase):
                     headline=article.get("headline", ""),
                     id=article.get("id", hash(article.get("url", ""))),
                     image=article.get("image", ""),
-                    related=ticker,
+                    related=[ticker,],
                     source=article.get("source", ""),
                     summary=article.get("summary", ""),
                     url=article.get("url", ""),
@@ -144,7 +148,7 @@ class FinnhubNewsProvider(NewsProviderBase):
                 ) for article in articles
             ]
 
-            return self._filter_news(news_list, max_hour_interval, max_count)
+            return self.filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
             logger.debug(f"Error fetching stock news from Finnhub: {e}")

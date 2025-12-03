@@ -15,7 +15,6 @@ from loguru import logger
 
 from gentrade.news.meta import NewsInfo, NewsProviderBase
 
-
 class RssProvider(NewsProviderBase):
     """News provider that fetches news from RSS/ATOM feeds.
 
@@ -37,7 +36,15 @@ class RssProvider(NewsProviderBase):
             or os.getenv("RSS_FEED_URL")
             or "https://plink.anyfeeder.com/chinadaily/caijing"
         )
-        self.market = market
+        self._market = market
+
+    @property
+    def market(self) -> str:
+        return self._market
+
+    @property
+    def is_available(self) -> bool:
+        return self.feed_url is not None
 
     def fetch_latest_market_news(
         self,
@@ -93,7 +100,7 @@ class RssProvider(NewsProviderBase):
                     # Extract image URL (handles missing media_content gracefully)
                     image=entry.get("media_content", [{}])[0].get("url", "")
                     if entry.get("media_content") else "",
-                    related="",  # No ticker for general market news
+                    related=[],  # No ticker for general market news
                     source=feed.feed.get("title", "Unknown RSS Feed"),  # Feed source name
                     summary=entry.get("summary", ""),  # Short article preview
                     url=entry.get("link", ""),  # Direct article URL
@@ -106,7 +113,7 @@ class RssProvider(NewsProviderBase):
             ]
 
             # Filter by recency and limit to max_count
-            return self._filter_news(news_list, max_hour_interval, max_count)
+            return self.filter_news(news_list, max_hour_interval, max_count)
 
         except requests.HTTPError as e:
             logger.error(
@@ -120,48 +127,3 @@ class RssProvider(NewsProviderBase):
         except Exception as e:
             logger.error(f"Unexpected error parsing RSS feed {self.feed_url}: {str(e)}")
             return []
-
-    def fetch_stock_news(
-        self,
-        ticker: str,
-        category: str = "business",
-        max_hour_interval: int = 24,
-        max_count: int = 10
-    ) -> List[NewsInfo]:
-        """Fetch stock-specific news by filtering RSS feed results for the target ticker.
-
-        Note: Most RSS feeds don't support native ticker filtering. This method fetches
-        general market news first, then filters entries where the ticker appears in the
-        headline or summary (case-insensitive).
-
-        Args:
-            ticker: Stock ticker symbol (e.g., "AAPL") to filter for.
-            category: Category label to assign to fetched news (default: "business").
-            max_hour_interval: Maximum age (in hours) of articles to include (default: 24).
-            max_count: Maximum number of articles to return (default: 10).
-
-        Returns:
-            List of NewsInfo objects with ticker-matching news; empty list if no matches
-            or feed fetching fails.
-        """
-        # Fetch 2x max_count general news to allow ticker filtering
-        general_news = self.fetch_latest_market_news(
-            category=category,
-            max_hour_interval=max_hour_interval,
-            max_count=max_count * 2
-        )
-
-        # Filter articles where ticker is in headline or summary (case-insensitive)
-        ticker_lower = ticker.lower()
-        ticker_news = [
-            news for news in general_news
-            if ticker_lower in news.headline.lower()
-            or ticker_lower in news.summary.lower()
-        ]
-
-        # Update "related" field to link articles to the target ticker
-        for news in ticker_news:
-            news.related = ticker
-
-        # Limit to max_count results
-        return ticker_news[:max_count]

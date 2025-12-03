@@ -4,7 +4,7 @@ This module implements the NewsProviderBase abstract class to retrieve general m
 and stock-specific news via the NewsAPI.org API. It supports filtering by time interval,
 article count, and language, while formatting results into standardized NewsInfo objects.
 """
-
+import os
 from typing import List
 from datetime import datetime, timedelta
 import requests
@@ -20,18 +20,22 @@ class NewsApiProvider(NewsProviderBase):
     and stock-specific news (using ticker symbols).
     """
 
-    def __init__(self, api_key: str):
+    def __init__(self, api_key: str = None):
         """Initialize the NewsApiProvider with a NewsAPI.org API key.
 
         Args:
             api_key: API key for authenticating requests to NewsAPI.org.
         """
-        self.api_key = api_key
+        self.api_key = ( api_key or os.getenv("NEWSAPI_API_KEY") )
         self.base_url = "https://newsapi.org/v2/everything"  # Core endpoint for news retrieval
 
     @property
-    def market(self):
+    def market(self) -> str:
         return 'us'
+
+    @property
+    def is_available(self) -> bool:
+        return self.api_key is not None and len(self.api_key) != 0
 
     def fetch_latest_market_news(
         self,
@@ -78,7 +82,7 @@ class NewsApiProvider(NewsProviderBase):
                     headline=article.get("title", ""),
                     id=self.url_to_hash_id(article.get("url", "")),
                     image=article.get("urlToImage", ""),  # Article thumbnail (if available)
-                    related="",  # No stock ticker for general market news
+                    related=[],  # No stock ticker for general market news
                     source=article.get("source", {}).get("name", ""),  # News source name
                     summary=article.get("description", ""),  # Short article preview
                     url=article.get("url", ""),  # Direct article URL
@@ -89,7 +93,7 @@ class NewsApiProvider(NewsProviderBase):
                 for article in articles
             ]
 
-            return self._filter_news(news_list, max_hour_interval, max_count)
+            return self.filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
             logger.debug(f"Failed to fetch market news from NewsAPI.org: {e}")
@@ -138,14 +142,16 @@ class NewsApiProvider(NewsProviderBase):
             articles = response.json().get("articles", [])
 
             # Convert API response to standardized NewsInfo objects
-            news_list = [
-                NewsInfo(
+            news_list = []
+            for article in articles:
+                assert article.get("url", "") != ""
+                ni = NewsInfo(
                     category=category,
                     datetime=self._timestamp_to_epoch(article.get("publishedAt", "")),
                     headline=article.get("title", ""),
                     id=hash(article.get("url", "")),
                     image=article.get("urlToImage", ""),
-                    related=ticker,  # Associate with target stock ticker
+                    related=[ticker,],  # Associate with target stock ticker
                     source=article.get("source", {}).get("name", ""),
                     summary=article.get("description", ""),
                     url=article.get("url", ""),
@@ -153,10 +159,8 @@ class NewsApiProvider(NewsProviderBase):
                     provider='newsapi',
                     market='us'
                 )
-                for article in articles
-            ]
-
-            return self._filter_news(news_list, max_hour_interval, max_count)
+                news_list.append(ni)
+            return self.filter_news(news_list, max_hour_interval, max_count)
 
         except requests.RequestException as e:
             logger.debug(f"Failed to fetch {ticker} stock news from NewsAPI.org: {e}")

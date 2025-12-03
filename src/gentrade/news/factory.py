@@ -14,7 +14,7 @@ from loguru import logger
 
 from gentrade.scraper.extractor import ArticleContentExtractor
 
-from gentrade.news.meta import NewsProviderBase, NewsDatabase
+from gentrade.news.meta import NewsProviderBase, NewsDatabase, NewsFileDatabase
 from gentrade.news.newsapi import NewsApiProvider
 from gentrade.news.rss import RssProvider
 from gentrade.news.finnhub import FinnhubNewsProvider
@@ -72,7 +72,6 @@ class NewsFactory:
 
         return provider_class(**kwargs)
 
-
 class NewsAggregator:
     """Aggregates news articles from multiple providers and synchronizes them to a database.
 
@@ -92,7 +91,7 @@ class NewsAggregator:
         self.db_lock = threading.Lock()
 
     def _fetch_thread(self, provider, aggregator, ticker, category,
-        max_hour_interval, max_count, is_process=True):
+        max_hour_interval, max_count, is_process=False):
         if ticker:
             news = provider.fetch_stock_news(
                 ticker, category, max_hour_interval, max_count
@@ -115,7 +114,6 @@ class NewsAggregator:
             item.summary = ace.clean_html(item.summary)
             if is_process:
                 item.content = ace.extract_content(item.url)
-                logger.info(item.content)
 
         with aggregator.db_lock:
             aggregator.db.add_news(news)
@@ -147,6 +145,9 @@ class NewsAggregator:
 
         threads = []
         for provider in self.providers:
+            if not provider.is_available:
+                continue
+
             thread = threading.Thread(
                 target=self._fetch_thread,
                 args=(provider, self, ticker, category, max_hour_interval, max_count)
@@ -158,10 +159,11 @@ class NewsAggregator:
             thread.join()
 
         self.db.last_sync = current_time
+        self.db.save()
         logger.info("News sync completed.")
 
 if __name__ == "__main__":
-    db = NewsDatabase()
+    db = NewsFileDatabase("news_db.txt")
 
     try:
         # Initialize providers using the factory
@@ -170,7 +172,8 @@ if __name__ == "__main__":
         rss_provider = NewsFactory.create_provider("rss")
 
         # Create aggregator with selected providers
-        aggregator = NewsAggregator(providers=[rss_provider], db=db)
+        aggregator = NewsAggregator(
+            providers=[rss_provider, newsapi_provider, finnhub_provider], db=db)
 
         # Sync market news and stock-specific news
         aggregator.sync_news(category="business", max_hour_interval=64, max_count=10)
@@ -185,16 +188,7 @@ if __name__ == "__main__":
         all_news = db.get_all_news()
         logger.info(f"Total articles in database: {len(all_news)}")
 
-        if all_news:
-            logger.info("Example article:")
-            logger.info(all_news[0].to_dict())
-
-            for news_item in all_news:
-                logger.info("--------------------------------")
-                print(news_item.headline)
-                print(news_item.url)
-                print(news_item.content)
-                logger.info("--------------------------------")
-
+        for news_item in all_news:
+            logger.info("[%s...]: %s..." % (str(news_item.id)[:10], news_item.headline[:15]))
     except ValueError as e:
         logger.error(f"Error during news aggregation: {e}")
