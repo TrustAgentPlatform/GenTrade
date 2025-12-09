@@ -12,6 +12,8 @@ import json
 import abc
 import time
 import hashlib
+import random
+
 from typing import Dict, List, Any, Optional
 from datetime import datetime
 from dataclasses import dataclass
@@ -19,7 +21,7 @@ from loguru import logger
 import requests
 
 NEWS_MARKET = [
-    'us', 'zh', 'hk', 'cypto', 'common'
+    'us', 'cn', 'hk', 'cypto', 'common'
 ]
 
 @dataclass
@@ -128,6 +130,45 @@ class NewsProviderBase(metaclass=abc.ABCMeta):
             List of NewsInfo objects matching the criteria.
         """
         raise NotImplementedError
+
+    @property
+    def proxies(self) -> Dict:
+        """Get proxies. The default implementation is retrieving from os.environ
+
+        Returns:
+            Dict of proxies configurations
+        """
+        ret_dict = {}
+        for key in ['http_proxy', 'https_proxy', 'no_proxy', \
+            'HTTP_PROXY', 'HTTPS_PROXY', 'NO_PROXY']:
+            if os.environ.get(key):
+                ret_dict[key] = os.environ[key]
+        return ret_dict
+
+    @property
+    def http_headers(self) -> Dict:
+        """Get http headers.
+
+        Returns:
+            Dict of http headers
+        """
+        user_agents = [
+            ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"),
+            ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+             "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15"),
+            ("Mozilla/5.0 (X11; Linux x86_64) "
+             "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36"),
+            ]
+
+        return {
+            "User-Agent": random.choice(user_agents),
+            "Accept": ("text/html,application/xhtml+xml,application/xml;q=0.9,"
+                       "image/avif,image/webp,*/*;q=0.8"),
+            "Accept-Language": "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3",
+            "Connection": "keep-alive",
+            "Upgrade-Insecure-Requests": "1",
+            }
 
     def fetch_stock_news(
         self,
