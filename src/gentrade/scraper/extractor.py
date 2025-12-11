@@ -226,7 +226,7 @@ class ArticleContentExtractor:
             return "Unsupported file type (non-HTML)"
 
         try:
-            article = Article(url)
+            article = Article(url, language='zh')
             article.download()
             article.parse()
             if article.text:

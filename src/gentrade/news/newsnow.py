@@ -1,13 +1,12 @@
-import json
 import time
 import random
-from typing import List, Optional
+from typing import List
 from loguru import logger
-import requests
 
 from gentrade.news.meta import NewsProviderBase, NewsInfo
+from gentrade.utils.download import HttpDownloader
 
-AVAILABLE_SOURCE_ID = [
+AVAILABLE_SOURCE = [
     'baidu',
     'bilibili',
     'cankaoxiaoxi',
@@ -56,14 +55,15 @@ class NewsNowProvider(NewsProviderBase):
     to fetch market news using the NewsNow API endpoint.
     """
 
-    def __init__(self, source_id: str = "baidu"):
+    def __init__(self, source: str = "baidu"):
         """Initialize NewsNowProvider with optional proxy and platform ID.
 
         Args:
             proxy_url: Optional proxy URL for making requests.
-            source_id: Platform identifier used in the API request.
+            source: Platform identifier used in the API request.
         """
-        self.source_id = source_id
+        self.source = source
+        self.url = f"https://newsnow.busiyi.world/api/s?id={self.source}&latest"
 
     @property
     def market(self) -> str:
@@ -87,78 +87,16 @@ class NewsNowProvider(NewsProviderBase):
             List of NewsInfo objects filtered by time and count constraints.
         """
         # Fetch raw data from NewsNow API
-        raw_data = self._fetch_news_data()
-        if not raw_data:
+        response = HttpDownloader.inst().get(self.url)
+        if not response:
             return []
 
         # Convert raw data to NewsInfo objects
-        news_list = self._parse_news(raw_data)
+        news_list = self._parse_news(response)
 
         # Filter news by time interval and count
         return self.filter_news(news_list, max_hour_interval, max_count)
 
-    def _fetch_news_data(self, max_retries: int = 2) -> Optional[dict]:
-        """Fetch raw news data from NewsNow API with retry mechanism.
-
-        Args:
-            max_retries: Maximum number of retry attempts on failure.
-
-        Returns:
-            Parsed JSON data if successful, None otherwise.
-        """
-        url = f"https://newsnow.busiyi.world/api/s?id={self.source_id}&latest"
-
-        retries = 0
-        while retries <= max_retries:
-            try:
-                response = requests.get(
-                    url,
-                    proxies=self.proxies,
-                    headers=self.http_headers,
-                    timeout=10
-                )
-                response.raise_for_status()
-                return self._validate_response(response.text)
-
-            except Exception as e:
-                retries += 1
-                if retries <= max_retries:
-                    wait_time = self._calculate_retry_wait(retries)
-                    logger.error(
-                        f"[{self.source_id}] Request failed (attempt {retries}/{max_retries}): {e}."
-                        f"[{self.source_id}] Retrying in {wait_time:.2f}s..."
-                    )
-                    time.sleep(wait_time)
-                else:
-                    logger.error(f"Failed after {max_retries} retries: {e}")
-                    return None
-
-        return None
-
-    @staticmethod
-    def _validate_response(response_text: str) -> Optional[dict]:
-        """Validate and parse API response.
-
-        Args:
-            response_text: Raw text response from the API.
-
-        Returns:
-            Parsed JSON data if valid, None otherwise.
-        """
-        try:
-            data = json.loads(response_text)
-            status = data.get("status", "unknown")
-            if status not in ["success", "cache"]:
-                logger.error(f"Invalid response status: {status}")
-                return None
-
-            status_info = "latest data" if status == "success" else "cached data"
-            logger.info(f"Successfully fetched {status_info}")
-            return data
-
-        except json.JSONDecodeError as e:
-            logger.error(f"Failed to parse JSON response: {e}")
-            return None
 
     @staticmethod
     def _calculate_retry_wait(retry_number: int, min_wait: int = 3, max_wait: int = 5) -> float:
@@ -207,7 +145,7 @@ class NewsNowProvider(NewsProviderBase):
                     id=self.url_to_hash_id(url),  # Use URL hash as unique ID
                     image=item.get("image", ""),
                     related=item.get("related", []),
-                    source=item.get("source", self.source_id),
+                    source=item.get("source", self.source),
                     summary=item.get("summary", ""),
                     url=url,
                     content=item.get("content", ""),
@@ -224,8 +162,8 @@ class NewsNowProvider(NewsProviderBase):
 
 if __name__ == "__main__":
     logger.info("hello")
-    for source_id in AVAILABLE_SOURCE_ID:
-        inst = NewsNowProvider(source_id)
+    for source in AVAILABLE_SOURCE:
+        inst = NewsNowProvider(source)
         ret = inst.fetch_latest_market_news()
         logger.info(ret)
-        time.sleep(5)
+        time.sleep(1)
