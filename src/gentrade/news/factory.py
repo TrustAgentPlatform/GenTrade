@@ -12,13 +12,12 @@ import threading
 from typing import List, Optional
 from loguru import logger
 
-from gentrade.scraper.extractor import ArticleContentExtractor
-
 from gentrade.news.meta import NewsProviderBase, NewsDatabase, NewsFileDatabase
-from gentrade.news.newsapi import NewsApiProvider
-from gentrade.news.rss import RssProvider
-from gentrade.news.finnhub import FinnhubNewsProvider
-from gentrade.news.newsnow import NewsNowProvider
+from gentrade.news.providers.newsapi import NewsApiProvider
+from gentrade.news.providers.rss import RssProvider
+from gentrade.news.providers.finnhub import FinnhubNewsProvider
+from gentrade.news.providers.newsnow import NewsNowProvider
+from gentrade.utils.download import ArticleDownloader
 
 class NewsFactory:
     """Factory class for creating news provider instances based on provider type.
@@ -114,11 +113,14 @@ class NewsAggregator:
                 f"{provider.__class__.__name__}"
             )
 
-        ace = ArticleContentExtractor.inst()
+        downloader = ArticleDownloader.inst()
         for item in news:
-            item.summary = ace.clean_html(item.summary)
+            item.summary = downloader.clean_html(item.summary)
             if process_content:
-                item.content = ace.extract_content(item.url)
+                logger.info(f"Process content ... {item.url}")
+                item.content = downloader.get_content(item.url)
+                if item.content:
+                    logger.info(f"Content: {item.content[:20]}")
 
         if self.db:
             with aggregator.db_lock:
@@ -154,6 +156,7 @@ class NewsAggregator:
         threads = []
         for provider in self.providers:
             if not provider.is_available:
+                logger.error(f"Provider {provider.__class__.__name__} is not available")
                 continue
 
             thread = threading.Thread(
@@ -185,7 +188,7 @@ if __name__ == "__main__":
 
         # Create aggregator with selected providers
         aggregator = NewsAggregator(
-            providers=[newsnow_provider, ], db=db)
+            providers=[newsnow_provider, finnhub_provider, rss_provider, newsapi_provider], db=db)
 
         # Sync market news and stock-specific news
         aggregator.sync_news(

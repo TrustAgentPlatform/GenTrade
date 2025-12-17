@@ -35,7 +35,7 @@ class NewsInfo:
     summary: str
     url: str
     content: str
-    provider: str  # provder like newsapi, finnhub, rss
+    provider: str  # provider like newsapi, finnhub, rss
     market: str    # market type like us, chn, eur, hk, crypto
 
     def to_dict(self) -> Dict[str, Any]:
