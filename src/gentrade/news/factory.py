@@ -12,13 +12,12 @@ import threading
 from typing import List, Optional
 from loguru import logger
 
-from gentrade.scraper.extractor import ArticleContentExtractor
-
 from gentrade.news.meta import NewsProviderBase, NewsDatabase, NewsFileDatabase
-from gentrade.news.newsapi import NewsApiProvider
-from gentrade.news.rss import RssProvider
-from gentrade.news.finnhub import FinnhubNewsProvider
-
+from gentrade.news.providers.newsapi import NewsApiProvider
+from gentrade.news.providers.rss import RssProvider
+from gentrade.news.providers.finnhub import FinnhubNewsProvider
+from gentrade.news.providers.newsnow import NewsNowProvider
+from gentrade.utils.download import ArticleDownloader
 
 class NewsFactory:
     """Factory class for creating news provider instances based on provider type.
@@ -47,7 +46,8 @@ class NewsFactory:
         providers = {
             "newsapi": NewsApiProvider,
             "finnhub": FinnhubNewsProvider,
-            "rss": RssProvider
+            "rss": RssProvider,
+            "newsnow": NewsNowProvider
         }
 
         provider_class = providers.get(provider_type_lower)
@@ -70,6 +70,10 @@ class NewsFactory:
             feed_url = kwargs.get("feed_url", os.getenv("RSS_FEED_URL"))
             return provider_class(feed_url=feed_url)
 
+        if provider_type_lower == "newsnow":
+            source = kwargs.get("source", "baidu")
+            return provider_class(source=source)
+
         return provider_class(**kwargs)
 
 class NewsAggregator:
@@ -79,7 +83,7 @@ class NewsAggregator:
     and stores results in a database. Includes logic to avoid frequent syncs.
     """
 
-    def __init__(self, providers: List[NewsProviderBase], db: NewsDatabase):
+    def __init__(self, providers: List[NewsProviderBase], db: NewsDatabase = None):
         """Initialize the NewsAggregator with a list of providers and a database.
 
         Args:
@@ -91,7 +95,7 @@ class NewsAggregator:
         self.db_lock = threading.Lock()
 
     def _fetch_thread(self, provider, aggregator, ticker, category,
-        max_hour_interval, max_count, is_process=False):
+        max_hour_interval, max_count, process_content=True):
         if ticker:
             news = provider.fetch_stock_news(
                 ticker, category, max_hour_interval, max_count
@@ -109,21 +113,26 @@ class NewsAggregator:
                 f"{provider.__class__.__name__}"
             )
 
-        ace = ArticleContentExtractor.inst()
+        downloader = ArticleDownloader.inst()
         for item in news:
-            item.summary = ace.clean_html(item.summary)
-            if is_process:
-                item.content = ace.extract_content(item.url)
+            item.summary = downloader.clean_html(item.summary)
+            if process_content:
+                logger.info(f"Process content ... {item.url}")
+                item.content = downloader.get_content(item.url)
+                if item.content:
+                    logger.info(f"Content: {item.content[:20]}")
 
-        with aggregator.db_lock:
-            aggregator.db.add_news(news)
+        if self.db:
+            with aggregator.db_lock:
+                aggregator.db.add_news(news)
 
     def sync_news(
         self,
         ticker: Optional[str] = None,
         category: str = "business",
         max_hour_interval: int = 24,
-        max_count: int = 10
+        max_count: int = 10,
+        process_content: bool = True
     ) -> None:
         """Synchronize news from providers, skipping if last sync was within 1 hour.
 
@@ -136,21 +145,24 @@ class NewsAggregator:
             max_hour_interval: Maximum age (in hours) of news articles to fetch (default: 24).
             max_count: Maximum number of articles to fetch per provider (default: 10).
         """
-        current_time = time.time()
-        if current_time < self.db.last_sync + 3600:
-            logger.info("Skipping sync: Last sync was less than 1 hour ago.")
-            return
+        if self.db:
+            current_time = time.time()
+            if current_time < self.db.last_sync + 3600:
+                logger.info("Skipping sync: Last sync was less than 1 hour ago.")
+                return
 
         logger.info("Starting news sync...")
 
         threads = []
         for provider in self.providers:
             if not provider.is_available:
+                logger.error(f"Provider {provider.__class__.__name__} is not available")
                 continue
 
             thread = threading.Thread(
                 target=self._fetch_thread,
-                args=(provider, self, ticker, category, max_hour_interval, max_count)
+                args=(provider, self, ticker, category, max_hour_interval,
+                    max_count, process_content)
             )
             threads.append(thread)
             thread.start()
@@ -158,8 +170,10 @@ class NewsAggregator:
         for thread in threads:
             thread.join()
 
-        self.db.last_sync = current_time
-        self.db.save()
+        if self.db:
+            self.db.last_sync = current_time
+            self.db.save()
+
         logger.info("News sync completed.")
 
 if __name__ == "__main__":
@@ -170,18 +184,24 @@ if __name__ == "__main__":
         newsapi_provider = NewsFactory.create_provider("newsapi")
         finnhub_provider = NewsFactory.create_provider("finnhub")
         rss_provider = NewsFactory.create_provider("rss")
+        newsnow_provider = NewsFactory.create_provider("newsnow", source="jin10")
 
         # Create aggregator with selected providers
         aggregator = NewsAggregator(
-            providers=[rss_provider, newsapi_provider, finnhub_provider], db=db)
+            providers=[newsnow_provider, finnhub_provider, rss_provider, newsapi_provider], db=db)
 
         # Sync market news and stock-specific news
-        aggregator.sync_news(category="business", max_hour_interval=64, max_count=10)
+        aggregator.sync_news(
+            category="business",
+            max_hour_interval=64,
+            max_count=10,
+            process_content = True)
         aggregator.sync_news(
             ticker="AAPL",
             category="business",
             max_hour_interval=240,
-            max_count=10
+            max_count=10,
+            process_content = True
         )
 
         # Log results

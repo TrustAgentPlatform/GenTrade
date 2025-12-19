@@ -7,7 +7,6 @@ source, timestamp, and optionally full article content.
 """
 
 import json
-import logging
 import random
 import re
 import time
@@ -16,19 +15,11 @@ from typing import Dict, List
 
 import requests
 from bs4 import BeautifulSoup
+from loguru import logger
 
-from gentrade.scraper.extractor import ScraperStorage, ArticleContentExtractor
+from gentrade.utils.download import ArticleDownloader
 
-
-# pylint: disable=too-many-locals,too-many-statements,too-many-branches,possibly-used-before-assignment
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
-
+# pylint: disable=too-many-branches,too-many-locals,too-many-statements
 
 class BaiduSearchScraper:
     """Scrapes Baidu search results and extracts structured article data."""
@@ -36,19 +27,8 @@ class BaiduSearchScraper:
     def __init__(self) -> None:
         """Initialize scraper with user agents, storage, and regex patterns."""
         self.base_url = "https://www.baidu.com/s"
-        self.user_agents = [
-            ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-             "AppleWebKit/537.36 (KHTML, like Gecko) "
-             "Chrome/114.0.0.0 Safari/537.36"),
-            ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-             "AppleWebKit/605.1.15 (KHTML, like Gecko) "
-             "Version/16.5 Safari/605.1.15"),
-            ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-             "(KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
-        ]
 
-        self.storage = ScraperStorage()
-        self.content_extractor = ArticleContentExtractor(self.storage)
+        self.content_downloader = ArticleDownloader()
 
         self.time_patterns = {
             "minute": re.compile(r"(\d+)\s*分钟前"),
@@ -64,20 +44,16 @@ class BaiduSearchScraper:
             ),
         }
 
-    def _get_random_headers(self) -> Dict[str, str]:
-        """Generate random HTTP headers for requests."""
-        return {
-            "User-Agent": random.choice(self.user_agents),
-            "Accept": ("text/html,application/xhtml+xml,application/xml;"
-                       "q=0.9,image/avif,image/webp,*/*;q=0.8"),
-            "Accept-Language": (
-                "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,"
-                "en-US;q=0.3,en;q=0.2"
-            ),
-            "Connection": "keep-alive",
-            "Referer": "https://www.baidu.com/",
-            "Upgrade-Insecure-Requests": "1",
-        }
+        self.user_agents = [
+            ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+             "AppleWebKit/537.36 (KHTML, like Gecko) "
+             "Chrome/114.0.0.0 Safari/537.36"),
+            ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+             "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+             "Version/16.5 Safari/605.1.15"),
+            ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+             "(KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36")
+        ]
 
     def _parse_time_to_timestamp(self, time_text: str) -> int:
         """Convert a time string into a Unix timestamp."""
@@ -92,6 +68,7 @@ class BaiduSearchScraper:
             if match:
                 try:
                     num = int(match.group(1))
+                    dt = None
                     if unit == "minute":
                         dt = now - timedelta(minutes=num)
                     elif unit == "hour":
@@ -104,7 +81,9 @@ class BaiduSearchScraper:
                         dt = now - timedelta(days=num * 30)
                     elif unit == "year":
                         dt = now - timedelta(days=num * 365)
-                    return int(dt.timestamp())
+                    if dt:
+                        return int(dt.timestamp())
+                    continue
                 except Exception:
                     continue
 
@@ -128,6 +107,21 @@ class BaiduSearchScraper:
 
         logger.warning("Unrecognized time format: %s", time_text)
         return int(time.time())
+
+    def _get_random_headers(self) -> Dict[str, str]:
+        """Generate random HTTP headers for requests."""
+        return {
+            "User-Agent": random.choice(self.user_agents),
+            "Accept": ("text/html,application/xhtml+xml,application/xml;"
+                       "q=0.9,image/avif,image/webp,*/*;q=0.8"),
+            "Accept-Language": (
+                "zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,"
+                "en-US;q=0.3,en;q=0.2"
+            ),
+            "Connection": "keep-alive",
+            "Referer": "https://www.baidu.com/",
+            "Upgrade-Insecure-Requests": "1",
+        }
 
     def search(
         self,
@@ -219,7 +213,7 @@ class BaiduSearchScraper:
 
                         content = ""
                         if fetch_content and url:
-                            content = self.content_extractor.extract_content(url)
+                            content = self.content_downloader.get_content(url)
                             time.sleep(random.uniform(0.5, 1.5))
 
                         results.append({
@@ -235,8 +229,7 @@ class BaiduSearchScraper:
                         logger.error("Error parsing result: %s", str(e))
                         continue
 
-                logger.info("Fetched page %d - total results: %d",
-                            current_page, len(results))
+                logger.info(f"Fetched page {current_page} - total results: {len(results)}")
 
                 next_page = soup.select_one("a.n")
                 if not next_page:
@@ -257,7 +250,6 @@ class BaiduSearchScraper:
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
     scraper = BaiduSearchScraper()
     news = scraper.search(
         query="最近24小时关于TESLA的财经新闻",
@@ -266,5 +258,4 @@ if __name__ == "__main__":
         fetch_content=True,
     )
 
-
-    print(json.dumps(news, ensure_ascii=False, indent=2))
+    logger.info(json.dumps(news, ensure_ascii=False, indent=2))

@@ -12,14 +12,14 @@ import json
 import abc
 import time
 import hashlib
-from typing import Dict, List, Any, Optional
+
+from typing import Dict, List, Any
 from datetime import datetime
 from dataclasses import dataclass
 from loguru import logger
-import requests
 
 NEWS_MARKET = [
-    'us', 'zh', 'hk', 'cypto', 'common'
+    'us', 'cn', 'hk', 'cypto', 'common'
 ]
 
 @dataclass
@@ -35,7 +35,7 @@ class NewsInfo:
     summary: str
     url: str
     content: str
-    provider: str  # provder like newsapi, finnhub, rss
+    provider: str  # provider like newsapi, finnhub, rss
     market: str    # market type like us, chn, eur, hk, crypto
 
     def to_dict(self) -> Dict[str, Any]:
@@ -58,27 +58,6 @@ class NewsInfo:
             "provider": self.provider,
             "market": self.market,
         }
-
-    def fetch_article_html(self) -> Optional[str]:
-        """Fetch raw HTML content from the article's direct URL.
-
-        Uses a browser-like user agent to avoid being blocked by servers.
-
-        Returns:
-            Raw HTML string if successful; None if request fails.
-        """
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                          "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        }
-
-        try:
-            response = requests.get(self.url, headers=headers, timeout=15)
-            response.raise_for_status()
-            return response.text
-        except requests.RequestException as e:
-            logger.debug(f"Failed to fetch HTML for {self.url}: {e}")
-            return None
 
 class NewsProviderBase(metaclass=abc.ABCMeta):
     """Abstract base class defining the interface for news providers.
@@ -278,11 +257,11 @@ class NewsFileDatabase(NewsDatabase):
             "last_sync": self.last_sync,
             "news_list": news_dicts
         }
-        with open(self._filepath, 'w', encoding='utf-8') as f:
-            json.dump(content, f, indent=4)  # indent for readability
+        with open(self._filepath, 'w', encoding="utf-8") as f:
+            json.dump(content, f, ensure_ascii=False, indent=4)  # indent for readability
 
     def load(self):
-        with open(self._filepath, 'r', encoding='utf-8') as f:
+        with open(self._filepath, 'r', encoding="utf-8") as f:
             content = json.load(f)  # Directly loads JSON content into a Python list/dict
         self.last_sync = content['last_sync']
         self.news_list = [NewsInfo(**item_dict) for item_dict in content['news_list']]
