@@ -1,2 +1,0 @@
-fastapi[standard]
-uvicorn[standard]

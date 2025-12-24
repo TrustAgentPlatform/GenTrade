@@ -30,7 +30,7 @@ def test_provider_basic(provider_name:str):
 @pytest.mark.parametrize("source",
                          AVAILABLE_SOURCE)
 def test_provider_newsnow(source:str):
-    db = NewsFileDatabase("news_db.txt")
+    db = NewsFileDatabase(f"news_db_{source}.txt")
 
     provider = NewsFactory.create_provider("newsnow", source=source)
     aggregator = NewsAggregator([ provider], db)
